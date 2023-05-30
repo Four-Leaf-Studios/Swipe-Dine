@@ -119,8 +119,8 @@ const theme = createTheme({
     },
     swipeScreenButton: {
       borderRadius: 999,
-      height: 70,
-      width: 70,
+      height: 60,
+      width: 60,
     },
   },
   cardVariants: {
