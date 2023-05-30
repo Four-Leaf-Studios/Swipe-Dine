@@ -1,8 +1,8 @@
 import { StyleSheet, TextInput } from "react-native";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Box from "../components/Box";
-import Loading from "./Loading";
+import Logo from "../components/Logo";
 import Button from "../components/Button";
 import StyledTextInput from "../components/StyledTextInput";
 type Props = {};
@@ -21,7 +21,7 @@ const Login = (props: Props) => {
 
   return (
     <>
-      <Loading />
+      <Logo variant="header" />
 
       <Box
         flex={0.5}

@@ -9,8 +9,18 @@ const palette = {
   greenPrimary: "#0ECD9D",
   greenDark: "#0A906E",
 
-  darkGray: "#333",
+  orangeLight: "#FECC00",
+  orangePrimary: "#FE8C00",
+  orangeDark: "#FE3C00",
 
+  redLight: "#ff4000",
+  redPrimary: "#ff3000",
+  redDark: "#ff1000",
+
+  darkGray: "#333",
+  grayPrimary: "#d0d0d0",
+
+  transparent: "transparent",
   black: "#0B0B0B",
   white: "#F0F2F3",
 };
@@ -19,15 +29,38 @@ const theme = createTheme({
   colors: {
     mainBackground: palette.white,
     mainForeground: palette.black,
-    cardPrimaryBackground: palette.greenLight,
 
+    cardPrimaryBackground: palette.greenLight,
     cardShadowColor: "#000",
     secondaryCardBackground: palette.white,
     secondaryCardText: palette.white,
+
     buttonPrimaryBackground: palette.greenLight,
     buttonPrimaryText: palette.white,
+
+    orangeDark: palette.orangeDark,
+    orange: palette.orangePrimary,
+    orangeLight: palette.orangeLight,
+
+    redDark: palette.redDark,
+    red: palette.redPrimary,
+    redLight: palette.redLight,
+
+    greenDark: palette.greenDark,
+    green: palette.greenPrimary,
+    greenLight: palette.greenLight,
+
+    darkGray: palette.darkGray,
+    gray: palette.grayPrimary,
+
+    transparent: palette.transparent,
     black: palette.black,
     white: palette.white,
+  },
+  zIndices: {
+    ["-z-10"]: -10,
+    ["z-0"]: 0,
+    ["z-10"]: 10,
   },
   spacing: {
     s: 8,
@@ -47,28 +80,24 @@ const theme = createTheme({
   },
   textVariants: {
     logo: {
-      fontFamily: "ShopifySans-Bold",
       fontWeight: "bold",
       fontSize: 48,
       lineHeight: 48.5,
-      color: "white",
+      color: "orange",
     },
     header: {
-      fontFamily: "ShopifySans-Bold",
       fontWeight: "bold",
       fontSize: 34,
       lineHeight: 42.5,
       color: "black",
     },
     subheader: {
-      fontFamily: "ShopifySans-SemiBold",
       fontWeight: "600",
       fontSize: 28,
       lineHeight: 36,
       color: "black",
     },
     body: {
-      fontFamily: "ShopifySans",
       fontSize: 16,
       lineHeight: 24,
       color: "black",
@@ -77,16 +106,21 @@ const theme = createTheme({
   buttonVariants: {
     defaults: {
       width: "100%",
-      backgroundColor: "buttonPrimaryBackground",
       borderRadius: 10,
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
+      overflow: "hidden",
     },
     login: {
       width: 250,
       flex: 0.25,
       color: "white",
+    },
+    swipeScreenButton: {
+      borderRadius: 999,
+      height: 70,
+      width: 70,
     },
   },
   cardVariants: {
@@ -114,7 +148,7 @@ const theme = createTheme({
       backgroundColor: "cardPrimaryBackground",
       borderRadius: 20,
       width: "95%",
-      flex: 9,
+      flex: 15,
       shadowColor: "cardShadowColor",
       overflow: "hidden",
       position: "relative",
@@ -135,9 +169,35 @@ const theme = createTheme({
       elevation: 5,
     },
   },
+  linearGradientVariants: {
+    defaults: {
+      height: "100%",
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    main: {},
+    red: {
+      zIndex: "z-10",
+    },
+    green: {
+      zIndex: "z-10",
+    },
+    shadow: {
+      zIndex: "z-0",
+    },
+  },
+
+  logoVariants: {
+    defaults: {
+      color: "orangeDark",
+    },
+  },
   defaults: {
     // We can define a default text variant here.
   },
+
   breakpoints: {
     phone: 0,
     longPhone: {

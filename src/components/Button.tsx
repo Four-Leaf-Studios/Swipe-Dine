@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from "react-native";
+import { TouchableOpacity } from "react-native";
 import {
   useRestyle,
   spacing,
@@ -9,13 +9,12 @@ import {
   composeRestyleFunctions,
   VariantProps,
   createVariant,
-  useTheme,
-  useResponsiveProp,
 } from "@shopify/restyle";
 
 import Text from "./Text";
 import { Theme } from "../../theme";
-
+import LinearGradient from "./LinearGradient";
+import { ReactElement } from "react";
 type RestyleProps = SpacingProps<Theme> &
   BorderProps<Theme> &
   BackgroundColorProps<Theme> &
@@ -30,16 +29,22 @@ const restyleFunctions = composeRestyleFunctions<Theme, RestyleProps>([
 type Props = RestyleProps & {
   onPress: () => void;
   label: string;
+  children?: ReactElement;
 };
 
-const Button = ({ onPress, label, ...rest }: Props) => {
+const Button = ({ onPress, label, children, ...rest }: Props) => {
   const props = useRestyle(restyleFunctions, rest);
 
   return (
     <TouchableOpacity onPress={onPress} {...props}>
-      <Text variant="subheader" color="buttonPrimaryText">
-        {label}
-      </Text>
+      {rest.variant === "swipeScreenButton" && children}
+      {rest.variant === "login" && (
+        <LinearGradient variant="main">
+          <Text variant="subheader" color="buttonPrimaryText">
+            {label}
+          </Text>
+        </LinearGradient>
+      )}
     </TouchableOpacity>
   );
 };

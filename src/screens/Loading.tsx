@@ -1,18 +1,8 @@
-import { StyleSheet, View } from "react-native";
 import React from "react";
-import Text from "../components/Text";
+import Logo from "../components/Logo";
 
-type Props = {};
-
-const Loading = (props: Props) => {
-  return (
-    <>
-      <Text variant="logo" color="white">
-        Foodr
-      </Text>
-    </>
-  );
+const Loading = () => {
+  return <Logo variant="logo" />;
 };
 
 export default Loading;
-const styles = StyleSheet.create({});
