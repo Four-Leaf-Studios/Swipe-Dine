@@ -1,5 +1,5 @@
 import { Image, Pressable, StyleSheet } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "./Card";
 import Box from "./Box";
 import Text from "./Text";
@@ -23,7 +23,7 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
     price_level,
     icon_mask_base_uri: image_url,
     vicinity,
-  } = restaurant;
+  } = useRestaurantDetails(restaurant.place_id);
 
   // const {
   //   photos = [],
@@ -40,7 +40,7 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
   const handlePreviousPhoto = () => {
     setCurrentPhoto((prevPhoto) => {
       if (prevPhoto === 0) {
-        return photos.length - 1;
+        return 0;
       } else {
         return prevPhoto - 1;
       }
@@ -50,7 +50,7 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
   const handleNextPhoto = () => {
     setCurrentPhoto((prevPhoto) => {
       if (prevPhoto === photos.length - 1) {
-        return 0;
+        return prevPhoto;
       } else {
         return prevPhoto + 1;
       }
@@ -82,6 +82,7 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
           >
             {photos?.map((photo, index) => (
               <Box
+                key={photo.photo_reference}
                 flex={1}
                 backgroundColor={index === currentPhoto ? "white" : "gray"}
                 height="100%"
@@ -127,10 +128,10 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
             flex={1}
             zIndex="z-10"
           >
-            <Text variant="header" color="secondaryCardText">
+            <Text variant="subheader" color="primaryCardText">
               {name}
             </Text>
-            <Text variant="subheader" color="secondaryCardText">
+            <Text variant="body" color="secondaryCardText">
               Rating: {rating} / 5
             </Text>
             <Text variant="body" color="secondaryCardText">

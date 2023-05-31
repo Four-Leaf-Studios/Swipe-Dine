@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react";
 import { getRestaurantDetailsFromYelp } from "../api/yelp/yelp";
 import { Restaurant, RestaurantDetails } from "../api/yelp/yelpTypes";
 import { RestaurantDetails as RestaurantDetailsGoogle } from "../api/google/googleTypes";
+import { getRestaurantDetailsFromGooglePlaces } from "../api/google/google";
 
-const useRestaurantDetails = ({ id }: Restaurant) => {
-  const [restaurant, setRestaurant] = useState<RestaurantDetails>();
+const useRestaurantDetails = (id: string) => {
+  const [restaurant, setRestaurant] = useState<RestaurantDetailsGoogle>();
 
   useEffect(() => {
     const fetchRestaurantDetailsFromYelp = async () => {
-      const data = await getRestaurantDetailsFromYelp(id);
+      const data = await getRestaurantDetailsFromGooglePlaces(id);
       if (data.result) {
         setRestaurant(data.result);
       } else {

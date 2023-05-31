@@ -3,23 +3,15 @@ import axios from "axios";
 const API_KEY = "AIzaSyBLB4ZE2E8SRTeZ2f9OtY1fXGJ8cdIlvro";
 const URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 const URL_DETAILS = "https://maps.googleapis.com/maps/api/place/details/json";
-const Axios = axios.create({
-  baseURL: URL,
-  params: {
-    key: API_KEY,
-    type: "restaurant",
-    rankby: "distance",
-  },
-});
 
-const getGooglePlaces = async (location: string) => {
+const getGooglePlaces = async (location, distanceInMeters) => {
   try {
     const response = await axios.get(URL, {
       params: {
         location: location,
-        type: "restaurant",
-        rankby: "distance",
         key: API_KEY,
+        keyword: "restaurant | fast food | ice cream",
+        rankby: "distance",
       },
     });
 

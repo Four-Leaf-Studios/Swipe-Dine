@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getGooglePlaces } from "../api/google/google";
-import { Restaurant } from "../api/yelp/yelpTypes";
 import { RestaurantDetails } from "../api/google/googleTypes";
-import { getYelp } from "../api/yelp/yelp";
 import { getUserLocation } from "../utils/geolocation";
 
 const useRestaurants = () => {
@@ -14,7 +12,8 @@ const useRestaurants = () => {
       const location = await getUserLocation();
       console.log(location);
       const data = await getGooglePlaces(
-        `${location.latitude},${location.longitude}`
+        `${location.latitude},${location.longitude}`,
+        50000
       );
       if (data.result) {
         setRestaurants(data.result);

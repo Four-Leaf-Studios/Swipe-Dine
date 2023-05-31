@@ -33,7 +33,8 @@ const theme = createTheme({
     cardPrimaryBackground: palette.greenLight,
     cardShadowColor: "#000",
     secondaryCardBackground: palette.white,
-    secondaryCardText: palette.white,
+    secondaryCardText: palette.grayPrimary,
+    primaryCardText: palette.white,
 
     buttonPrimaryBackground: palette.greenLight,
     buttonPrimaryText: palette.white,
