@@ -39,8 +39,15 @@ const Button = ({ onPress, label, children, ...rest }: Props) => {
     <TouchableOpacity onPress={onPress} {...props}>
       {rest.variant === "swipeScreenButton" && children}
       {rest.variant === "login" && (
-        <LinearGradient variant="main">
-          <Text variant="subheader" color="buttonPrimaryText">
+        <LinearGradient variant="login">
+          <Text
+            variant="subheader"
+            color="buttonPrimaryText"
+            textAlign="center"
+            style={{
+              paddingTop: 1,
+            }}
+          >
             {label}
           </Text>
         </LinearGradient>

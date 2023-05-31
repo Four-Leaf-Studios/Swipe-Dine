@@ -19,11 +19,10 @@ export default function App() {
           flexDirection="column"
           alignItems="center"
           justifyContent="center"
-          maxWidth="100%"
+          width="100%"
           height="100%"
-          padding="s"
         >
-          <SwipeScreen />
+          <LoadingScreen />
         </Box>
       </SafeAreaView>
     </ThemeProvider>
@@ -34,5 +33,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: StatusBar.currentHeight,
+    position: "relative",
   },
 });

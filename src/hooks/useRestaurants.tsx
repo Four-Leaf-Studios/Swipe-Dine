@@ -10,7 +10,6 @@ const useRestaurants = () => {
   useEffect(() => {
     const fetchRestaurants = async () => {
       const location = await getUserLocation();
-      console.log(location);
       const data = await getGooglePlaces(
         `${location.latitude},${location.longitude}`,
         50000

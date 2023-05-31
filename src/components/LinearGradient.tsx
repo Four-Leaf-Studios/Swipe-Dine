@@ -52,6 +52,8 @@ const LinearGradient = ({ children, ...rest }: Props) => {
       "rgba(0,0,0,.75)",
       "rgba(0,0,0,.75)",
     ],
+    login: ["rgba(255,255,255,.5)", "rgba(255,255,255,.5)"],
+    burger: [],
   };
 
   // Define the colors array based on the variant
@@ -61,7 +63,13 @@ const LinearGradient = ({ children, ...rest }: Props) => {
     <Box width="100%" height="100%" position="absolute" {...props}>
       <ExpoLinearGradient
         colors={colors}
-        style={{ width: "100%", height: "100%" }}
+        style={{
+          width: "100%",
+          height: "100%",
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
         {children}
       </ExpoLinearGradient>

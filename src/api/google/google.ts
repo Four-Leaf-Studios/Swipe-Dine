@@ -12,6 +12,7 @@ const getGooglePlaces = async (location, distanceInMeters) => {
         key: API_KEY,
         keyword: "restaurant | fast food | ice cream",
         rankby: "distance",
+        opennow: true,
       },
     });
 

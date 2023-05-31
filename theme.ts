@@ -72,12 +72,15 @@ const theme = createTheme({
     m: 16,
     l: 24,
     xl: 40,
+    auto: "auto",
   },
 
   inputVariants: {
+    defaults: {
+      height: 60,
+    },
     login: {
       backgroundColor: "white",
-      height: 40,
       padding: "s",
       borderRadius: 4,
       width: 250,
@@ -184,6 +187,7 @@ const theme = createTheme({
       alignItems: "center",
     },
     main: {},
+    login: {},
     red: {
       zIndex: "z-10",
     },
@@ -193,6 +197,7 @@ const theme = createTheme({
     shadow: {
       zIndex: "z-0",
     },
+    burger: {},
   },
 
   logoVariants: {

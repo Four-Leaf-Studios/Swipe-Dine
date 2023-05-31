@@ -159,13 +159,7 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
                 : image_url,
           }}
           alt="Restaurant Photo"
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            resizeMode: "cover",
-            zIndex: -10,
-          }}
+          style={styles.image}
         />
 
         {/* Swipe Card Buttons */}
@@ -190,4 +184,12 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
 
 export default SwipeCard;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  image: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    resizeMode: "cover",
+    zIndex: -10,
+  },
+});
