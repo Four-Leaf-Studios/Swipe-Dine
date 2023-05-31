@@ -83,6 +83,7 @@ const theme = createTheme({
     },
   },
   textVariants: {
+    defaults: {},
     logo: {
       fontWeight: "bold",
       fontSize: 48,
@@ -155,7 +156,7 @@ const theme = createTheme({
       flex: 15,
       shadowColor: "cardShadowColor",
       overflow: "hidden",
-      position: "relative",
+      position: "absolute",
       padding: {
         phone: 0,
         tablet: 0,

@@ -1,14 +1,36 @@
-import { StyleSheet, View } from "react-native";
-import React from "react";
+import { StyleSheet, ActivityIndicator } from "react-native";
 import SwipeCard from "../components/SwipeCard";
 import Box from "../components/Box";
 import Text from "../components/Text";
-import Button from "../components/Button";
 import Logo from "../components/Logo";
+import useRestaurants from "../hooks/useRestaurants";
+import { useState } from "react";
+import { RestaurantDetails } from "../api/google/googleTypes";
 
 type Props = {};
 
 const Swipe = (props: Props) => {
+  const { restaurants, loading, setRestaurants } = useRestaurants();
+  const [swipeLeftList, setSwipeLeftList] = useState<RestaurantDetails[]>([]);
+  const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
+
+  const handleSwipe = (direction: string, index: number) => {
+    const updatedRestaurants = [...restaurants];
+    const restaurant = updatedRestaurants[index];
+
+    // Remove the restaurant from the restaurants list
+    updatedRestaurants.splice(index, 1);
+
+    if (direction === "left") {
+      setSwipeLeftList((prevList) => [...prevList, restaurant]);
+    }
+    if (direction === "right") {
+      setSwipeRightList((prevList) => [...prevList, restaurant]);
+    }
+
+    setRestaurants(updatedRestaurants);
+  };
+
   return (
     <>
       <Box
@@ -27,24 +49,30 @@ const Swipe = (props: Props) => {
           Filter
         </Text>
       </Box>
-      <SwipeCard
-        title="title"
-        subtitle="subtitle"
-        description={
-          "Description Description Description Description Description Description Description"
-        }
-        photos={[
-          "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTg_46CuoZjkg5C-nnW_XbHV-pftW0GdoZWBg&usqp=CAU",
-          "https://scontent.ftpa1-2.fna.fbcdn.net/v/t39.30808-6/307314335_5655122674556643_1657747153723673069_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=l_BXiIM0IRAAX93YxJB&_nc_ht=scontent.ftpa1-2.fna&oh=00_AfDRNg-kNtQhQJYo4lQsqYqwzRkb5DnRPWmTi44oADvaVA&oe=647AE053",
-          "https://scontent.ftpa1-2.fna.fbcdn.net/v/t39.30808-6/307314335_5655122674556643_1657747153723673069_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=l_BXiIM0IRAAX93YxJB&_nc_ht=scontent.ftpa1-2.fna&oh=00_AfDRNg-kNtQhQJYo4lQsqYqwzRkb5DnRPWmTi44oADvaVA&oe=647AE053",
-          "https://scontent.ftpa1-2.fna.fbcdn.net/v/t39.30808-6/307314335_5655122674556643_1657747153723673069_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=l_BXiIM0IRAAX93YxJB&_nc_ht=scontent.ftpa1-2.fna&oh=00_AfDRNg-kNtQhQJYo4lQsqYqwzRkb5DnRPWmTi44oADvaVA&oe=647AE053",
-          "https://scontent.ftpa1-2.fna.fbcdn.net/v/t39.30808-6/307314335_5655122674556643_1657747153723673069_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=l_BXiIM0IRAAX93YxJB&_nc_ht=scontent.ftpa1-2.fna&oh=00_AfDRNg-kNtQhQJYo4lQsqYqwzRkb5DnRPWmTi44oADvaVA&oe=647AE053",
-          "https://scontent.ftpa1-2.fna.fbcdn.net/v/t39.30808-6/307314335_5655122674556643_1657747153723673069_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=l_BXiIM0IRAAX93YxJB&_nc_ht=scontent.ftpa1-2.fna&oh=00_AfDRNg-kNtQhQJYo4lQsqYqwzRkb5DnRPWmTi44oADvaVA&oe=647AE053",
-          "https://scontent.ftpa1-2.fna.fbcdn.net/v/t39.30808-6/307314335_5655122674556643_1657747153723673069_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=l_BXiIM0IRAAX93YxJB&_nc_ht=scontent.ftpa1-2.fna&oh=00_AfDRNg-kNtQhQJYo4lQsqYqwzRkb5DnRPWmTi44oADvaVA&oe=647AE053",
-          "https://scontent.ftpa1-2.fna.fbcdn.net/v/t39.30808-6/307314335_5655122674556643_1657747153723673069_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=l_BXiIM0IRAAX93YxJB&_nc_ht=scontent.ftpa1-2.fna&oh=00_AfDRNg-kNtQhQJYo4lQsqYqwzRkb5DnRPWmTi44oADvaVA&oe=647AE053",
-          "https://scontent.ftpa1-2.fna.fbcdn.net/v/t39.30808-6/307314335_5655122674556643_1657747153723673069_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=l_BXiIM0IRAAX93YxJB&_nc_ht=scontent.ftpa1-2.fna&oh=00_AfDRNg-kNtQhQJYo4lQsqYqwzRkb5DnRPWmTi44oADvaVA&oe=647AE053",
-        ]}
-      />
+
+      <Box
+        position="relative"
+        width="100%"
+        flex={10}
+        flexDirection="row"
+        justifyContent="center"
+        alignItems="center"
+      >
+        {loading ? (
+          <ActivityIndicator size="large" />
+        ) : restaurants.length > 0 ? (
+          restaurants.map((restaurant, index) => (
+            <SwipeCard
+              key={restaurant.place_id}
+              restaurant={restaurant}
+              handleSwipe={handleSwipe}
+              index={index}
+            />
+          ))
+        ) : (
+          <Text>No restaurants found.</Text>
+        )}
+      </Box>
     </>
   );
 };

@@ -3,22 +3,39 @@ import React, { useState } from "react";
 import Card from "./Card";
 import Box from "./Box";
 import Text from "./Text";
-import { LinearGradient as ExpoLinearGradient } from "expo-linear-gradient";
 import SwipeCardButton from "./SwipeCardButton";
 import LinearGradient from "./LinearGradient";
-import Button from "./Button";
-type Props = {
-  title: string;
-  subtitle: string;
-  description: string;
-  photos: string[];
-};
+import { Restaurant } from "../api/yelp/yelpTypes";
+import { RestaurantDetails } from "../api/google/googleTypes";
+import { getPhotoURL } from "../api/google/google";
+import useRestaurantDetails from "../hooks/useRestaurantDetails";
 
-const SwipeCard = ({ title, subtitle, description, photos }: Props) => {
-  const [currentPhoto, setCurrentPhoto] = useState(3);
+interface Props {
+  handleSwipe: (direction: string, index: number) => void;
+  index: number;
+  restaurant: RestaurantDetails;
+}
+const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
+  const {
+    photos = [],
+    name = "",
+    rating,
+    price_level,
+    icon_mask_base_uri: image_url,
+    vicinity,
+  } = restaurant;
 
-  const handleSwipeLeft = () => {};
-  const handleSwipeRight = () => {};
+  // const {
+  //   photos = [],
+  //   name = "",
+  //   image_url = "",
+  //   price = "",
+  //   rating = 0,
+  // } = useRestaurantDetails(restaurant);
+  const [currentPhoto, setCurrentPhoto] = useState(0);
+
+  const handleSwipeLeft = () => handleSwipe("left", index);
+  const handleSwipeRight = () => handleSwipe("right", index);
   const handleViewDetails = () => {};
   const handlePreviousPhoto = () => {
     setCurrentPhoto((prevPhoto) => {
@@ -111,13 +128,13 @@ const SwipeCard = ({ title, subtitle, description, photos }: Props) => {
             zIndex="z-10"
           >
             <Text variant="header" color="secondaryCardText">
-              {title}
+              {name}
             </Text>
             <Text variant="subheader" color="secondaryCardText">
-              {subtitle}
+              Rating: {rating} / 5
             </Text>
             <Text variant="body" color="secondaryCardText">
-              {description}
+              {vicinity}
             </Text>
           </Box>
 
@@ -135,7 +152,10 @@ const SwipeCard = ({ title, subtitle, description, photos }: Props) => {
         </Box>
         <Image
           source={{
-            uri: photos[currentPhoto],
+            uri:
+              photos.length > 0
+                ? getPhotoURL(photos[currentPhoto].photo_reference)
+                : image_url,
           }}
           alt="Restaurant Photo"
           style={{
