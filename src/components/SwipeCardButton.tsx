@@ -8,9 +8,10 @@ import Text from "./Text";
 
 type Props = {
   type: string;
+  handlePress: () => void;
 };
 
-const SwipeCardButton = ({ type }: Props) => {
+const SwipeCardButton = ({ type, handlePress }: Props) => {
   const variants = {
     x: { variant: "red", value: "X" },
     heart: { variant: "green", value: "<3" },
@@ -21,7 +22,7 @@ const SwipeCardButton = ({ type }: Props) => {
   const value = variant.value;
 
   return (
-    <Button variant="swipeScreenButton" label="X" onPress={() => {}}>
+    <Button variant="swipeScreenButton" label="X" onPress={handlePress}>
       <MaskedView
         maskElement={
           <View

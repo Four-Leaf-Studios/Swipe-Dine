@@ -58,9 +58,13 @@ const theme = createTheme({
     white: palette.white,
   },
   zIndices: {
+    ["-z-30"]: -30,
+    ["-z-20"]: -20,
     ["-z-10"]: -10,
     ["z-0"]: 0,
     ["z-10"]: 10,
+    ["z-20"]: 20,
+    ["z-30"]: 30,
   },
   spacing: {
     s: 8,
