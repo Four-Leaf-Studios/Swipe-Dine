@@ -2,9 +2,10 @@ import { Image, StyleSheet, TextInput } from "react-native";
 import React from "react";
 import { useForm } from "react-hook-form";
 import Box from "../components/Box";
-import Logo from "../components/Logo";
 import Button from "../components/Button";
 import StyledTextInput from "../components/StyledTextInput";
+import Logo from "../components/Logo";
+import MaskedViewCustom from "../components/MaskedViewCustom";
 import Text from "../components/Text";
 type Props = {};
 
@@ -37,9 +38,19 @@ const Login = (props: Props) => {
           backgroundColor: "rgba(0,0,0,.8)",
         }}
       >
-        <Text variant="header" color="white">
-          Foodr
-        </Text>
+        <Box
+          width={200}
+          height={100}
+          overflow="hidden"
+          flexDirection="row"
+          justifyContent="center"
+          alignItems="center"
+          borderRadius={999}
+        >
+          <MaskedViewCustom linearGradientVariant={"main"} noBorder>
+            <Logo variant="logo" />
+          </MaskedViewCustom>
+        </Box>
 
         <StyledTextInput
           placeholder="email"
@@ -53,7 +64,11 @@ const Login = (props: Props) => {
           variant="login"
           register={register("password", { required: true })}
         />
-        <Button label="Login" onPress={() => {}} variant="login" />
+        <Button label="Login" onPress={() => {}} variant="login">
+          <MaskedViewCustom linearGradientVariant={"main"}>
+            <Text variant="subheader">Login</Text>
+          </MaskedViewCustom>
+        </Button>
       </Box>
       <Image
         source={{

@@ -1,8 +1,9 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { ReactElement } from "react";
 import LinearGradient from "./LinearGradient";
 import Box from "./Box";
 import { ResponsiveValue } from "@shopify/restyle";
+import MaskedView from "@react-native-masked-view/masked-view";
 
 type Props = {
   children: ReactElement;
@@ -15,9 +16,14 @@ type Props = {
       largeTablet: number;
     }
   >;
+  noBorder?: boolean;
 };
 
-const MaskedView = ({ children, linearGradientVariant }: Props) => {
+const MaskedViewCustom = ({
+  children,
+  linearGradientVariant,
+  noBorder,
+}: Props) => {
   return (
     <MaskedView
       maskElement={
@@ -26,7 +32,7 @@ const MaskedView = ({ children, linearGradientVariant }: Props) => {
           style={[
             StyleSheet.absoluteFill,
             {
-              borderWidth: 3,
+              borderWidth: noBorder ? 0 : 3,
               borderRadius: 50,
               flex: "row",
               justifyContent: "center",
@@ -55,6 +61,6 @@ const MaskedView = ({ children, linearGradientVariant }: Props) => {
   );
 };
 
-export default MaskedView;
+export default MaskedViewCustom;
 
 const styles = StyleSheet.create({});

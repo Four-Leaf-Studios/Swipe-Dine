@@ -22,7 +22,7 @@ export default function App() {
           width="100%"
           height="100%"
         >
-          <LoadingScreen />
+          <LoginScreen />
         </Box>
       </SafeAreaView>
     </ThemeProvider>

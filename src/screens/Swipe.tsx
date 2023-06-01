@@ -6,6 +6,7 @@ import Logo from "../components/Logo";
 import useRestaurants from "../hooks/useRestaurants";
 import { useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
+import MaskedViewCustom from "../components/MaskedViewCustom";
 
 type Props = {};
 
@@ -32,22 +33,24 @@ const Swipe = (props: Props) => {
   };
 
   return (
-    <>
-      <Box
-        width="100%"
-        flex={1}
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-        gap="s"
-        paddingLeft="m"
-        paddingRight="m"
-        paddingBottom="s"
-      >
-        <Logo variant="subheader" />
-        <Text variant="subheader" color="orangeDark">
-          Filter
-        </Text>
+    <Box width="100%" flex={1} padding="s">
+      <Box width="100%" flex={1}>
+        <MaskedViewCustom linearGradientVariant={"main"} noBorder>
+          <Box
+            width="100%"
+            height="100%"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap="s"
+            paddingLeft="m"
+            paddingRight="m"
+            paddingBottom="s"
+          >
+            <Logo variant="subheader" />
+            <Text variant="subheader">Filter</Text>
+          </Box>
+        </MaskedViewCustom>
       </Box>
 
       <Box
@@ -73,7 +76,7 @@ const Swipe = (props: Props) => {
           <Text>No restaurants found.</Text>
         )}
       </Box>
-    </>
+    </Box>
   );
 };
 

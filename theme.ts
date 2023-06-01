@@ -123,7 +123,7 @@ const theme = createTheme({
     },
     login: {
       width: 250,
-      flex: 0.25,
+      flex: 0.35,
       color: "white",
     },
     swipeScreenButton: {
@@ -186,7 +186,9 @@ const theme = createTheme({
       justifyContent: "center",
       alignItems: "center",
     },
-    main: {},
+    main: {
+      zIndex: "z-10",
+    },
     login: {},
     red: {
       zIndex: "z-10",
