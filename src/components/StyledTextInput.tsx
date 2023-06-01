@@ -9,7 +9,9 @@ import {
   composeRestyleFunctions,
 } from "@shopify/restyle";
 import { Theme } from "../../theme";
-import { UseFormRegisterReturn } from "react-hook-form";
+import Text from "./Text";
+import Box from "./Box";
+import { useState } from "react";
 
 const restyleFunctions = composeRestyleFunctions<Theme, RestyleProps>([
   createVariant({ themeKey: "inputVariants" }),
@@ -21,26 +23,42 @@ type RestyleProps = SpacingProps<Theme> &
   VariantProps<Theme, "inputVariants">;
 
 type Props = RestyleProps & {
-  register: UseFormRegisterReturn;
   placeholder: string;
   keyboardType: KeyboardTypeOptions;
+  value: string;
+  message: string | null;
+  onChangeText: Function;
+  secure?: boolean;
 };
 
 const StyledTextInput = ({
-  register,
   placeholder,
   keyboardType,
+  message,
+  value,
+  onChangeText,
+  secure,
   ...rest
 }: Props) => {
   const props = useRestyle(restyleFunctions, rest);
-
   return (
-    <TextInput
-      {...props}
-      placeholder={placeholder}
-      keyboardType={keyboardType}
-      {...register}
-    />
+    <Box width="100%" flexDirection="column" gap="s">
+      <TextInput
+        {...props}
+        placeholder={placeholder}
+        keyboardType={keyboardType}
+        value={value}
+        onChangeText={(text) => onChangeText(text)}
+        secureTextEntry={secure}
+      />
+      {message && (
+        <Box backgroundColor="error" padding="s" borderRadius={5}>
+          <Text variant="body" color="white">
+            {message}
+          </Text>
+        </Box>
+      )}
+    </Box>
   );
 };
 

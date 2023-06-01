@@ -7,6 +7,7 @@ import {
 } from "@shopify/restyle";
 import { Theme } from "../../theme";
 import Text from "./Text";
+import MaskedViewCustom from "./MaskedViewCustom";
 
 type RestyleProps = SpacingProps<Theme> &
   BorderProps<Theme> &
@@ -17,9 +18,9 @@ type Props = RestyleProps & {};
 
 const StyledTextInput = ({ ...rest }: Props) => {
   return (
-    <Text variant={rest.variant} color="orangeDark">
-      Foodr
-    </Text>
+    <MaskedViewCustom linearGradientVariant={"main"} noBorder>
+      <Text variant={rest.variant}>Foodr</Text>
+    </MaskedViewCustom>
   );
 };
 

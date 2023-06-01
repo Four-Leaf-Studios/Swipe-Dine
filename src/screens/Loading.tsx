@@ -1,37 +1,66 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Logo from "../components/Logo";
-import { Image, StyleSheet, View } from "react-native";
+import { Animated, useAnimatedValue } from "react-native";
 import Box from "../components/Box";
-import LinearGradient from "../components/LinearGradient";
 import MaskedViewCustom from "../components/MaskedViewCustom";
 import Text from "../components/Text";
-import MaskedView from "@react-native-masked-view/masked-view";
-import SwipeCardButton from "../components/SwipeCardButton";
-import Button from "../components/Button";
+import Layout from "../components/Layout";
 
 const Loading = () => {
+  const progress = useAnimatedValue(0.5);
+  const scale = useAnimatedValue(1);
+
+  const animation = Animated.loop(
+    Animated.parallel([
+      Animated.sequence([
+        Animated.spring(scale, {
+          toValue: 1.1,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scale, {
+          toValue: 1,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.delay(3000),
+    ])
+  );
+
+  useEffect(() => {
+    animation.start();
+  }, []);
+
+  const SIZE = 30.0;
   return (
-    <>
-      <LinearGradient variant="main">
+    <Layout variant="main">
+      <Animated.View
+        style={{
+          borderRadius: progress.interpolate({
+            inputRange: [0.5, 1],
+            outputRange: [SIZE / 4, SIZE / 2],
+          }),
+          transform: [{ scale }],
+          overflow: "hidden",
+        }}
+      >
         <Box
-          width={200}
-          height={100}
+          width={{ phone: 200, tablet: 300 }}
+          height={{ phone: 100, tablet: 150 }}
           flexDirection="row"
           justifyContent="center"
           alignItems="center"
           backgroundColor="white"
-          borderRadius={999}
           shadowColor="black"
           shadowOpacity={1}
-          shadowRadius={50}
+          shadowRadius={10}
           overflow="hidden"
         >
-          <MaskedViewCustom linearGradientVariant={"main"}>
-            <Text variant="header">Foodr</Text>
+          <MaskedViewCustom linearGradientVariant={"main"} noBorder>
+            <Text variant={"header"}>Foodr</Text>
           </MaskedViewCustom>
         </Box>
-      </LinearGradient>
-    </>
+      </Animated.View>
+    </Layout>
   );
 };
 

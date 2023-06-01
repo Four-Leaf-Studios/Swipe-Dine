@@ -1,30 +1,34 @@
-import { Image, StyleSheet, TextInput } from "react-native";
+import { StyleSheet } from "react-native";
 import React, { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import Box from "../components/Box";
-import Button from "../components/Button";
-import StyledTextInput from "../components/StyledTextInput";
-import Logo from "../components/Logo";
-import MaskedViewCustom from "../components/MaskedViewCustom";
-import Text from "../components/Text";
 import LinearGradient from "../components/LinearGradient";
+import Box from "../components/Box";
+import MaskedViewCustom from "../components/MaskedViewCustom";
+import StyledTextInput from "../components/StyledTextInput";
+import Button from "../components/Button";
+import Text from "../components/Text";
+import Logo from "../components/Logo";
 import Layout from "../components/Layout";
+
 type Props = {};
 
-const Login = (props: Props) => {
+const Signup = (props: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [errors, setErrors] = useState({
     email: null,
     password: null,
+    confirmPassword: null,
   });
   const handleSubmit = () => {
     if (errors.email && errors.password)
-      setErrors({ email: null, password: null });
+      setErrors({ email: null, password: null, confirmPassword: null });
     else
       setErrors({
         email: "Please enter an email.",
         password: "Please enter a password.",
+        confirmPassword: "Not the same as your password.",
       });
   };
   return (
@@ -61,7 +65,8 @@ const Login = (props: Props) => {
           width="100%"
           flexDirection="column"
           justifyContent="center"
-          flexShrink={1}
+          flexShrink={!password && 1}
+          flexGrow={password && 1}
           gap="l"
           alignItems="center"
         >
@@ -82,16 +87,29 @@ const Login = (props: Props) => {
             onChangeText={setPassword}
             secure
           />
+          {password && (
+            <StyledTextInput
+              placeholder="confirm password"
+              keyboardType="visible-password"
+              variant="login"
+              message={errors.confirmPassword}
+              value={confirmPassword}
+              onChangeText={setConfirmPassword}
+              secure
+            />
+          )}
         </Box>
 
         <Button label="Login" onPress={handleSubmit} variant="login">
           <MaskedViewCustom
             linearGradientVariant={
-              errors.email || errors.password ? "red" : "green"
+              errors.email || errors.password || errors.confirmPassword
+                ? "red"
+                : "green"
             }
             noBorder
           >
-            <Text variant="subheader">Login</Text>
+            <Text variant="subheader">Signup</Text>
           </MaskedViewCustom>
         </Button>
       </Box>
@@ -99,6 +117,6 @@ const Login = (props: Props) => {
   );
 };
 
-export default Login;
+export default Signup;
 
 const styles = StyleSheet.create({});

@@ -17,12 +17,14 @@ type Props = {
     }
   >;
   noBorder?: boolean;
+  borderRadius?: number;
 };
 
 const MaskedViewCustom = ({
   children,
   linearGradientVariant,
   noBorder,
+  borderRadius,
 }: Props) => {
   return (
     <MaskedView
@@ -33,7 +35,7 @@ const MaskedViewCustom = ({
             StyleSheet.absoluteFill,
             {
               borderWidth: noBorder ? 0 : 3,
-              borderRadius: 50,
+              borderRadius: borderRadius ? borderRadius : 50,
               flex: "row",
               justifyContent: "center",
               alignItems: "center",

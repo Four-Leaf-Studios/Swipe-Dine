@@ -54,6 +54,7 @@ const LinearGradient = ({ children, ...rest }: Props) => {
     ],
     login: ["rgba(255,255,255,.5)", "rgba(255,255,255,.5)"],
     burger: [],
+    white: ["rgb(255,255,255)", "rgb(255,255,255)"],
   };
 
   // Define the colors array based on the variant

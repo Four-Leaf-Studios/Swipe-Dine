@@ -37,21 +37,7 @@ const Button = ({ onPress, label, children, ...rest }: Props) => {
 
   return (
     <TouchableOpacity onPress={onPress} {...props}>
-      {children && children}
-      {rest.variant === "login" && !children && (
-        <LinearGradient variant="login">
-          <Text
-            variant="subheader"
-            color="buttonPrimaryText"
-            textAlign="center"
-            style={{
-              paddingTop: 1,
-            }}
-          >
-            {label}
-          </Text>
-        </LinearGradient>
-      )}
+      {children}
     </TouchableOpacity>
   );
 };

@@ -12,11 +12,10 @@ const palette = {
   orangeLight: "#FECC00",
   orangePrimary: "#FE8C00",
   orangeDark: "#FE3C00",
-
+  pinkRed: "#ff5333",
   redLight: "#ff4000",
   redPrimary: "#ff3000",
   redDark: "#ff1000",
-
   darkGray: "#333",
   grayPrimary: "#d0d0d0",
 
@@ -30,7 +29,7 @@ const theme = createTheme({
     mainBackground: palette.white,
     mainForeground: palette.black,
 
-    cardPrimaryBackground: palette.greenLight,
+    cardPrimaryBackground: palette.white,
     cardShadowColor: "#000",
     secondaryCardBackground: palette.white,
     secondaryCardText: palette.grayPrimary,
@@ -38,6 +37,8 @@ const theme = createTheme({
 
     buttonPrimaryBackground: palette.greenLight,
     buttonPrimaryText: palette.white,
+
+    error: palette.pinkRed,
 
     orangeDark: palette.orangeDark,
     orange: palette.orangePrimary,
@@ -83,7 +84,8 @@ const theme = createTheme({
       backgroundColor: "white",
       padding: "s",
       borderRadius: 4,
-      width: 250,
+      width: { phone: "100%", tablet: "100%" },
+      height: { phone: 60, tablet: 85 },
     },
   },
   textVariants: {
@@ -122,9 +124,10 @@ const theme = createTheme({
       overflow: "hidden",
     },
     login: {
-      width: 250,
-      flex: 0.35,
+      width: "100%",
+      height: { phone: 60, longPhone: 80, tablet: 100 },
       color: "white",
+      backgroundColor: "white",
     },
     swipeScreenButton: {
       borderRadius: 999,
@@ -200,6 +203,9 @@ const theme = createTheme({
       zIndex: "z-0",
     },
     burger: {},
+    white: {
+      zIndex: "z-0",
+    },
   },
 
   logoVariants: {
@@ -212,12 +218,26 @@ const theme = createTheme({
   },
 
   breakpoints: {
-    phone: 0,
+    phone: {
+      width: 0,
+      height: 0,
+    },
+
     longPhone: {
       width: 0,
       height: 812,
     },
+    sideLongPhone: {
+      width: 812,
+      height: 0,
+    },
     tablet: 768,
+    sideTablet: {
+      height: 0,
+      width: 768,
+    },
+
+    sideLargeTablet: { width: 1024, height: 0 },
     largeTablet: 1024,
   },
 });

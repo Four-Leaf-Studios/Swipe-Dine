@@ -1,12 +1,10 @@
-import { SafeAreaView, StatusBar, StyleSheet, View } from "react-native";
-import { ThemeProvider, createVariant, useTheme } from "@shopify/restyle";
+import { ThemeProvider } from "@shopify/restyle";
 import { darkTheme, theme } from "./theme";
 import { useState } from "react";
-import Box from "./src/components/Box";
 import LoadingScreen from "./src/screens/Loading";
 import SwipeScreen from "./src/screens/Swipe";
 import LoginScreen from "./src/screens/Login";
-import LinearGradient from "./src/components/LinearGradient";
+import SignupScreen from "./src/screens/Signup";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -14,25 +12,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={activeTheme}>
-      <SafeAreaView style={styles.container}>
-        <Box
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          width="100%"
-          height="100%"
-        >
-          <LoginScreen />
-        </Box>
-      </SafeAreaView>
+      <SwipeScreen />
     </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight,
-    position: "relative",
-  },
-});
