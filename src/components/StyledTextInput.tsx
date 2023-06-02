@@ -48,7 +48,7 @@ const StyledTextInput = ({
   const theme = useTheme();
   const { green, red } = theme.colors;
   return (
-    <Box width="100%" flexDirection="column" gap="s">
+    <>
       <TextInput
         {...props}
         placeholder={placeholder}
@@ -61,7 +61,6 @@ const StyledTextInput = ({
       {message && (
         <Box
           width="100%"
-          height={{ phone: 40, tablet: 50 }}
           borderRadius={5}
           flexDirection="row"
           justifyContent="flex-start"
@@ -75,8 +74,9 @@ const StyledTextInput = ({
             </Text>
           </Box>
         </Box>
+        
       )}
-    </Box>
+    </>
   );
 };
 

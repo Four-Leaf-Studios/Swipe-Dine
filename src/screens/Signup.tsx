@@ -20,12 +20,16 @@ const Signup = (props: Props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
+  const [loading, setLoading] = useState({
+    google: false,
+    facebook: false,
+  });
   const [errors, setErrors] = useState({
     email: null,
     password: null,
     confirmPassword: null,
   });
+
   const handleSubmit = () => {
     if (errors.email && errors.password)
       setErrors({ email: null, password: null, confirmPassword: null });
@@ -39,123 +43,121 @@ const Signup = (props: Props) => {
   return (
     <Layout variant="main">
       <Box
-        width={{ phone: "100%", longPhone: "100%", tablet: "70%" }}
-        height="100%"
-        padding="xl"
-        gap="l"
+        width={{ phone: "100%" }}
+        flex={{ phone: 1, tablet: 0.6 }}
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
+        padding="s"
+        gap="m"
       >
+        {/* Logo */}
         <Box
-          width="100%"
-          height={{ phone: 60, longPhone: 60, tablet: 100 }}
+          width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
+          flex={1}
+          backgroundColor="darkGray"
           flexDirection="row"
-          alignItems="center"
           justifyContent="center"
+          alignItems="center"
+          borderRadius={10}
         >
-          <Box
-            width={{ phone: "50%", longPhone: "50%", tablet: "40%" }}
-            height="100%"
-            overflow="hidden"
-            flexDirection="row"
-            backgroundColor={{
-              phone: "darkGray",
-              longPhone: "darkGray",
-              tablet: "darkGray",
-            }}
-            justifyContent="center"
-            alignItems="center"
-            borderRadius={10}
-          >
-            <Logo variant="header" />
-          </Box>
+          <Logo variant="header" />
         </Box>
 
+        {/* Inputs */}
         <Box
-          width="100%"
-          flexDirection="column"
-          justifyContent="center"
-          flexShrink={!password && 1}
-          flexGrow={password && 1}
-          gap="l"
-          alignItems="center"
+          width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
+          flex={errors.email || errors.password ? 4 : 2}
+          gap="s"
         >
           <StyledTextInput
-            placeholder="email"
-            keyboardType="email-address"
-            variant="login"
-            message={errors.email}
+            placeholder="Email"
+            keyboardType={"email-address"}
             value={email}
+            message={errors.email}
+            variant="login"
             onChangeText={setEmail}
           />
           <StyledTextInput
-            placeholder="password"
-            keyboardType="visible-password"
-            variant="login"
-            message={errors.password}
+            placeholder="Password"
+            keyboardType={"visible-password"}
             value={password}
+            message={errors.password}
+            variant="login"
             onChangeText={setPassword}
             secure
           />
-          {password && (
-            <StyledTextInput
-              placeholder="confirm password"
-              keyboardType="visible-password"
-              variant="login"
-              message={errors.confirmPassword}
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              secure
-            />
-          )}
+          <StyledTextInput
+            placeholder="Confirm Password"
+            keyboardType={"visible-password"}
+            value={confirmPassword}
+            message={errors.confirmPassword}
+            variant="login"
+            onChangeText={setConfirmPassword}
+            secure
+          />
         </Box>
 
-        <Button label="Login" onPress={handleSubmit} variant="login">
-          <MaskedViewCustom
-            linearGradientVariant={
-              errors.email || errors.password || errors.confirmPassword
-                ? "red"
-                : "green"
-            }
-            noBorder
-          >
-            <Text variant="subheader">Signup</Text>
-          </MaskedViewCustom>
-        </Button>
+        {/* Login Button */}
+        <Box
+          width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
+          flex={errors.email || errors.password ? 0.8 : 0.5}
+        >
+          <Button variant="login" label="Login" onPress={handleSubmit}>
+            <MaskedViewCustom
+              linearGradientVariant={
+                errors.email || errors.password || errors.confirmPassword
+                  ? "red"
+                  : "green"
+              }
+            >
+              <Text variant="header">Signup</Text>
+            </MaskedViewCustom>
+          </Button>
+        </Box>
 
-        <TouchableOpacity onPress={() => {}}>
-          <Text
-            variant="body"
-            color="white"
-            fontWeight="bold"
-            fontSize={{ phone: 20, tablet: 28 }}
-          >
-            Already have an account?
-          </Text>
-        </TouchableOpacity>
-
-        <Box width="100%" height={{ phone: 60, longPhone: 60, tablet: 60 }}>
+        {/* Apple Sign In */}
+        <Box
+          width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
+          flex={0.5}
+        >
           <AppleAuthenticationButton
             buttonType={AppleAuthenticationButtonType.SIGN_UP}
             buttonStyle={AppleAuthenticationButtonStyle.WHITE}
             cornerRadius={5}
             style={{
               flex: 1,
-              height: "100%",
             }}
             onPress={async () => {}}
           />
         </Box>
+
+        {/* Sign In Options other than Apple */}
         <Box
-          width="100%"
+          width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
+          flex={0.5}
           flexDirection="row"
-          flexWrap="wrap"
           justifyContent="center"
           alignItems="center"
         >
-          <SocialIcon type="facebook" light raised loading={false} />
-          <SocialIcon type="google" light raised loading={false} />
+          <SocialIcon type="facebook" light raised loading={loading.facebook} />
+          <SocialIcon type="google" light raised loading={loading.google} />
+        </Box>
+
+        {/* Sign up button */}
+        <Box
+          width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
+          flex={0.3}
+        >
+          <Button
+            variant="auth-nav"
+            label="Already have an account?"
+            onPress={() => {}}
+          >
+            <Text variant="body" color="white" fontWeight="bold">
+              Already have an account?
+            </Text>
+          </Button>
         </Box>
       </Box>
     </Layout>

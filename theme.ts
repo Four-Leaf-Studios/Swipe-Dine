@@ -85,7 +85,7 @@ const theme = createTheme({
       padding: "s",
       borderRadius: 4,
       width: { phone: "100%", tablet: "100%" },
-      height: { phone: 60, tablet: 85 },
+      flex: 1,
     },
   },
   textVariants: {
@@ -122,13 +122,17 @@ const theme = createTheme({
     },
     login: {
       width: "100%",
-      height: { phone: 60, longPhone: 80, tablet: 100 },
+      flex: 1,
       color: "white",
       backgroundColor: "white",
     },
     swipeScreenButton: {
       height: 60,
       width: 60,
+    },
+    ["auth-nav"]: {
+      width: "100%",
+      flex: 1,
     },
   },
   cardVariants: {
@@ -226,7 +230,10 @@ const theme = createTheme({
       width: 0,
       height: 812,
     },
-    tablet: 768,
+    tablet: {
+      width: 481,
+      height: 768,
+    },
     largeTablet: 1024,
   },
 });

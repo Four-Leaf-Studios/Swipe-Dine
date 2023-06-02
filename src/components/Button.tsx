@@ -11,9 +11,7 @@ import {
   createVariant,
 } from "@shopify/restyle";
 
-import Text from "./Text";
 import { Theme } from "../../theme";
-import LinearGradient from "./LinearGradient";
 import { ReactElement } from "react";
 type RestyleProps = SpacingProps<Theme> &
   BorderProps<Theme> &
