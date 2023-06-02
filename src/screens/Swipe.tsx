@@ -1,4 +1,4 @@
-import { StyleSheet, ActivityIndicator } from "react-native";
+import { StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
 import SwipeCard from "../components/SwipeCard";
 import Box from "../components/Box";
 import Text from "../components/Text";
@@ -8,10 +8,17 @@ import { useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import MaskedViewCustom from "../components/MaskedViewCustom";
 import Layout from "../components/Layout";
+import useAuth from "../hooks/useAuth";
+import Loading from "./Loading";
+import Button from "../components/Button";
 
 type Props = {};
 
 const Swipe = (props: Props) => {
+  const { loading: loadingApp, logout, user } = useAuth();
+
+  if (loadingApp) return <Loading />;
+
   const { restaurants, loading, setRestaurants } = useRestaurants();
   const [swipeLeftList, setSwipeLeftList] = useState<RestaurantDetails[]>([]);
   const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
@@ -32,6 +39,7 @@ const Swipe = (props: Props) => {
 
     setRestaurants(updatedRestaurants);
   };
+  console.log(user);
 
   return (
     <Layout variant="white">
@@ -49,6 +57,13 @@ const Swipe = (props: Props) => {
             paddingBottom="s"
           >
             <Logo variant="subheader" />
+            <Box>
+              <Button label="Logout" onPress={logout} variant="logout">
+                <MaskedViewCustom linearGradientVariant={"green"}>
+                  <Text variant="subheader">Logout</Text>
+                </MaskedViewCustom>
+              </Button>
+            </Box>
           </Box>
         </Box>
 

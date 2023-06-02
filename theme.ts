@@ -129,6 +129,10 @@ const theme = createTheme({
       backgroundColor: "darkGray",
       justifyContent: "center",
     },
+    logout: {
+      zIndex: "z-0",
+      flex: 1,
+    },
     swipeScreenButton: {
       height: 60,
       width: 60,

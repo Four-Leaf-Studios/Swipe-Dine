@@ -9,14 +9,13 @@ import { getAuth } from "firebase/auth";
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "api-key",
-  authDomain: "project-id.firebaseapp.com",
-  databaseURL: "https://project-id.firebaseio.com",
-  projectId: "project-id",
-  storageBucket: "project-id.appspot.com",
-  messagingSenderId: "sender-id",
-  appId: "app-id",
-  measurementId: "G-measurement-id",
+  apiKey: "AIzaSyAC8Jkq4QG-kwevwsGjfjv_J_oeX8ZF9is",
+  authDomain: "foodr-388417.firebaseapp.com",
+  projectId: "foodr-388417",
+  storageBucket: "foodr-388417.appspot.com",
+  messagingSenderId: "291562557089",
+  appId: "1:291562557089:web:5315c40000f3362a926ae0",
+  measurementId: "G-YG7NMBK5RM",
 };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);

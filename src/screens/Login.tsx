@@ -14,9 +14,10 @@ import Button from "../components/Button";
 import MaskedView from "@react-native-masked-view/masked-view";
 import Text from "../components/Text";
 import MaskedViewCustom from "../components/MaskedViewCustom";
-type Props = {};
+import useAuth from "../hooks/useAuth";
 
-const Login = (props: Props) => {
+const Login = ({ navigation }) => {
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({
@@ -26,15 +27,30 @@ const Login = (props: Props) => {
   const [loading, setLoading] = useState({
     google: false,
     facebook: false,
+    normal: false,
   });
-  const handleSubmit = () => {
-    if (errors.email && errors.password)
+  const handleSubmit = async () => {
+    setLoading((loading) => {
+      return {
+        ...loading,
+        normal: true,
+      };
+    });
+
+    const result = await signIn(email, password);
+
+    if (result) setErrors(result);
+    else {
       setErrors({ email: null, password: null });
-    else
-      setErrors({
-        email: "Please enter an email.",
-        password: "Please enter a password.",
-      });
+      navigation.navigate("SwipeScreen");
+    }
+
+    setLoading((loading) => {
+      return {
+        ...loading,
+        normal: false,
+      };
+    });
   };
   return (
     <Layout variant="white">
@@ -101,7 +117,7 @@ const Login = (props: Props) => {
               variant="header"
               color={errors.email || errors.password ? "error" : "success"}
             >
-              Login
+              {loading.normal ? "Logging in..." : "Login"}
             </Text>
           </Button>
         </Box>

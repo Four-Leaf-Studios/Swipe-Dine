@@ -13,10 +13,10 @@ import {
   AppleAuthenticationButtonType,
 } from "expo-apple-authentication";
 import { SocialIcon } from "react-native-elements";
+import useAuth from "../hooks/useAuth";
 
-type Props = {};
-
-const Signup = (props: Props) => {
+const Signup = ({ navigation }) => {
+  const { signUp } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -30,16 +30,17 @@ const Signup = (props: Props) => {
     confirmPassword: null,
   });
 
-  const handleSubmit = () => {
-    if (errors.email && errors.password)
-      setErrors({ email: null, password: null, confirmPassword: null });
-    else
+  const handleSubmit = async () => {
+    const result = await signUp(email, password);
+    if (result?.email || result?.password)
       setErrors({
-        email: "Please enter an email.",
-        password: "Please enter a password.",
-        confirmPassword: "Not the same as your password.",
+        email: result?.email,
+        password: result?.password,
+        confirmPassword: null,
       });
+    else navigation.navigate("SwipeScreen");
   };
+
   return (
     <Layout variant="white">
       <Box
