@@ -5,6 +5,9 @@ import LoadingScreen from "./src/screens/Loading";
 import SwipeScreen from "./src/screens/Swipe";
 import LoginScreen from "./src/screens/Login";
 import SignupScreen from "./src/screens/Signup";
+import ForgotPassword from "./src/screens/ForgotPassword";
+import { Keyboard, KeyboardAvoidingView, Platform } from "react-native";
+import { AuthenticatedUserProvider } from "./src/hooks/useAuth";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -12,7 +15,9 @@ export default function App() {
 
   return (
     <ThemeProvider theme={activeTheme}>
-      <LoadingScreen />
+      <AuthenticatedUserProvider>
+        <LoginScreen />
+      </AuthenticatedUserProvider>
     </ThemeProvider>
   );
 }

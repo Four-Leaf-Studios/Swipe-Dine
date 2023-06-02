@@ -12,12 +12,13 @@ const palette = {
   orangeLight: "#FECC00",
   orangePrimary: "#FE8C00",
   orangeDark: "#FE3C00",
-  pinkRed: "#ff5333",
+  pinkRed: "#ff5252",
   redLight: "#ff4000",
   redPrimary: "#ff3000",
   redDark: "#ff1000",
   darkGray: "#333",
   grayPrimary: "#d0d0d0",
+  grayLight: "#E0E0E0",
 
   transparent: "transparent",
   black: "#0B0B0B",
@@ -39,7 +40,7 @@ const theme = createTheme({
     buttonPrimaryText: palette.white,
 
     error: palette.pinkRed,
-
+    success: palette.greenLight,
     orangeDark: palette.orangeDark,
     orange: palette.orangePrimary,
     orangeLight: palette.orangeLight,
@@ -54,7 +55,7 @@ const theme = createTheme({
 
     darkGray: palette.darkGray,
     gray: palette.grayPrimary,
-
+    grayLight: palette.grayLight,
     transparent: palette.transparent,
     black: palette.black,
     white: palette.white,
@@ -81,11 +82,13 @@ const theme = createTheme({
       height: 60,
     },
     login: {
-      backgroundColor: "white",
+      backgroundColor: "grayLight",
       padding: "s",
       borderRadius: 4,
       width: { phone: "100%", tablet: "100%" },
       flex: 1,
+      minHeight: { phone: 50 },
+      maxHeight: { phone: 60, tablet: 70 },
     },
   },
   textVariants: {
@@ -116,7 +119,6 @@ const theme = createTheme({
       width: "100%",
       borderRadius: 10,
       flexDirection: "row",
-      justifyContent: "center",
       alignItems: "center",
       overflow: "hidden",
     },
@@ -124,7 +126,8 @@ const theme = createTheme({
       width: "100%",
       flex: 1,
       color: "white",
-      backgroundColor: "white",
+      backgroundColor: "darkGray",
+      justifyContent: "center",
     },
     swipeScreenButton: {
       height: 60,
@@ -208,6 +211,9 @@ const theme = createTheme({
       zIndex: "z-0",
     },
     error: {
+      zIndex: "z-0",
+    },
+    gray: {
       zIndex: "z-0",
     },
   },

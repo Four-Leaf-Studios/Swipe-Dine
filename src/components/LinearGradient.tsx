@@ -38,6 +38,8 @@ const LinearGradient = ({ children, ...rest }: Props) => {
     redDark,
     redLight,
     error,
+    gray,
+    darkGray,
   } = theme.colors;
   const props = useRestyle(restyleFunctions, rest);
 
@@ -47,6 +49,7 @@ const LinearGradient = ({ children, ...rest }: Props) => {
     main: [orangeDark, orange, orangeLight],
     red: [redDark, red, redLight],
     green: [greenDark, green, greenLight],
+    gray: [darkGray, darkGray],
     shadow: [
       "rgba(255,255,255,0)",
       "rgba(255,255,255,0)",
@@ -56,7 +59,7 @@ const LinearGradient = ({ children, ...rest }: Props) => {
     login: ["rgba(255,255,255,.5)", "rgba(255,255,255,.5)"],
     burger: [],
     white: ["rgb(255,255,255)", "rgb(255,255,255)"],
-    error: [red, redLight, error],
+    error: [error, error],
   };
 
   // Define the colors array based on the variant

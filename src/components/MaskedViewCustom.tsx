@@ -8,7 +8,7 @@ import MaskedView from "@react-native-masked-view/masked-view";
 type Props = {
   children: ReactElement;
   linearGradientVariant: ResponsiveValue<
-    "red" | "green" | "main" | "login" | "shadow" | "burger" | "error",
+    "red" | "green" | "main" | "login" | "shadow" | "burger" | "error" | "gray",
     {
       phone: number;
       longPhone: { width: number; height: number };

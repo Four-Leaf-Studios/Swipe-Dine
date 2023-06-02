@@ -41,12 +41,12 @@ const Signup = (props: Props) => {
       });
   };
   return (
-    <Layout variant="main">
+    <Layout variant="white">
       <Box
         width={{ phone: "100%" }}
-        flex={{ phone: 1, tablet: 0.6 }}
+        flexGrow={{ phone: 1, tablet: 0.8, largeTablet: 0.6 }}
         flexDirection="column"
-        justifyContent="center"
+        justifyContent={{ phone: "flex-start", tablet: "center" }}
         alignItems="center"
         padding="s"
         gap="m"
@@ -55,7 +55,6 @@ const Signup = (props: Props) => {
         <Box
           width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
           flex={1}
-          backgroundColor="darkGray"
           flexDirection="row"
           justifyContent="center"
           alignItems="center"
@@ -67,8 +66,13 @@ const Signup = (props: Props) => {
         {/* Inputs */}
         <Box
           width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
-          flex={errors.email || errors.password ? 4 : 2}
-          gap="s"
+          flex={
+            errors.email || errors.password
+              ? 7
+              : { phone: 2, longPhone: 1, tablet: 1.5 }
+          }
+          maxHeight={{ phone: "100%", longPhone: "40%", tablet: "100%" }}
+          gap={{ phone: "s", tablet: "m" }}
         >
           <StyledTextInput
             placeholder="Email"
@@ -102,17 +106,20 @@ const Signup = (props: Props) => {
         <Box
           width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
           flex={errors.email || errors.password ? 0.8 : 0.5}
+          minHeight={{ phone: 30, tablet: 60 }}
+          maxHeight={{ phone: 80, tablet: 80 }}
         >
           <Button variant="login" label="Login" onPress={handleSubmit}>
-            <MaskedViewCustom
-              linearGradientVariant={
-                errors.email || errors.password || errors.confirmPassword
-                  ? "red"
-                  : "green"
+            <Text
+              variant="header"
+              color={
+                errors.email || errors.confirmPassword || errors.password
+                  ? "error"
+                  : "success"
               }
             >
-              <Text variant="header">Signup</Text>
-            </MaskedViewCustom>
+              Signup
+            </Text>
           </Button>
         </Box>
 
@@ -120,6 +127,7 @@ const Signup = (props: Props) => {
         <Box
           width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
           flex={0.5}
+          minHeight={{ phone: 40, tablet: 60 }}
         >
           <AppleAuthenticationButton
             buttonType={AppleAuthenticationButtonType.SIGN_UP}
@@ -136,12 +144,22 @@ const Signup = (props: Props) => {
         <Box
           width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
           flex={0.5}
+          minHeight={20}
           flexDirection="row"
           justifyContent="center"
           alignItems="center"
         >
-          <SocialIcon type="facebook" light raised loading={loading.facebook} />
-          <SocialIcon type="google" light raised loading={loading.google} />
+          <TouchableOpacity>
+            <SocialIcon
+              type="facebook"
+              light
+              raised
+              loading={loading.facebook}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <SocialIcon type="google" light raised loading={loading.google} />
+          </TouchableOpacity>
         </Box>
 
         {/* Sign up button */}
@@ -154,7 +172,15 @@ const Signup = (props: Props) => {
             label="Already have an account?"
             onPress={() => {}}
           >
-            <Text variant="body" color="white" fontWeight="bold">
+            <Text
+              variant="body"
+              color="darkGray"
+              fontWeight="bold"
+              textAlign="center"
+              style={{
+                width: "100%",
+              }}
+            >
               Already have an account?
             </Text>
           </Button>
