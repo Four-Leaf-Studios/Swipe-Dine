@@ -12,7 +12,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={activeTheme}>
-      <LoginScreen />
+      <LoadingScreen />
     </ThemeProvider>
   );
 }

@@ -33,33 +33,41 @@ const Loading = () => {
   const SIZE = 30.0;
   return (
     <Layout variant="main">
-      <Animated.View
-        style={{
-          borderRadius: progress.interpolate({
-            inputRange: [0.5, 1],
-            outputRange: [SIZE / 4, SIZE / 2],
-          }),
-          transform: [{ scale }],
-          overflow: "hidden",
-        }}
+      <Box
+        width="100%"
+        flex={1}
+        flexDirection="row"
+        justifyContent="center"
+        alignItems="center"
       >
-        <Box
-          width={{ phone: 200, tablet: 300 }}
-          height={{ phone: 100, tablet: 150 }}
-          flexDirection="row"
-          justifyContent="center"
-          alignItems="center"
-          backgroundColor="white"
-          shadowColor="black"
-          shadowOpacity={1}
-          shadowRadius={10}
-          overflow="hidden"
+        <Animated.View
+          style={{
+            borderRadius: progress.interpolate({
+              inputRange: [0.5, 1],
+              outputRange: [SIZE / 4, SIZE / 2],
+            }),
+            transform: [{ scale }],
+            overflow: "hidden",
+          }}
         >
-          <MaskedViewCustom linearGradientVariant={"main"} noBorder>
-            <Text variant={"header"}>Foodr</Text>
-          </MaskedViewCustom>
-        </Box>
-      </Animated.View>
+          <Box
+            width={{ phone: 200, tablet: 300 }}
+            height={{ phone: 100, tablet: 150 }}
+            flexDirection="row"
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor="white"
+            shadowColor="black"
+            shadowOpacity={1}
+            shadowRadius={10}
+            overflow="hidden"
+          >
+            <MaskedViewCustom linearGradientVariant={"main"} noBorder>
+              <Text variant={"header"}>Foodr</Text>
+            </MaskedViewCustom>
+          </Box>
+        </Animated.View>
+      </Box>
     </Layout>
   );
 };
