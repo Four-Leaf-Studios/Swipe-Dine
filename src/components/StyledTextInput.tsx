@@ -7,11 +7,15 @@ import {
   useRestyle,
   createVariant,
   composeRestyleFunctions,
+  useTheme,
 } from "@shopify/restyle";
 import { Theme } from "../../theme";
 import Text from "./Text";
 import Box from "./Box";
 import { useState } from "react";
+import MaskedView from "@react-native-masked-view/masked-view";
+import MaskedViewCustom from "./MaskedViewCustom";
+import LinearGradient from "./LinearGradient";
 
 const restyleFunctions = composeRestyleFunctions<Theme, RestyleProps>([
   createVariant({ themeKey: "inputVariants" }),
@@ -41,6 +45,8 @@ const StyledTextInput = ({
   ...rest
 }: Props) => {
   const props = useRestyle(restyleFunctions, rest);
+  const theme = useTheme();
+  const { green, red } = theme.colors;
   return (
     <Box width="100%" flexDirection="column" gap="s">
       <TextInput
@@ -50,12 +56,24 @@ const StyledTextInput = ({
         value={value}
         onChangeText={(text) => onChangeText(text)}
         secureTextEntry={secure}
+        placeholderTextColor={message ? red : green}
       />
       {message && (
-        <Box backgroundColor="error" padding="s" borderRadius={5}>
-          <Text variant="body" color="white">
-            {message}
-          </Text>
+        <Box
+          width="100%"
+          height={{ phone: 40, tablet: 50 }}
+          borderRadius={5}
+          flexDirection="row"
+          justifyContent="flex-start"
+          alignItems="center"
+          overflow="hidden"
+        >
+          <LinearGradient variant="error" />
+          <Box padding="s">
+            <Text variant="body" color="white">
+              {message}
+            </Text>
+          </Box>
         </Box>
       )}
     </Box>

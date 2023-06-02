@@ -8,7 +8,7 @@ import MaskedView from "@react-native-masked-view/masked-view";
 type Props = {
   children: ReactElement;
   linearGradientVariant: ResponsiveValue<
-    "red" | "green" | "main" | "login" | "shadow" | "burger",
+    "red" | "green" | "main" | "login" | "shadow" | "burger" | "error",
     {
       phone: number;
       longPhone: { width: number; height: number };
@@ -20,45 +20,11 @@ type Props = {
   borderRadius?: number;
 };
 
-const MaskedViewCustom = ({
-  children,
-  linearGradientVariant,
-  noBorder,
-  borderRadius,
-}: Props) => {
+const MaskedViewCustom = ({ children, linearGradientVariant }: Props) => {
   return (
-    <MaskedView
-      maskElement={
-        <View
-          pointerEvents="none"
-          style={[
-            StyleSheet.absoluteFill,
-            {
-              borderWidth: noBorder ? 0 : 3,
-              borderRadius: borderRadius ? borderRadius : 50,
-              flex: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-              height: "100%",
-            },
-          ]}
-        >
-          {children}
-        </View>
-      }
-      style={[StyleSheet.absoluteFill]}
-    >
+    <MaskedView maskElement={children}>
       <LinearGradient variant={linearGradientVariant} />
-      <Box
-        width="100%"
-        height="100%"
-        flexDirection="row"
-        justifyContent="center"
-        alignItems="center"
-      >
-        {children}
-      </Box>
+      {children}
     </MaskedView>
   );
 };

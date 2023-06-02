@@ -36,23 +36,20 @@ const Swipe = (props: Props) => {
   return (
     <Layout variant="white">
       <Box width="100%" flex={1} padding="s">
-        <Box width="100%" flex={1}>
-          <MaskedViewCustom linearGradientVariant={"main"} noBorder>
-            <Box
-              width="100%"
-              height="100%"
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="space-between"
-              gap="s"
-              paddingLeft="m"
-              paddingRight="m"
-              paddingBottom="s"
-            >
-              <Logo variant="subheader" />
-              <Text variant="subheader">Filter</Text>
-            </Box>
-          </MaskedViewCustom>
+        <Box width="100%" flex={1} flexDirection="column">
+          <Box
+            width="100%"
+            height="100%"
+            flexDirection="row"
+            alignItems="center"
+            justifyContent="space-between"
+            gap="s"
+            paddingLeft="m"
+            paddingRight="m"
+            paddingBottom="s"
+          >
+            <Logo variant="subheader" />
+          </Box>
         </Box>
 
         <Box

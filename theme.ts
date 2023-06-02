@@ -98,19 +98,16 @@ const theme = createTheme({
     },
     header: {
       fontWeight: "bold",
-      fontSize: 34,
-      lineHeight: 42.5,
+      fontSize: { phone: 34, tablet: 48 },
       color: "black",
     },
     subheader: {
       fontWeight: "600",
-      fontSize: 28,
-      lineHeight: 36,
+      fontSize: { phone: 28, tablet: 34 },
       color: "black",
     },
     body: {
-      fontSize: 16,
-      lineHeight: 24,
+      fontSize: { phone: 16, tablet: 28 },
       color: "black",
     },
   },
@@ -130,7 +127,6 @@ const theme = createTheme({
       backgroundColor: "white",
     },
     swipeScreenButton: {
-      borderRadius: 999,
       height: 60,
       width: 60,
     },
@@ -188,6 +184,7 @@ const theme = createTheme({
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
+      position: "absolute",
     },
     main: {
       zIndex: "z-10",
@@ -206,6 +203,9 @@ const theme = createTheme({
     white: {
       zIndex: "z-0",
     },
+    error: {
+      zIndex: "z-0",
+    },
   },
 
   logoVariants: {
@@ -222,22 +222,11 @@ const theme = createTheme({
       width: 0,
       height: 0,
     },
-
     longPhone: {
       width: 0,
       height: 812,
     },
-    sideLongPhone: {
-      width: 812,
-      height: 0,
-    },
     tablet: 768,
-    sideTablet: {
-      height: 0,
-      width: 768,
-    },
-
-    sideLargeTablet: { width: 1024, height: 0 },
     largeTablet: 1024,
   },
 });

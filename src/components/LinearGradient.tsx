@@ -37,6 +37,7 @@ const LinearGradient = ({ children, ...rest }: Props) => {
     red,
     redDark,
     redLight,
+    error,
   } = theme.colors;
   const props = useRestyle(restyleFunctions, rest);
 
@@ -55,21 +56,19 @@ const LinearGradient = ({ children, ...rest }: Props) => {
     login: ["rgba(255,255,255,.5)", "rgba(255,255,255,.5)"],
     burger: [],
     white: ["rgb(255,255,255)", "rgb(255,255,255)"],
+    error: [red, redLight, error],
   };
 
   // Define the colors array based on the variant
   const colors = gradients[rest.variant as keyof typeof gradients];
 
   return (
-    <Box width="100%" height="100%" position="absolute" {...props}>
+    <Box {...props}>
       <ExpoLinearGradient
         colors={colors}
         style={{
           width: "100%",
           height: "100%",
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
         }}
       >
         {children}

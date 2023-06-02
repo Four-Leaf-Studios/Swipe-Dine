@@ -18,7 +18,7 @@ type Props = RestyleProps & {};
 
 const StyledTextInput = ({ ...rest }: Props) => {
   return (
-    <MaskedViewCustom linearGradientVariant={"main"} noBorder>
+    <MaskedViewCustom linearGradientVariant={"main"}>
       <Text variant={rest.variant}>Foodr</Text>
     </MaskedViewCustom>
   );

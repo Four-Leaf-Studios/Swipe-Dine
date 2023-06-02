@@ -25,7 +25,17 @@ const SwipeCardButton = ({ type, handlePress }: Props) => {
   return (
     <Button variant="swipeScreenButton" label="X" onPress={handlePress}>
       <MaskedViewCustom linearGradientVariant={gradientVariant}>
-        <Text variant="subheader">{value}</Text>
+        <Box
+          width={60}
+          height={60}
+          flexDirection="row"
+          justifyContent="center"
+          alignItems="center"
+          borderWidth={3}
+          borderRadius={999}
+        >
+          <Text variant="subheader">{value}</Text>
+        </Box>
       </MaskedViewCustom>
     </Button>
   );

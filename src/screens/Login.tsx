@@ -1,14 +1,18 @@
-import { Image, StyleSheet, TextInput } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
 import Box from "../components/Box";
 import Button from "../components/Button";
 import StyledTextInput from "../components/StyledTextInput";
 import Logo from "../components/Logo";
 import MaskedViewCustom from "../components/MaskedViewCustom";
 import Text from "../components/Text";
-import LinearGradient from "../components/LinearGradient";
 import Layout from "../components/Layout";
+import {
+  AppleAuthenticationButton,
+  AppleAuthenticationButtonStyle,
+  AppleAuthenticationButtonType,
+} from "expo-apple-authentication";
+import { SocialIcon } from "react-native-elements";
 type Props = {};
 
 const Login = (props: Props) => {
@@ -30,33 +34,36 @@ const Login = (props: Props) => {
   return (
     <Layout variant="main">
       <Box
-        width={{ phone: "100%", longPhone: "80%", tablet: "70%" }}
-        flexGrow={0}
+        width={{ phone: "100%", longPhone: "100%", tablet: "70%" }}
+        height="100%"
         padding="xl"
         gap="l"
-        flexDirection="column"
-        justifyContent={{
-          phone: "center",
-          longPhone: "center",
-          tablet: "center",
-        }}
-        alignItems="center"
-        shadowColor="black"
-        shadowRadius={10}
-        shadowOpacity={0.15}
       >
         <Box
           width="100%"
-          height={{ phone: 60, longPhone: 80, tablet: 100 }}
-          overflow="hidden"
+          flex={1}
           flexDirection="row"
-          backgroundColor="white"
-          justifyContent="center"
           alignItems="center"
-          borderRadius={10}
+          justifyContent="center"
         >
-          <Logo variant="header" />
+          <Box
+            width={{ phone: "50%", longPhone: "50%", tablet: "40%" }}
+            height={{ phone: "100%", longPhone: "100%", tablet: "60%" }}
+            overflow="hidden"
+            flexDirection="row"
+            backgroundColor={{
+              phone: "darkGray",
+              longPhone: "darkGray",
+              tablet: "darkGray",
+            }}
+            justifyContent="center"
+            alignItems="center"
+            borderRadius={10}
+          >
+            <Logo variant="header" />
+          </Box>
         </Box>
+
         <Box
           width="100%"
           flexDirection="column"
@@ -94,6 +101,40 @@ const Login = (props: Props) => {
             <Text variant="subheader">Login</Text>
           </MaskedViewCustom>
         </Button>
+
+        <TouchableOpacity onPress={() => {}}>
+          <Text
+            variant="body"
+            color="white"
+            fontWeight="bold"
+            fontSize={{ phone: 20, tablet: 28 }}
+          >
+            Don't have an account yet?
+          </Text>
+        </TouchableOpacity>
+        <Box width="100%" flex={{ phone: 1, tablet: 0.2 }} maxHeight={70}>
+          <AppleAuthenticationButton
+            buttonType={AppleAuthenticationButtonType.SIGN_IN}
+            buttonStyle={AppleAuthenticationButtonStyle.WHITE}
+            cornerRadius={5}
+            style={{
+              flex: 1,
+              height: "100%",
+            }}
+            onPress={async () => {}}
+          />
+        </Box>
+        <Box
+          width="100%"
+          flex={1}
+          flexDirection="row"
+          flexWrap="wrap"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <SocialIcon type="facebook" light raised loading={false} />
+          <SocialIcon type="google" light raised loading={false} />
+        </Box>
       </Box>
     </Layout>
   );

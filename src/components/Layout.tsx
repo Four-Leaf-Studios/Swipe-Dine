@@ -5,7 +5,7 @@ import { ResponsiveValue } from "@shopify/restyle";
 import Box from "./Box";
 
 type Props = {
-  children: ReactElement;
+  children: ReactElement<any>;
   variant: ResponsiveValue<any, any>;
 };
 
@@ -18,7 +18,7 @@ const Layout = ({ children, variant }: Props) => {
           justifyContent="center"
           alignItems="center"
           width="100%"
-          height="100%"
+          maxHeight="100%"
         >
           {children}
         </Box>

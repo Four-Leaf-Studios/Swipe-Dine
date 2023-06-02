@@ -4,6 +4,7 @@
     "@shopify/restyle": "^2.4.2",
     "axios": "^1.4.0",
     "expo": "^48.0.7",
+    "expo-apple-authentication": "~6.0.1",
     "expo-linear-gradient": "~12.1.2",
     "expo-location": "~15.1.1",
     "geolocation-utils": "^1.2.5",
@@ -11,6 +12,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "^7.44.2",
     "react-native": "0.71.8",
+    "react-native-elements": "^3.4.3",
     "react-native-web": "~0.18.7"
   },
   "devDependencies": {
