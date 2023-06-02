@@ -41,7 +41,7 @@ const Login = (props: Props) => {
       >
         <Box
           width="100%"
-          flex={1}
+          flex={{ phone: 1.5, longPhone: 1 }}
           flexDirection="row"
           alignItems="center"
           justifyContent="center"
