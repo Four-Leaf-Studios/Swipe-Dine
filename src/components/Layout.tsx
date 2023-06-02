@@ -12,17 +12,7 @@ type Props = {
 const Layout = ({ children, variant }: Props) => {
   return (
     <LinearGradient variant={variant}>
-      <SafeAreaView style={styles.container}>
-        <Box
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          width="100%"
-          maxHeight="100%"
-        >
-          {children}
-        </Box>
-      </SafeAreaView>
+      <SafeAreaView style={styles.container}>{children}</SafeAreaView>
     </LinearGradient>
   );
 };

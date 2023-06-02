@@ -5,7 +5,6 @@ import LoadingScreen from "./src/screens/Loading";
 import SwipeScreen from "./src/screens/Swipe";
 import LoginScreen from "./src/screens/Login";
 import SignupScreen from "./src/screens/Signup";
-import Loading from "./src/screens/Loading";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
