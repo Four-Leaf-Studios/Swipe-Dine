@@ -23,9 +23,10 @@ const restyleFunctions = composeRestyleFunctions<Theme, RestyleProps>([
 
 type Props = RestyleProps & {
   children?: ReactElement;
+  gradient?: boolean;
 };
 
-const LinearGradient = ({ children, ...rest }: Props) => {
+const LinearGradient = ({ children, gradient, ...rest }: Props) => {
   const theme = useTheme<Theme>();
   const {
     orange,
@@ -67,15 +68,19 @@ const LinearGradient = ({ children, ...rest }: Props) => {
 
   return (
     <Box {...props}>
-      <ExpoLinearGradient
-        colors={colors}
-        style={{
-          width: "100%",
-          height: "100%",
-        }}
-      >
-        {children}
-      </ExpoLinearGradient>
+      {!gradient ? (
+        children
+      ) : (
+        <ExpoLinearGradient
+          colors={colors}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          {children}
+        </ExpoLinearGradient>
+      )}
     </Box>
   );
 };

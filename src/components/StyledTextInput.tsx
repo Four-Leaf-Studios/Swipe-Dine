@@ -67,7 +67,7 @@ const StyledTextInput = ({
           alignItems="center"
           overflow="hidden"
         >
-          <LinearGradient variant="error" />
+          <LinearGradient variant="error" gradient />
           <Box padding="s">
             <Text variant="body" color="white">
               {message}

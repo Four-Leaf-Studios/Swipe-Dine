@@ -1,9 +1,7 @@
 import { ThemeProvider } from "@shopify/restyle";
 import { darkTheme, theme } from "./theme";
 import { useState } from "react";
-
 import { AuthenticatedUserProvider } from "./src/hooks/useAuth";
-import { NavigationContainer } from "@react-navigation/native";
 import RootNavigation from "./src/navigation/RootNavigation";
 
 export default function App() {

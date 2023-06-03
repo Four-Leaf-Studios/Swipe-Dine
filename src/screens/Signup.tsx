@@ -1,5 +1,5 @@
 import { StyleSheet, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Box from "../components/Box";
 import MaskedViewCustom from "../components/MaskedViewCustom";
 import StyledTextInput from "../components/StyledTextInput";
@@ -38,18 +38,28 @@ const Signup = ({ navigation }) => {
         password: result?.password,
         confirmPassword: null,
       });
-    else navigation.navigate("SwipeScreen");
   };
 
+  useEffect(() => {
+    if (password !== confirmPassword)
+      setErrors((errors) => {
+        return { ...errors, confirmPassword: "Passwords do not match." };
+      });
+    else
+      setErrors((errors) => {
+        return { ...errors, confirmPassword: null };
+      });
+  }, [confirmPassword]);
+
   return (
-    <Layout variant="white">
+    <Layout variant="main">
       <Box
         width={{ phone: "100%" }}
         flexGrow={{ phone: 1, tablet: 0.8, largeTablet: 0.6 }}
         flexDirection="column"
         justifyContent={{ phone: "flex-start", tablet: "center" }}
         alignItems="center"
-        padding="s"
+        padding="l"
         gap="m"
       >
         {/* Logo */}
@@ -110,7 +120,7 @@ const Signup = ({ navigation }) => {
           minHeight={{ phone: 30, tablet: 60 }}
           maxHeight={{ phone: 80, tablet: 80 }}
         >
-          <Button variant="login" label="Login" onPress={handleSubmit}>
+          <Button variant="login" onPress={handleSubmit}>
             <Text
               variant="header"
               color={
@@ -170,8 +180,7 @@ const Signup = ({ navigation }) => {
         >
           <Button
             variant="auth-nav"
-            label="Already have an account?"
-            onPress={() => {}}
+            onPress={() => navigation.navigate("Login")}
           >
             <Text
               variant="body"

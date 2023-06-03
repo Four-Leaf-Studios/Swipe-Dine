@@ -23,7 +23,7 @@ type Props = {
 const MaskedViewCustom = ({ children, linearGradientVariant }: Props) => {
   return (
     <MaskedView maskElement={children}>
-      <LinearGradient variant={linearGradientVariant} />
+      <LinearGradient variant={linearGradientVariant} gradient />
       {children}
     </MaskedView>
   );

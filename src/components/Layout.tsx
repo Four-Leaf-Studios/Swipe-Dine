@@ -7,11 +7,12 @@ import Box from "./Box";
 type Props = {
   children?: ReactElement<any>;
   variant: ResponsiveValue<any, any>;
+  gradient?: boolean;
 };
 
-const Layout = ({ children, variant }: Props) => {
+const Layout = ({ children, variant, gradient }: Props) => {
   return (
-    <LinearGradient variant={variant}>
+    <LinearGradient variant={variant} gradient={gradient}>
       <SafeAreaView style={styles.container}>{children}</SafeAreaView>
     </LinearGradient>
   );

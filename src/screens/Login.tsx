@@ -42,7 +42,6 @@ const Login = ({ navigation }) => {
     if (result) setErrors(result);
     else {
       setErrors({ email: null, password: null });
-      navigation.navigate("SwipeScreen");
     }
 
     setLoading((loading) => {
@@ -53,14 +52,14 @@ const Login = ({ navigation }) => {
     });
   };
   return (
-    <Layout variant="white">
+    <Layout variant="main">
       <Box
         width={{ phone: "100%" }}
         flexGrow={{ phone: 1, tablet: 0.8, largeTablet: 0.6 }}
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
-        padding="s"
+        padding="l"
         gap="m"
       >
         {/* Logo */}
@@ -80,7 +79,7 @@ const Login = ({ navigation }) => {
           width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
           flex={
             errors.email || errors.password
-              ? { phone: 3, longPhone: 1, tablet: 3 }
+              ? { phone: 3, longPhone: 2, tablet: 3 }
               : 1
           }
           gap={{ phone: "s", tablet: "m" }}
@@ -103,6 +102,24 @@ const Login = ({ navigation }) => {
             onChangeText={setPassword}
             secure
           />
+          <Box flex={0.5} maxHeight={30}>
+            <Button
+              variant="auth-nav"
+              onPress={() => navigation.navigate("ForgotPassword")}
+            >
+              <Text
+                variant="body"
+                color="darkGray"
+                fontWeight="bold"
+                textAlign="left"
+                style={{
+                  width: "100%",
+                }}
+              >
+                Forgot password?
+              </Text>
+            </Button>
+          </Box>
         </Box>
 
         {/* Login Button */}
@@ -112,7 +129,7 @@ const Login = ({ navigation }) => {
           minHeight={{ phone: 30, tablet: 70 }}
           maxHeight={{ phone: 60, tablet: 80 }}
         >
-          <Button variant="login" label="Login" onPress={handleSubmit}>
+          <Button variant="login" onPress={handleSubmit}>
             <Text
               variant="header"
               color={errors.email || errors.password ? "error" : "success"}
@@ -168,8 +185,7 @@ const Login = ({ navigation }) => {
         >
           <Button
             variant="auth-nav"
-            label="Already have an account?"
-            onPress={() => {}}
+            onPress={() => navigation.navigate("SignUp")}
           >
             <Text
               variant="body"

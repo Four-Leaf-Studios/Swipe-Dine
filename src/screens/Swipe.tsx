@@ -4,25 +4,20 @@ import Box from "../components/Box";
 import Text from "../components/Text";
 import Logo from "../components/Logo";
 import useRestaurants from "../hooks/useRestaurants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import MaskedViewCustom from "../components/MaskedViewCustom";
 import Layout from "../components/Layout";
 import useAuth from "../hooks/useAuth";
-import Loading from "./Loading";
 import Button from "../components/Button";
+import AnimatedLogo from "../components/AnimatedLogo";
 
-type Props = {};
-
-const Swipe = (props: Props) => {
-  const { loading: loadingApp, logout, user } = useAuth();
-
-  if (loadingApp) return <Loading />;
-
+const Swipe = ({ navigation }) => {
+  const { logout, user } = useAuth();
   const { restaurants, loading, setRestaurants } = useRestaurants();
+
   const [swipeLeftList, setSwipeLeftList] = useState<RestaurantDetails[]>([]);
   const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
-
   const handleSwipe = (direction: string, index: number) => {
     const updatedRestaurants = [...restaurants];
     const restaurant = updatedRestaurants[index];
@@ -39,34 +34,24 @@ const Swipe = (props: Props) => {
 
     setRestaurants(updatedRestaurants);
   };
-  console.log(user);
+  useEffect(() => {
+    navigation.setOptions({
+      ...navigation.options,
+      headerRight: () => (
+        <Box paddingRight="l">
+          <TouchableOpacity onPress={() => navigation.navigate("Filters")}>
+            <Text variant="body" color="headerButtonText">
+              Filters
+            </Text>
+          </TouchableOpacity>
+        </Box>
+      ),
+    });
+  }, [navigation]);
 
   return (
-    <Layout variant="white">
+    <Layout variant="main">
       <Box width="100%" flex={1} padding="s">
-        <Box width="100%" flex={1} flexDirection="column">
-          <Box
-            width="100%"
-            height="100%"
-            flexDirection="row"
-            alignItems="center"
-            justifyContent="space-between"
-            gap="s"
-            paddingLeft="m"
-            paddingRight="m"
-            paddingBottom="s"
-          >
-            <Logo variant="subheader" />
-            <Box>
-              <Button label="Logout" onPress={logout} variant="logout">
-                <MaskedViewCustom linearGradientVariant={"green"}>
-                  <Text variant="subheader">Logout</Text>
-                </MaskedViewCustom>
-              </Button>
-            </Box>
-          </Box>
-        </Box>
-
         <Box
           position="relative"
           width="100%"
@@ -76,7 +61,7 @@ const Swipe = (props: Props) => {
           alignItems="center"
         >
           {loading ? (
-            <ActivityIndicator size="large" />
+            <AnimatedLogo variant="secondary" />
           ) : restaurants.length > 0 ? (
             restaurants.map((restaurant, index) => (
               <SwipeCard

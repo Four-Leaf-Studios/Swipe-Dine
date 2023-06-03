@@ -23,22 +23,23 @@ const palette = {
   transparent: "transparent",
   black: "#0B0B0B",
   white: "#FFFFFF",
+  systemBlue: "#007AFF",
 };
 
 const theme = createTheme({
   colors: {
     mainBackground: palette.white,
-    mainForeground: palette.black,
+    mainForeground: palette.grayPrimary,
 
     cardPrimaryBackground: palette.white,
     cardShadowColor: "#000",
     secondaryCardBackground: palette.white,
-    secondaryCardText: palette.grayPrimary,
+    secondaryCardText: palette.darkGray,
     primaryCardText: palette.white,
-
-    buttonPrimaryBackground: palette.greenLight,
+    inputBackground: palette.grayLight,
+    buttonPrimaryBackground: palette.darkGray,
     buttonPrimaryText: palette.white,
-
+    headerButtonText: palette.orangeDark,
     error: palette.pinkRed,
     success: palette.greenLight,
     orangeDark: palette.orangeDark,
@@ -82,7 +83,7 @@ const theme = createTheme({
       height: 60,
     },
     login: {
-      backgroundColor: "grayLight",
+      backgroundColor: "inputBackground",
       padding: "s",
       borderRadius: 4,
       width: { phone: "100%", tablet: "100%" },
@@ -102,16 +103,21 @@ const theme = createTheme({
     header: {
       fontWeight: "bold",
       fontSize: { phone: 34, tablet: 48 },
-      color: "black",
     },
     subheader: {
       fontWeight: "600",
       fontSize: { phone: 28, tablet: 34 },
-      color: "black",
     },
     body: {
       fontSize: { phone: 16, tablet: 28 },
-      color: "black",
+    },
+  },
+  logoVariants: {
+    defaults: {
+      backgroundColor: "white",
+    },
+    secondary: {
+      backgroundColor: "darkGray",
     },
   },
   buttonVariants: {
@@ -126,8 +132,16 @@ const theme = createTheme({
       width: "100%",
       flex: 1,
       color: "white",
-      backgroundColor: "darkGray",
       justifyContent: "center",
+      backgroundColor: "buttonPrimaryBackground",
+    },
+    home: {
+      width: "100%",
+      flex: 1,
+      backgroundColor: "buttonPrimaryBackground",
+      justifyContent: "center",
+      alignItems: "center",
+      maxHeight: 100,
     },
     logout: {
       zIndex: "z-0",
@@ -199,6 +213,7 @@ const theme = createTheme({
     },
     main: {
       zIndex: "z-10",
+      backgroundColor: "mainBackground",
     },
     login: {},
     red: {
@@ -222,11 +237,6 @@ const theme = createTheme({
     },
   },
 
-  logoVariants: {
-    defaults: {
-      color: "orangeDark",
-    },
-  },
   defaults: {
     // We can define a default text variant here.
   },
@@ -254,11 +264,14 @@ const darkTheme: Theme = {
   ...theme,
   colors: {
     ...theme.colors,
-    mainBackground: palette.black,
-    mainForeground: palette.white,
-
+    mainBackground: palette.darkGray,
+    mainForeground: palette.black,
+    inputBackground: palette.white,
+    cardPrimaryBackground: palette.grayPrimary,
     secondaryCardBackground: palette.darkGray,
     secondaryCardText: palette.white,
+    buttonPrimaryBackground: palette.white,
+    buttonPrimaryText: palette.darkGray,
   },
 };
 export { darkTheme, theme };

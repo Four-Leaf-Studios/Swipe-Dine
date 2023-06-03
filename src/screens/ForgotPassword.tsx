@@ -8,7 +8,7 @@ import Button from "../components/Button";
 import MaskedViewCustom from "../components/MaskedViewCustom";
 import Text from "../components/Text";
 
-const ForgotPassword = () => {
+const ForgotPassword = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({
     email: null,
@@ -22,14 +22,14 @@ const ForgotPassword = () => {
       });
   };
   return (
-    <Layout variant="white">
+    <Layout variant="main">
       <Box
         width={{ phone: "100%" }}
         flex={{ phone: 1, tablet: 0.6 }}
         flexDirection="column"
-        justifyContent="center"
+        justifyContent="flex-start"
         alignItems="center"
-        padding="s"
+        padding="l"
         gap="m"
       >
         {/* Logo */}
@@ -68,15 +68,14 @@ const ForgotPassword = () => {
           flex={0.5}
           maxHeight={{ phone: 120, tablet: 150 }}
         >
-          <Button variant="login" label="Login" onPress={handleSubmit}>
+          <Button variant="login" onPress={handleSubmit}>
             <Text variant="header" color={errors.email ? "error" : "success"}>
               Reset Password
             </Text>
           </Button>
           <Button
             variant="auth-nav"
-            label="Already have an account?"
-            onPress={() => {}}
+            onPress={() => navigation.navigate("Login")}
           >
             <Text
               variant="body"

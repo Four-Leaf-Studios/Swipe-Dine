@@ -128,13 +128,13 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
             flex={1}
             zIndex="z-10"
           >
-            <Text variant="subheader" color="primaryCardText">
+            <Text variant="subheader" color="white">
               {name}
             </Text>
-            <Text variant="body" color="secondaryCardText">
+            <Text variant="body" color="gray">
               Rating: {rating} / 5
             </Text>
-            <Text variant="body" color="secondaryCardText">
+            <Text variant="body" color="gray">
               {vicinity}
             </Text>
           </Box>
@@ -176,7 +176,7 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
           <SwipeCardButton type="x" handlePress={handleSwipeLeft} />
           <SwipeCardButton type="heart" handlePress={handleSwipeRight} />
         </Box>
-        <LinearGradient variant="shadow" />
+        <LinearGradient variant="shadow" gradient />
       </>
     </Card>
   );

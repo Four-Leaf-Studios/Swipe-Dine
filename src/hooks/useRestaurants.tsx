@@ -9,6 +9,8 @@ const useRestaurants = () => {
 
   useEffect(() => {
     const fetchRestaurants = async () => {
+      setLoading(true);
+
       const location = await getUserLocation();
       const data = await getGooglePlaces(
         `${location.latitude},${location.longitude}`,
@@ -21,7 +23,6 @@ const useRestaurants = () => {
       }
       setLoading(false);
     };
-
     fetchRestaurants();
   }, []);
   return { restaurants, loading, setRestaurants };

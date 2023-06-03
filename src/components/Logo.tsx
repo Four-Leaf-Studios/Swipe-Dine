@@ -19,7 +19,7 @@ type Props = RestyleProps & {};
 const StyledTextInput = ({ ...rest }: Props) => {
   return (
     <MaskedViewCustom linearGradientVariant={"main"}>
-      <Text variant={rest.variant}>Foodr</Text>
+      <Text variant={rest.variant}>Swipe & Dine</Text>
     </MaskedViewCustom>
   );
 };

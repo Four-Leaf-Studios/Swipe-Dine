@@ -26,11 +26,10 @@ const restyleFunctions = composeRestyleFunctions<Theme, RestyleProps>([
 
 type Props = RestyleProps & {
   onPress: () => void;
-  label: string;
   children?: ReactElement;
 };
 
-const Button = ({ onPress, label, children, ...rest }: Props) => {
+const Button = ({ onPress, children, ...rest }: Props) => {
   const props = useRestyle(restyleFunctions, rest);
 
   return (
