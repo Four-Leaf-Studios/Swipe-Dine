@@ -5,6 +5,7 @@ import { getUserLocation } from "../utils/geolocation";
 
 const useRestaurants = () => {
   const [restaurants, setRestaurants] = useState<RestaurantDetails[]>([]);
+  const [pageToken, setPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -14,17 +15,18 @@ const useRestaurants = () => {
       const location = await getUserLocation();
       const data = await getGooglePlaces(
         `${location.latitude},${location.longitude}`,
-        50000
+        pageToken
       );
-      if (data.result) {
-        setRestaurants(data.result);
+      if (data.results) {
+        setRestaurants((list) => [...list, ...data.results]);
+        setPageToken(data.nextPageToken);
       } else {
         console.error(data.error);
       }
       setLoading(false);
     };
-    fetchRestaurants();
-  }, []);
+    if (restaurants.length === 0) fetchRestaurants();
+  }, [restaurants]);
   return { restaurants, loading, setRestaurants };
 };
 

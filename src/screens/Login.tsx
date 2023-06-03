@@ -80,10 +80,12 @@ const Login = ({ navigation }) => {
           flex={
             errors.email || errors.password
               ? { phone: 3, longPhone: 2, tablet: 3 }
-              : 1
+              : 1.7
           }
           gap={{ phone: "s", tablet: "m" }}
-          maxHeight={{ phone: "100%", longPhone: "50%", tablet: "100%" }}
+          maxHeight={{ phone: "100%", longPhone: "30%", tablet: "100%" }}
+          flexDirection="column"
+          justifyContent={"flex-start"}
         >
           <StyledTextInput
             placeholder="Email"

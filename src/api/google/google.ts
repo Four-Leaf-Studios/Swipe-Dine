@@ -4,21 +4,38 @@ const API_KEY = "AIzaSyBLB4ZE2E8SRTeZ2f9OtY1fXGJ8cdIlvro";
 const URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 const URL_DETAILS = "https://maps.googleapis.com/maps/api/place/details/json";
 
-const getGooglePlaces = async (location, distanceInMeters) => {
-  try {
-    const response = await axios.get(URL, {
-      params: {
-        location: location,
-        key: API_KEY,
-        keyword: "restaurant | fast food | ice cream",
-        rankby: "distance",
-        opennow: true,
-      },
-    });
+interface GooglePlacesParams {
+  location: string;
+  key: string;
+  keyword: string;
+  rankby: string;
+  opennow: boolean;
+  pagetoken?: string;
+}
 
-    return { result: response.data.results, error: null };
+const getGooglePlaces = async (location, nextPageToken = null) => {
+  try {
+    const params: GooglePlacesParams = {
+      location: location,
+      key: API_KEY,
+      keyword: "restaurant | fast food | ice cream",
+      rankby: "distance",
+      opennow: true,
+    };
+
+    if (nextPageToken) {
+      params.pagetoken = nextPageToken;
+    }
+
+    const response = await axios.get(URL, { params });
+
+    return {
+      results: response.data.results,
+      nextPageToken: response.data.next_page_token,
+      error: null,
+    };
   } catch (error) {
-    return { result: null, error: error.message };
+    return { results: null, nextPageToken: null, error: error.message };
   }
 };
 

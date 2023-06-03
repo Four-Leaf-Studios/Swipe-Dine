@@ -34,6 +34,7 @@ const Swipe = ({ navigation }) => {
 
     setRestaurants(updatedRestaurants);
   };
+
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
