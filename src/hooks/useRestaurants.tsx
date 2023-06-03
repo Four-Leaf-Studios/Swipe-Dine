@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { getGooglePlaces } from "../api/google/google";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import { getUserLocation } from "../utils/geolocation";
+import useFilters from "./useFilters";
 
 const useRestaurants = () => {
+  const { getFiltersForParams } = useFilters();
   const [restaurants, setRestaurants] = useState<RestaurantDetails[]>([]);
   const [pageToken, setPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -15,7 +17,8 @@ const useRestaurants = () => {
       const location = await getUserLocation();
       const data = await getGooglePlaces(
         `${location.latitude},${location.longitude}`,
-        pageToken
+        pageToken,
+        getFiltersForParams()
       );
       if (data.results) {
         setRestaurants((list) => [...list, ...data.results]);
@@ -25,7 +28,7 @@ const useRestaurants = () => {
       }
       setLoading(false);
     };
-    if (restaurants.length === 0) fetchRestaurants();
+    // if (restaurants.length === 0) fetchRestaurants();
   }, [restaurants]);
   return { restaurants, loading, setRestaurants };
 };

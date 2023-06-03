@@ -39,6 +39,10 @@ const theme = createTheme({
     inputBackground: palette.grayLight,
     buttonPrimaryBackground: palette.darkGray,
     buttonPrimaryText: palette.white,
+
+    buttonSecondaryBackground: palette.white,
+    buttonSecondaryText: palette.darkGray,
+
     headerButtonText: palette.orangeDark,
     error: palette.pinkRed,
     success: palette.greenLight,
@@ -146,6 +150,22 @@ const theme = createTheme({
     logout: {
       zIndex: "z-0",
       flex: 1,
+    },
+    filterOff: {
+      flexGrow: 1,
+      backgroundColor: "buttonPrimaryBackground",
+      justifyContent: "center",
+      alignItems: "center",
+      height: 50,
+    },
+    filterOn: {
+      flexGrow: 1,
+      backgroundColor: "buttonSecondaryBackground",
+      borderWidth: 5,
+      borderColor: "buttonPrimaryBackground",
+      justifyContent: "center",
+      alignItems: "center",
+      height: 50,
     },
     swipeScreenButton: {
       height: 60,

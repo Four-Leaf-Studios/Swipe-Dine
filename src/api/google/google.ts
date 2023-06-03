@@ -13,12 +13,12 @@ interface GooglePlacesParams {
   pagetoken?: string;
 }
 
-const getGooglePlaces = async (location, nextPageToken = null) => {
+const getGooglePlaces = async (location, nextPageToken = null, keywords) => {
   try {
     const params: GooglePlacesParams = {
       location: location,
       key: API_KEY,
-      keyword: "restaurant | fast food | ice cream",
+      keyword: keywords,
       rankby: "distance",
       opennow: true,
     };

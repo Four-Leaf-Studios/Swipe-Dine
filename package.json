@@ -39,5 +39,6 @@
   },
   "version": "1.0.0",
   "private": true,
-  "name": "foodr"
+  "name": "Swipe & Dine",
+  "icon": "./assets/images/icon.png"
 }

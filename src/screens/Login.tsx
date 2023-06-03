@@ -11,9 +11,7 @@ import {
 } from "expo-apple-authentication";
 import { SocialIcon } from "react-native-elements";
 import Button from "../components/Button";
-import MaskedView from "@react-native-masked-view/masked-view";
 import Text from "../components/Text";
-import MaskedViewCustom from "../components/MaskedViewCustom";
 import useAuth from "../hooks/useAuth";
 
 const Login = ({ navigation }) => {
