@@ -19,7 +19,7 @@ const getGooglePlaces = async (location, nextPageToken = null, keywords) => {
     const params: GooglePlacesParams = {
       location: location,
       key: API_KEY,
-      keyword: keywords,
+      keyword: "restaurant | " + keywords,
       rankby: "distance",
       opennow: true,
     };

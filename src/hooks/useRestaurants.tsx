@@ -33,18 +33,18 @@ const useRestaurants = (filtersUpdated, setFiltersUpdated) => {
       setLoading(false);
     };
 
-    if (restaurants.length === 0 || filtersUpdated) {
-      const filterString = Object.entries(
-        filtersUpdated ? filtersUpdated : filters || {}
-      )
-        .filter(([_, value]) => value === true)
-        .map(([key]) => key.toLowerCase()) // Convert key to lowercase
-        .join(" | ");
+    // if (restaurants.length === 0 || filtersUpdated) {
+    //   const filterString = Object.entries(
+    //     filtersUpdated ? filtersUpdated : filters || {}
+    //   )
+    //     .filter(([_, value]) => value === true)
+    //     .map(([key]) => key.toLowerCase()) // Convert key to lowercase
+    //     .join(" | ");
 
-      console.log(filterString);
-      fetchRestaurants(filterString);
-      setFiltersUpdated(null);
-    }
+    //   console.log(filterString);
+    //   fetchRestaurants(filterString);
+    //   setFiltersUpdated(null);
+    // }
   }, [restaurants, filtersUpdated, filters]);
 
   return { restaurants, loading, setRestaurants };

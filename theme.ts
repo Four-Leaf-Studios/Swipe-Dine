@@ -95,6 +95,16 @@ const theme = createTheme({
       minHeight: { phone: 50 },
       maxHeight: { phone: 60, tablet: 70 },
     },
+
+    room: {
+      backgroundColor: "inputBackground",
+      padding: "s",
+      borderRadius: 4,
+      width: { phone: "100%", tablet: "100%" },
+      flex: 1,
+      minHeight: { phone: 50 },
+      maxHeight: { phone: 60, tablet: 70 },
+    },
   },
   textVariants: {
     defaults: {},

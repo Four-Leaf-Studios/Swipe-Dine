@@ -1,63 +1,95 @@
 import { StyleSheet } from "react-native";
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-import SwipeScreen from "../screens/Swipe";
 import { NavigationContainer } from "@react-navigation/native";
-import Home from "../screens/Home";
-import FilterScreen from "../screens/FilterScreen";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import HomeStack from "./homeStack";
+import SwipeStack from "./swipeStack";
+import MaskedViewCustom from "../components/MaskedViewCustom";
+import Text from "../components/Text";
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
-const Stack = createStackNavigator();
+import RoomStack from "./roomStack";
 
-const userStack = () => {
+const Tab = createMaterialBottomTabNavigator();
+
+const UserStack = () => {
   const theme = useTheme<Theme>();
-  const { headerButtonText } = theme.colors;
+  const { mainBackground, buttonPrimaryBackground } = theme.colors;
+
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          headerTintColor: headerButtonText,
-          headerTitleStyle: {
-            color: "black",
+      <Tab.Navigator
+        shifting
+        sceneAnimationEnabled
+        labeled={false}
+        barStyle={{ backgroundColor: mainBackground }}
+        sceneAnimationType="shifting"
+        screenOptions={({ route }) => ({
+          lazy: false,
+          tabBarIcon: ({ focused }) => {
+            let icon;
+            const size = 24;
+            if (route.name === "HomeStack") {
+              icon = focused ? (
+                <Ionicons
+                  name={"md-home"}
+                  size={size}
+                  color={buttonPrimaryBackground}
+                />
+              ) : (
+                <Ionicons
+                  name={"md-home"}
+                  size={size}
+                  color={buttonPrimaryBackground}
+                />
+              );
+            } else if (route.name === "SwipeStack") {
+              icon = focused ? (
+                <Ionicons
+                  name={"md-map"}
+                  size={size}
+                  color={buttonPrimaryBackground}
+                />
+              ) : (
+                <Ionicons
+                  name={"md-map"}
+                  size={size}
+                  color={buttonPrimaryBackground}
+                />
+              );
+            } else if (route.name === "RoomStack") {
+              icon = focused ? (
+                <Ionicons
+                  name={"md-people"}
+                  size={size}
+                  color={buttonPrimaryBackground}
+                />
+              ) : (
+                <Ionicons
+                  name={"md-people"}
+                  size={size}
+                  color={buttonPrimaryBackground}
+                />
+              );
+            }
+            if (!focused) return icon;
+            return (
+              <MaskedViewCustom linearGradientVariant={"main"}>
+                {icon}
+              </MaskedViewCustom>
+            );
           },
-        }}
+        })}
       >
-        <Stack.Screen name="Home" component={Home} />
-        <Stack.Screen name="SwipeScreen" component={SwipeScreen} />
-        <Stack.Screen
-          name="Filters"
-          component={FilterScreen}
-          options={{
-            cardStyleInterpolator: ({ current: { progress } }) => ({
-              cardStyle: {
-                opacity: progress.interpolate({
-                  inputRange: [0, 0.5, 1],
-                  outputRange: [0, 0.5, 1],
-                }),
-                transform: [
-                  {
-                    translateY: progress.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [200, 0],
-                    }),
-                  },
-                ],
-              },
-              overlayStyle: {
-                opacity: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 0.5],
-                }),
-              },
-            }),
-          }}
-        />
-      </Stack.Navigator>
+        <Tab.Screen name="HomeStack" component={HomeStack} />
+        <Tab.Screen name="SwipeStack" component={SwipeStack} />
+        <Tab.Screen name="RoomStack" component={RoomStack} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 };
 
-export default userStack;
+export default UserStack;
 
 const styles = StyleSheet.create({});

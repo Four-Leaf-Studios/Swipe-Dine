@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import Layout from "../components/Layout";
 import AnimatedLogo from "../components/AnimatedLogo";
-import useFilters from "../hooks/useFilters";
 
 const Swipe = ({ navigation }) => {
   const [filtersUpdated, setFiltersUpdated] = useState<Object | null>(null);

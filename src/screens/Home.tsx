@@ -43,10 +43,7 @@ const Home = ({ navigation }) => {
           padding="s"
           gap="m"
         >
-          <Button
-            variant="home"
-            onPress={() => navigation.navigate("SwipeScreen")}
-          >
+          <Button variant="home" onPress={() => navigation.navigate("Room")}>
             <MaskedViewCustom linearGradientVariant={"main"}>
               <Text variant="body" color="buttonPrimaryText">
                 Create a Room

@@ -18,7 +18,7 @@ const useRestaurantDetails = (id: string) => {
       }
     };
 
-    fetchRestaurantDetailsFromYelp();
+    // if (!restaurant) fetchRestaurantDetailsFromYelp();
   }, []);
 
   return {

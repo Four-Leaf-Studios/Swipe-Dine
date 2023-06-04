@@ -33,6 +33,7 @@ type Props = RestyleProps & {
   message: string | null;
   onChangeText: Function;
   secure?: boolean;
+  color: string;
 };
 
 const StyledTextInput = ({
@@ -42,6 +43,7 @@ const StyledTextInput = ({
   value,
   onChangeText,
   secure,
+  color,
   ...rest
 }: Props) => {
   const props = useRestyle(restyleFunctions, rest);
@@ -56,7 +58,9 @@ const StyledTextInput = ({
         value={value}
         onChangeText={(text) => onChangeText(text)}
         secureTextEntry={secure}
-        placeholderTextColor={message ? red : success}
+        placeholderTextColor={
+          message ? red : color ? theme.colors[color] : success
+        }
       />
       {message && (
         <Box

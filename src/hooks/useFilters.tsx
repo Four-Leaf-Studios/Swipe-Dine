@@ -1,33 +1,31 @@
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import { db } from "../lib/firebase";
-import {
-  collection,
-  doc,
-  getDoc,
-  updateDoc,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, doc, updateDoc, onSnapshot } from "firebase/firestore";
 
-const useFilters = () => {
+interface Filters {
+  BBQ: boolean;
+  ["Ice Cream"]: boolean;
+  ["Fast Food"]: boolean;
+}
+
+const useFilters = (room = null) => {
   const { user } = useAuth();
-  const [filters, setFilters] = useState<Object | null>(null);
+  const [filters, setFilters] = useState<Filters | null>(null);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
       doc(collection(db, "filters"), user.uid),
       (docSnapshot) => {
         if (docSnapshot.exists()) {
-          const swipe = docSnapshot.data().swipe;
+          const swipe = room
+            ? docSnapshot.data().room
+            : docSnapshot.data().swipe;
           setFilters(swipe);
         } else {
-          // Handle the case where the document doesn't exist
-          console.log("Document not found");
         }
       },
-      (error) => {
-        console.log("Error listening to filters:", error);
-      }
+      (error) => {}
     );
 
     return () => unsubscribe();
