@@ -80,7 +80,7 @@ const Signup = ({ navigation }) => {
           flex={
             errors.email || errors.password
               ? 7
-              : { phone: 2, longPhone: 1, tablet: 1.5 }
+              : { phone: 2, longPhone: 2, tablet: 1.5 }
           }
           maxHeight={{ phone: "100%", longPhone: "40%", tablet: "100%" }}
           gap={{ phone: "s", tablet: "m" }}

@@ -1,12 +1,28 @@
-import { StyleSheet } from "react-native";
-import React from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
+import React, { useEffect } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
 import Text from "../components/Text";
 import Button from "../components/Button";
 import MaskedViewCustom from "../components/MaskedViewCustom";
+import useAuth from "../hooks/useAuth";
 
 const Home = ({ navigation }) => {
+  const { logout } = useAuth();
+  useEffect(() => {
+    navigation.setOptions({
+      ...navigation.options,
+      headerRight: () => (
+        <Box paddingRight="l">
+          <TouchableOpacity onPress={logout}>
+            <Text variant="body" color="headerButtonText">
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </Box>
+      ),
+    });
+  }, [navigation]);
   return (
     <Layout variant="main">
       <Box

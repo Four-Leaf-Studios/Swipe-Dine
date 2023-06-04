@@ -1,0 +1,9 @@
+{
+"expo": {
+    "name": "Swipe & Dine", 
+    "icon": "./assets/images/icon.png",
+    "splash": {
+        "image": "./assets/images/Splash.png"
+    }
+}
+}

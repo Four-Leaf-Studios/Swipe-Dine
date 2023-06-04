@@ -14,6 +14,7 @@ interface GooglePlacesParams {
 }
 
 const getGooglePlaces = async (location, nextPageToken = null, keywords) => {
+  console.log(keywords);
   try {
     const params: GooglePlacesParams = {
       location: location,

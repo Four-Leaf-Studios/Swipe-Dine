@@ -1,39 +1,54 @@
-import { StyleSheet } from "react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
+import { db } from "../lib/firebase";
+import {
+  collection,
+  doc,
+  getDoc,
+  updateDoc,
+  onSnapshot,
+} from "firebase/firestore";
 
 const useFilters = () => {
   const { user } = useAuth();
-  const [filters, setFilters] = useState({
-    restaurant: true,
-    ["Fast Food"]: false,
-    ["Ice Cream"]: false,
-    ["BBQ"]: true,
-  });
+  const [filters, setFilters] = useState<Object | null>(null);
 
   useEffect(() => {
-    const fetchFiltersFromFirestore = async () => {};
+    const unsubscribe = onSnapshot(
+      doc(collection(db, "filters"), user.uid),
+      (docSnapshot) => {
+        if (docSnapshot.exists()) {
+          const swipe = docSnapshot.data().swipe;
+          setFilters(swipe);
+        } else {
+          // Handle the case where the document doesn't exist
+          console.log("Document not found");
+        }
+      },
+      (error) => {
+        console.log("Error listening to filters:", error);
+      }
+    );
 
-    fetchFiltersFromFirestore();
-  }, []);
+    return () => unsubscribe();
+  }, [user.uid]);
 
-  const getFiltersForParams = () => {
-    const activeFilters = Object.entries(filters)
-      .filter(([_, value]) => value === true)
-      .map(([key]) => key);
+  const saveFilters = async () => {
+    try {
+      const filtersCollection = collection(db, "filters");
+      const userDoc = doc(filtersCollection, user.uid);
 
-    const paramsString = activeFilters.join(" | ");
+      await updateDoc(userDoc, {
+        swipe: filters,
+      });
 
-    return paramsString;
+      console.log("Filters saved successfully!");
+    } catch (error) {
+      console.log("Error saving filters:", error);
+    }
   };
-  const setFilter = (filter: string, value: boolean) =>
-    setFilters((filters) => {
-      return { ...filters, [filter]: value };
-    });
 
-  return { filters, getFiltersForParams, setFilter };
+  return { filters, setFilters, saveFilters };
 };
 
 export default useFilters;
-
-const styles = StyleSheet.create({});

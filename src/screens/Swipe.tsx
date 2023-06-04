@@ -1,20 +1,20 @@
-import { StyleSheet, ActivityIndicator, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import SwipeCard from "../components/SwipeCard";
 import Box from "../components/Box";
 import Text from "../components/Text";
-import Logo from "../components/Logo";
 import useRestaurants from "../hooks/useRestaurants";
 import { useEffect, useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
-import MaskedViewCustom from "../components/MaskedViewCustom";
 import Layout from "../components/Layout";
-import useAuth from "../hooks/useAuth";
-import Button from "../components/Button";
 import AnimatedLogo from "../components/AnimatedLogo";
+import useFilters from "../hooks/useFilters";
 
 const Swipe = ({ navigation }) => {
-  const { logout, user } = useAuth();
-  const { restaurants, loading, setRestaurants } = useRestaurants();
+  const [filtersUpdated, setFiltersUpdated] = useState<Object | null>(null);
+  const { restaurants, loading, setRestaurants } = useRestaurants(
+    filtersUpdated,
+    setFiltersUpdated
+  );
 
   const [swipeLeftList, setSwipeLeftList] = useState<RestaurantDetails[]>([]);
   const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
@@ -40,7 +40,11 @@ const Swipe = ({ navigation }) => {
       ...navigation.options,
       headerRight: () => (
         <Box paddingRight="l">
-          <TouchableOpacity onPress={() => navigation.navigate("Filters")}>
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("Filters", { setFiltersUpdated })
+            }
+          >
             <Text variant="body" color="headerButtonText">
               Filters
             </Text>

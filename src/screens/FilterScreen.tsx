@@ -7,7 +7,8 @@ import Text from "../components/Text";
 import useFilters from "../hooks/useFilters";
 
 const FilterScreen = ({ navigation, route }) => {
-  const { filters, setFilter } = useFilters();
+  const { setFiltersUpdated } = route.params;
+  const { filters, setFilters, saveFilters } = useFilters();
 
   useEffect(() => {
     navigation.setOptions({
@@ -23,7 +24,13 @@ const FilterScreen = ({ navigation, route }) => {
       ),
       headerRight: () => (
         <Box paddingRight="l">
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() => {
+              saveFilters();
+              setFiltersUpdated(filters);
+              navigation.goBack();
+            }}
+          >
             <Text variant="body" color="headerButtonText">
               Save Filters
             </Text>
@@ -31,7 +38,8 @@ const FilterScreen = ({ navigation, route }) => {
         </Box>
       ),
     });
-  }, [navigation]);
+  }, [navigation, filters]);
+
   return (
     <Layout variant="main">
       <Box
@@ -42,20 +50,25 @@ const FilterScreen = ({ navigation, route }) => {
         gap="m"
         padding="l"
       >
-        {Object.entries(filters).map(([key, value]) => (
-          <Button
-            key={key}
-            variant={value ? "filterOn" : "filterOff"}
-            onPress={() => setFilter(key, !value)}
-          >
-            <Text
-              variant="body"
-              color={value ? "buttonSecondaryText" : "buttonPrimaryText"}
+        {filters &&
+          Object.entries(filters)?.map(([key, value]) => (
+            <Button
+              key={key}
+              variant={value ? "filterOn" : "filterOff"}
+              onPress={() => {
+                setFilters((filters) => {
+                  return { ...filters, [`${key}`]: !value };
+                });
+              }}
             >
-              {key} {value && "(selected)"}
-            </Text>
-          </Button>
-        ))}
+              <Text
+                variant="body"
+                color={value ? "buttonSecondaryText" : "buttonPrimaryText"}
+              >
+                {key} {value && "(selected)"}
+              </Text>
+            </Button>
+          ))}
       </Box>
     </Layout>
   );

@@ -38,7 +38,5 @@
     ]
   },
   "version": "1.0.0",
-  "private": true,
-  "name": "Swipe & Dine",
-  "icon": "./assets/images/icon.png"
+  "private": true
 }
