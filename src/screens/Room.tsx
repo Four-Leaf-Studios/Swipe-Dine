@@ -98,7 +98,7 @@ const Room = ({ navigation }) => {
 
           <Box
             width="100%"
-            flex={1}
+            flex={{ phone: 4, longPhone: 2, tablet: 1 }}
             gap="m"
             flexDirection="column"
             justifyContent={room ? "flex-end" : "center"}
@@ -115,7 +115,14 @@ const Room = ({ navigation }) => {
                 color="buttonSecondaryText"
               />
             )}
-            <Button variant="home" onPress={() => (room ? {} : joinRoom(code))}>
+            <Button
+              variant="home"
+              onPress={() =>
+                room
+                  ? navigation.navigate("SwipeScreen", { room: room })
+                  : joinRoom(code)
+              }
+            >
               <Text variant="subheader" color="buttonPrimaryText">
                 {room
                   ? owner
@@ -137,20 +144,17 @@ const Room = ({ navigation }) => {
               </Button>
             )}
             {room && owner && (
-              <Button
-                variant="home"
-                onPress={() => navigation.navigate("Filters")}
-              >
+              <Button variant="home" onPress={() => navigation.navigate()}>
                 <Text variant="subheader" color="buttonPrimaryText">
                   Edit Filters
                 </Text>
               </Button>
             )}
 
-            {room && !owner && (
+            {room && owner && (
               <Button variant="home" onPress={() => leaveRoom(room.code)}>
                 <Text variant="subheader" color="buttonPrimaryText">
-                  Leave Room
+                  End Session
                 </Text>
               </Button>
             )}

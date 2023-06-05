@@ -22,6 +22,7 @@ const SwipeStack = () => {
           color: buttonSecondaryText,
         },
       }}
+      initialRouteName="SwipeScreen"
     >
       <Stack.Screen name="SwipeScreen" component={Swipe} />
       <Stack.Screen

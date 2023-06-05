@@ -7,14 +7,14 @@ import { useEffect, useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import Layout from "../components/Layout";
 import AnimatedLogo from "../components/AnimatedLogo";
+import { useRecoilValue } from "recoil";
+import { roomState } from "../atoms/atoms";
+import useFilters from "../hooks/useFilters";
 
 const Swipe = ({ navigation }) => {
-  const [filtersUpdated, setFiltersUpdated] = useState<Object | null>(null);
-  const { restaurants, loading, setRestaurants } = useRestaurants(
-    filtersUpdated,
-    setFiltersUpdated
-  );
-
+  const { filters } = useFilters();
+  const room = useRecoilValue(roomState);
+  const { restaurants, loading, setRestaurants } = useRestaurants(filters);
   const [swipeLeftList, setSwipeLeftList] = useState<RestaurantDetails[]>([]);
   const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
   const handleSwipe = (direction: string, index: number) => {
@@ -37,19 +37,16 @@ const Swipe = ({ navigation }) => {
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
-      headerRight: () => (
-        <Box paddingRight="l">
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("Filters", { setFiltersUpdated })
-            }
-          >
-            <Text variant="body" color="headerButtonText">
-              Filters
-            </Text>
-          </TouchableOpacity>
-        </Box>
-      ),
+      headerRight: () =>
+        room ? null : (
+          <Box paddingRight="l">
+            <TouchableOpacity onPress={() => navigation.navigate("Filters")}>
+              <Text variant="body" color="headerButtonText">
+                Filters
+              </Text>
+            </TouchableOpacity>
+          </Box>
+        ),
     });
   }, [navigation]);
 
@@ -64,7 +61,7 @@ const Swipe = ({ navigation }) => {
           justifyContent="center"
           alignItems="center"
         >
-          {loading ? (
+          {/* {loading ? (
             <AnimatedLogo variant="secondary" />
           ) : restaurants.length > 0 ? (
             restaurants.map((restaurant, index) => (
@@ -77,7 +74,7 @@ const Swipe = ({ navigation }) => {
             ))
           ) : (
             <Text>No restaurants found.</Text>
-          )}
+          )} */}
         </Box>
       </Box>
     </Layout>

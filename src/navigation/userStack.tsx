@@ -26,7 +26,6 @@ const UserStack = () => {
         barStyle={{ backgroundColor: mainBackground }}
         sceneAnimationType="shifting"
         screenOptions={({ route }) => ({
-          lazy: false,
           tabBarIcon: ({ focused }) => {
             let icon;
             const size = 24;

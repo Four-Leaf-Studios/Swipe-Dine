@@ -4,12 +4,15 @@ import Layout from "../components/Layout";
 import Box from "../components/Box";
 import Button from "../components/Button";
 import Text from "../components/Text";
-import useFilters from "../hooks/useFilters";
+import Filters from "../components/Filters";
+import { useRecoilState } from "recoil";
+import { filtersState } from "../atoms/atoms";
+import { saveFilters } from "../lib/firebaseHelpers";
+import useAuth from "../hooks/useAuth";
 
-const FilterScreen = ({ navigation, route }) => {
-  const { setFiltersUpdated } = route.params;
-  const { filters, setFilters, saveFilters } = useFilters();
-
+const FilterScreen = ({ navigation }) => {
+  const { user } = useAuth();
+  const [filters, setFilters] = useRecoilState(filtersState);
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
@@ -26,8 +29,7 @@ const FilterScreen = ({ navigation, route }) => {
         <Box paddingRight="l">
           <TouchableOpacity
             onPress={() => {
-              saveFilters();
-              setFiltersUpdated(filters);
+              saveFilters(filters, user.uid);
               navigation.goBack();
             }}
           >
@@ -50,25 +52,7 @@ const FilterScreen = ({ navigation, route }) => {
         gap="m"
         padding="l"
       >
-        {filters &&
-          Object.entries(filters)?.map(([key, value]) => (
-            <Button
-              key={key}
-              variant={value ? "filterOn" : "filterOff"}
-              onPress={() => {
-                setFilters((filters) => {
-                  return { ...filters, [`${key}`]: !value };
-                });
-              }}
-            >
-              <Text
-                variant="body"
-                color={value ? "buttonSecondaryText" : "buttonPrimaryText"}
-              >
-                {key} {value && "(selected)"}
-              </Text>
-            </Button>
-          ))}
+        <Filters filters={filters} setFilters={setFilters} />
       </Box>
     </Layout>
   );

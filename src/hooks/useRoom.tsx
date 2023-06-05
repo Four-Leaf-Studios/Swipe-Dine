@@ -14,6 +14,8 @@ import {
 } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import useFilters from "./useFilters";
+import { useRecoilState } from "recoil";
+import { roomState } from "../atoms/atoms";
 
 interface Room {
   owner: string;
@@ -22,8 +24,9 @@ interface Room {
 }
 const useRoom = () => {
   const { user } = useAuth();
-  const { filters, setFilters } = useFilters(true);
-  const [room, setRoom] = useState<Room>();
+  const { filters, setFilters } = useFilters();
+
+  const [room, setRoom] = useRecoilState(roomState);
   const [code, setCode] = useState();
 
   useEffect(() => {

@@ -2,25 +2,27 @@ import React, { useEffect, useState } from "react";
 import { getGooglePlaces } from "../api/google/google";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import { getUserLocation } from "../utils/geolocation";
-import useFilters from "./useFilters";
 
-const useRestaurants = (filtersUpdated, setFiltersUpdated) => {
-  const { filters } = useFilters();
+const useRestaurants = (filters) => {
   const [restaurants, setRestaurants] = useState<RestaurantDetails[]>([]);
   const [pageToken, setPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [prevFilters, setPrevFilters] = useState(filters);
+  const [initialRender, setInitialRender] = useState(true);
+  let filtersUpdated = false;
+  if (restaurants.length > 0)
+    filtersUpdated = prevFilters === filters ? false : true;
   useEffect(() => {
-    const fetchRestaurants = async (filters) => {
-      setLoading(true);
-
+    const fetchRestaurants = async (filter) => {
       const location = await getUserLocation();
       const data = await getGooglePlaces(
         `${location.latitude},${location.longitude}`,
         pageToken,
-        filters
+        filter
       );
       if (data.results) {
         if (filtersUpdated) {
+          setPrevFilters(filters);
           setRestaurants(data.results);
           setPageToken(null);
         } else {
@@ -29,21 +31,27 @@ const useRestaurants = (filtersUpdated, setFiltersUpdated) => {
         }
       } else {
         console.error(data.error);
+        return null;
       }
-      setLoading(false);
     };
 
-    // if (restaurants.length === 0 || filtersUpdated) {
-    //   const filterString = Object.entries(
-    //     filtersUpdated ? filtersUpdated : filters || {}
-    //   )
-    //     .filter(([_, value]) => value === true)
-    //     .map(([key]) => key.toLowerCase()) // Convert key to lowercase
-    //     .join(" | ");
-
-    //   console.log(filterString);
-    //   fetchRestaurants(filterString);
-    //   setFiltersUpdated(null);
+    // if ((restaurants.length === 0 || filtersUpdated) && filters) {
+    //   if (filtersUpdated && initialRender) setInitialRender(false);
+    //   else {
+    //     const filterString = Object.entries(filters ? filters : {})
+    //       .filter(([_, value]) => value === true)
+    //       .map(([key]) => key.toLowerCase())
+    //       .join(" | ");
+    //     fetchRestaurants(filterString);
+    //     console.log(
+    //       "Filters : ",
+    //       filters,
+    //       "FILTERS UPDATED: ",
+    //       filtersUpdated,
+    //       "LENGTH:",
+    //       restaurants.length
+    //     );
+    //   }
     // }
   }, [restaurants, filtersUpdated, filters]);
 

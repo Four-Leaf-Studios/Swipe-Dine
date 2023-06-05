@@ -3,6 +3,7 @@ import { darkTheme, theme } from "./theme";
 import { useState } from "react";
 import { AuthenticatedUserProvider } from "./src/hooks/useAuth";
 import RootNavigation from "./src/navigation/RootNavigation";
+import { RecoilRoot } from "recoil";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -10,7 +11,9 @@ export default function App() {
   return (
     <ThemeProvider theme={activeTheme}>
       <AuthenticatedUserProvider>
-        <RootNavigation />
+        <RecoilRoot>
+          <RootNavigation />
+        </RecoilRoot>
       </AuthenticatedUserProvider>
     </ThemeProvider>
   );
