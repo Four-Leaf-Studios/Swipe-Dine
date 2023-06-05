@@ -10,4 +10,8 @@ const filtersState = atom({
   default: null,
 });
 
-export { roomState, filtersState };
+const roomFiltersState = atom({
+  key: "roomFiltersState",
+  default: null,
+});
+export { roomState, filtersState, roomFiltersState };

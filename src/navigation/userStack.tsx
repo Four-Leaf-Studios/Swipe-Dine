@@ -3,13 +3,11 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import HomeStack from "./homeStack";
-import SwipeStack from "./swipeStack";
 import MaskedViewCustom from "../components/MaskedViewCustom";
-import Text from "../components/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
-import RoomStack from "./roomStack";
+import MatchStack from "./matchStack";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -20,9 +18,8 @@ const UserStack = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator
-        shifting
         sceneAnimationEnabled
-        labeled={false}
+        labeled={true}
         barStyle={{ backgroundColor: mainBackground }}
         sceneAnimationType="shifting"
         screenOptions={({ route }) => ({
@@ -43,30 +40,16 @@ const UserStack = () => {
                   color={buttonPrimaryBackground}
                 />
               );
-            } else if (route.name === "SwipeStack") {
-              icon = focused ? (
-                <Ionicons
-                  name={"md-map"}
-                  size={size}
-                  color={buttonPrimaryBackground}
-                />
-              ) : (
-                <Ionicons
-                  name={"md-map"}
-                  size={size}
-                  color={buttonPrimaryBackground}
-                />
-              );
             } else if (route.name === "RoomStack") {
               icon = focused ? (
                 <Ionicons
-                  name={"md-people"}
+                  name={"md-heart"}
                   size={size}
                   color={buttonPrimaryBackground}
                 />
               ) : (
                 <Ionicons
-                  name={"md-people"}
+                  name={"md-heart"}
                   size={size}
                   color={buttonPrimaryBackground}
                 />
@@ -81,9 +64,16 @@ const UserStack = () => {
           },
         })}
       >
-        <Tab.Screen name="HomeStack" component={HomeStack} />
-        <Tab.Screen name="SwipeStack" component={SwipeStack} />
-        <Tab.Screen name="RoomStack" component={RoomStack} />
+        <Tab.Screen
+          name="HomeStack"
+          component={HomeStack}
+          options={{ title: "Home" }}
+        />
+        <Tab.Screen
+          name="RoomStack"
+          component={MatchStack}
+          options={{ title: "Match" }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );

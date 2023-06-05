@@ -1,10 +1,14 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import React from "react";
 import Home from "../screens/Home";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Theme } from "../../theme";
 import { useTheme } from "@shopify/restyle";
-import { NavigationContainer } from "@react-navigation/native";
+import FilterScreen from "../screens/FilterScreen";
+import Discover from "../screens/Discover";
+import Logo from "../components/Logo";
+import Box from "../components/Box";
+
 const Stack = createStackNavigator();
 const HomeStack = () => {
   const theme = useTheme<Theme>();
@@ -19,7 +23,36 @@ const HomeStack = () => {
         },
       }}
     >
-      <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="Home" component={Home} options={{ title: null }} />
+      <Stack.Screen name="Discover" component={Discover} />
+      <Stack.Screen
+        name="Filters"
+        component={FilterScreen}
+        options={{
+          cardStyleInterpolator: ({ current: { progress } }) => ({
+            cardStyle: {
+              opacity: progress.interpolate({
+                inputRange: [0, 0.5, 1],
+                outputRange: [0, 0.5, 1],
+              }),
+              transform: [
+                {
+                  translateY: progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [200, 0],
+                  }),
+                },
+              ],
+            },
+            overlayStyle: {
+              opacity: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 0.5],
+              }),
+            },
+          }),
+        }}
+      />
     </Stack.Navigator>
   );
 };

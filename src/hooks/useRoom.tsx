@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -24,12 +25,15 @@ interface Room {
 }
 const useRoom = () => {
   const { user } = useAuth();
-  const { filters, setFilters } = useFilters();
-
   const [room, setRoom] = useRecoilState(roomState);
+  const { filters, setFilters } = useFilters(true);
+
   const [code, setCode] = useState();
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
+    setLoading(true);
     const roomsRef = collection(db, "rooms");
 
     const q = query(roomsRef, where("members", "array-contains", user.uid));
@@ -39,12 +43,30 @@ const useRoom = () => {
         const roomData = querySnapshot.docs[0].data() as Room;
         setRoom(roomData);
       }
+      setTimeout(() => {
+        setLoading(false);
+      }, 2000);
     });
 
-    return () => unsubscribe();
+    let unsubscribeDeletion = null;
+    if (room) {
+      // Listen for document deletions
+      const roomDocRef = doc(db, "rooms", room?.code);
+      unsubscribeDeletion = onSnapshot(roomDocRef, (docSnapshot) => {
+        if (!docSnapshot.exists()) {
+          setRoom(null);
+        }
+      });
+    }
+
+    return () => {
+      unsubscribe();
+      unsubscribeDeletion();
+    };
   }, [user]);
 
   const joinRoom = async (roomCode) => {
+    setLoading(true);
     try {
       const roomRef = doc(db, "rooms", roomCode);
 
@@ -57,12 +79,17 @@ const useRoom = () => {
         await updateDoc(roomRef, { members: updatedMembers });
 
         setRoom({ ...roomData, members: updatedMembers });
+        setLoading(false);
       }
-    } catch (error) {}
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   const leaveRoom = async (roomCode) => {
     try {
+      setLoading(true);
+
       const roomRef = doc(db, "rooms", roomCode);
 
       const roomDoc = await getDoc(roomRef);
@@ -73,14 +100,23 @@ const useRoom = () => {
           (member) => member !== user.uid
         );
 
-        await updateDoc(roomRef, { members: updatedMembers });
-
-        setRoom(null);
+        if (roomData.owner === user.uid) {
+          // If the current user is the owner, delete the room document
+          await deleteDoc(roomRef);
+        } else {
+          await updateDoc(roomRef, { members: updatedMembers });
+        }
+        setTimeout(() => {
+          setRoom(null);
+          setLoading(false);
+        }, 2000);
       }
-    } catch (error) {}
+    } catch (error) {
+      // Handle the error
+    }
   };
-
   const createRoom = async () => {
+    setLoading(true);
     try {
       const roomCode = generateCode(); // Generate the room code
 
@@ -93,8 +129,11 @@ const useRoom = () => {
       };
 
       await setDoc(roomRef, roomData);
+      setLoading(false);
       setRoom(roomData);
-    } catch (error) {}
+    } catch (error) {
+      setLoading(false);
+    }
   };
   // Function to generate a random code
   const generateCode = () => {
@@ -120,9 +159,9 @@ const useRoom = () => {
     leaveRoom,
     filters,
     setFilters,
+    setLoading,
+    loading,
   };
 };
 
 export default useRoom;
-
-const styles = StyleSheet.create({});

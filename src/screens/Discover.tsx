@@ -7,14 +7,10 @@ import { useEffect, useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import Layout from "../components/Layout";
 import AnimatedLogo from "../components/AnimatedLogo";
-import { useRecoilValue } from "recoil";
-import { roomState } from "../atoms/atoms";
-import useFilters from "../hooks/useFilters";
 
-const Swipe = ({ navigation }) => {
-  const { filters } = useFilters();
-  const room = useRecoilValue(roomState);
-  const { restaurants, loading, setRestaurants } = useRestaurants(filters);
+const Discover = ({ navigation, route }) => {
+  const { room } = route.params;
+  const { restaurants, loading, setRestaurants } = useRestaurants(room);
   const [swipeLeftList, setSwipeLeftList] = useState<RestaurantDetails[]>([]);
   const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
   const handleSwipe = (direction: string, index: number) => {
@@ -40,7 +36,9 @@ const Swipe = ({ navigation }) => {
       headerRight: () =>
         room ? null : (
           <Box paddingRight="l">
-            <TouchableOpacity onPress={() => navigation.navigate("Filters")}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Filters", { room: null })}
+            >
               <Text variant="body" color="headerButtonText">
                 Filters
               </Text>
@@ -61,7 +59,7 @@ const Swipe = ({ navigation }) => {
           justifyContent="center"
           alignItems="center"
         >
-          {/* {loading ? (
+          {loading ? (
             <AnimatedLogo variant="secondary" />
           ) : restaurants.length > 0 ? (
             restaurants.map((restaurant, index) => (
@@ -74,13 +72,13 @@ const Swipe = ({ navigation }) => {
             ))
           ) : (
             <Text>No restaurants found.</Text>
-          )} */}
+          )}
         </Box>
       </Box>
     </Layout>
   );
 };
 
-export default Swipe;
+export default Discover;
 
 const styles = StyleSheet.create({});

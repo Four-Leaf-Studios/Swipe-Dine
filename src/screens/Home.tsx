@@ -4,14 +4,25 @@ import Layout from "../components/Layout";
 import Box from "../components/Box";
 import Text from "../components/Text";
 import Button from "../components/Button";
-import MaskedViewCustom from "../components/MaskedViewCustom";
 import useAuth from "../hooks/useAuth";
+import useFilters from "../hooks/useFilters";
+import Filters from "../components/Filters";
+import { saveFilters } from "../lib/firebaseHelpers";
 
 const Home = ({ navigation }) => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const { filters, setFilters } = useFilters();
+
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
+      headerLeft: () => (
+        <Box paddingLeft="l">
+          <Text variant="body" color="headerButtonText">
+            Swipe & Dine
+          </Text>
+        </Box>
+      ),
       headerRight: () => (
         <Box paddingRight="l">
           <TouchableOpacity onPress={logout}>
@@ -43,22 +54,39 @@ const Home = ({ navigation }) => {
           padding="s"
           gap="m"
         >
-          <Button variant="home" onPress={() => navigation.navigate("Room")}>
-            <MaskedViewCustom linearGradientVariant={"main"}>
-              <Text variant="body" color="buttonPrimaryText">
-                Create a Room
-              </Text>
-            </MaskedViewCustom>
-          </Button>
-
-          <Button
-            variant="home"
-            onPress={() => navigation.navigate("SwipeScreen")}
+          <Box
+            flexGrow={0.5}
+            width="100%"
+            flexDirection={"column"}
+            justifyContent={"space-between"}
+            alignItems="center"
+            borderColor="orangeDark"
+            padding="m"
+            borderWidth={3}
+            borderRadius={20}
+            gap={"m"}
           >
-            <Text variant="body" color="buttonPrimaryText">
-              Search Restaurants
-            </Text>
-          </Button>
+            <Box width="100%" flex={1} gap={"l"}>
+              <Text variant="body" fontSize={20}>
+                What are you looking for?
+              </Text>
+              {filters && <Filters filters={filters} setFilters={setFilters} />}
+            </Box>
+
+            <Button
+              variant="home"
+              onPress={async () => {
+                saveFilters(filters, user.uid);
+                navigation.navigate("Discover", {
+                  room: null,
+                });
+              }}
+            >
+              <Text variant="body" color="buttonPrimaryText">
+                Find Restaurants
+              </Text>
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Layout>

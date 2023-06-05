@@ -1,18 +1,21 @@
 import { TouchableOpacity } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
 import Button from "../components/Button";
 import Text from "../components/Text";
 import Filters from "../components/Filters";
-import { useRecoilState } from "recoil";
-import { filtersState } from "../atoms/atoms";
 import { saveFilters } from "../lib/firebaseHelpers";
 import useAuth from "../hooks/useAuth";
+import useFilters from "../hooks/useFilters";
+import { useRecoilState } from "recoil";
+import { filtersState, roomFiltersState } from "../atoms/atoms";
 
-const FilterScreen = ({ navigation }) => {
+const FilterScreen = ({ navigation, route }) => {
+  const { room } = route.params;
+  const { filters, setFilters } = useFilters(room);
   const { user } = useAuth();
-  const [filters, setFilters] = useRecoilState(filtersState);
+
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
