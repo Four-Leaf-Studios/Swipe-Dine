@@ -7,8 +7,10 @@ import Layout from "../components/Layout";
 import AnimatedLogo from "../components/AnimatedLogo";
 import MemberItem from "../components/MemberItem";
 import Button from "../components/Button";
+import useAuth from "../hooks/useAuth";
 
 const Room = ({ navigation }) => {
+  const { user } = useAuth();
   const { room, leaveRoom, loading } = useRoom();
   useEffect(() => {
     if (!room) navigation.navigate("Match");
@@ -49,23 +51,48 @@ const Room = ({ navigation }) => {
     );
 
   return (
-    <View>
-      <Text variant="body">Room {room?.code}</Text>
+    <Box
+      width="100%"
+      flexGrow={1}
+      padding="m"
+      flexDirection="column"
+      justifyContent={"space-between"}
+      alignItems="center"
+      gap={"m"}
+    >
+      <Box
+        padding="s"
+        flexDirection={"row"}
+        justifyContent={"center"}
+        alignItems="center"
+      >
+        <Text variant="subheader" color="orangeDark">
+          {room?.code}
+        </Text>
+      </Box>
+
       {room && (
         <FlatList
           data={room?.members}
           keyExtractor={(item) => item}
+          style={{
+            width: "100%",
+          }}
+          numColumns={3}
           renderItem={({ item }) => <MemberItem memberId={item} />}
         />
       )}
 
       <Button
         variant="home"
-        onPress={() => navigation.navigate("Matching", { room: room })}
+        disabled={room?.owner !== user.uid && true}
+        onPress={() => {}}
       >
-        <Text variant="body">Start</Text>
+        <Text variant="subheader" color="white">
+          {room?.owner === user.uid ? "Start" : "Waiting..."}
+        </Text>
       </Button>
-    </View>
+    </Box>
   );
 };
 

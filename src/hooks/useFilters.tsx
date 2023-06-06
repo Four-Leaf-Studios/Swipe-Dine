@@ -9,11 +9,17 @@ interface Filters {
   BBQ: boolean;
   ["Ice Cream"]: boolean;
   ["Fast Food"]: boolean;
+  Bars: boolean;
 }
 
 const useFilters = (room = null) => {
   const { user } = useAuth();
-  const [filters, setFilters] = useState<Filters | null>();
+  const [filters, setFilters] = useState<Filters | null>({
+    BBQ: false,
+    ["Ice Cream"]: false,
+    ["Fast Food"]: false,
+    Bars: false,
+  });
   useEffect(() => {
     const unsubscribe = onSnapshot(
       doc(collection(db, "filters"), user.uid),

@@ -8,10 +8,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 import MatchStack from "./matchStack";
+import useAuth from "../hooks/useAuth";
+import CreateProfile from "../screens/Profile";
 
 const Tab = createMaterialBottomTabNavigator();
 
 const UserStack = () => {
+  const { firstTime } = useAuth();
   const theme = useTheme<Theme>();
   const { mainBackground, buttonPrimaryBackground } = theme.colors;
 
@@ -22,6 +25,7 @@ const UserStack = () => {
         labeled={true}
         barStyle={{ backgroundColor: mainBackground }}
         sceneAnimationType="shifting"
+        initialRouteName={firstTime ? "CreateProfile" : "Home"}
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused }) => {
             let icon;
@@ -73,6 +77,11 @@ const UserStack = () => {
           name="RoomStack"
           component={MatchStack}
           options={{ title: "Match" }}
+        />
+        <Tab.Screen
+          name="CreateProfile"
+          component={CreateProfile}
+          options={{ title: "Profile Creation" }}
         />
       </Tab.Navigator>
     </NavigationContainer>

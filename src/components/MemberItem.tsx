@@ -1,26 +1,46 @@
-import { StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  ImageSourcePropType,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
+import Box from "./Box";
 
 type Props = {
   memberId: string;
 };
 
+interface UserProfile {
+  displayName: string;
+  photoURL: string;
+  email: string;
+}
 const MemberItem = ({ memberId }: Props) => {
-  const [data, setData] = useState<any | null>();
+  const [data, setData] = useState<UserProfile>();
   useEffect(() => {
-    const findMemberData = async (memberId) => {
+    const findMemberData = async (memberId: string) => {
       const userRef = doc(db, "users", memberId);
       const userDoc = await getDoc(userRef);
-      setData(userDoc.data());
+      setData(userDoc.data() as UserProfile);
     };
     findMemberData(memberId);
   }, []);
+
   return (
-    <View>
-      <Text>{data?.email}</Text>
-    </View>
+    <Box margin="s">
+      <Image
+        source={{ uri: data?.photoURL || "" }}
+        style={{
+          width: 80,
+          height: 80,
+          borderRadius: 999,
+        }}
+      />
+    </Box>
   );
 };
 

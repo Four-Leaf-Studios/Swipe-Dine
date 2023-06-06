@@ -27,13 +27,14 @@ const restyleFunctions = composeRestyleFunctions<Theme, RestyleProps>([
 type Props = RestyleProps & {
   onPress: () => void;
   children?: ReactElement;
+  disabled?: boolean;
 };
 
-const Button = ({ onPress, children, ...rest }: Props) => {
+const Button = ({ onPress, children, disabled, ...rest }: Props) => {
   const props = useRestyle(restyleFunctions, rest);
 
   return (
-    <TouchableOpacity onPress={onPress} {...props}>
+    <TouchableOpacity onPress={onPress} {...props} disabled={disabled}>
       {children}
     </TouchableOpacity>
   );

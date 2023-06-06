@@ -34,7 +34,7 @@ type Props = RestyleProps & {
   onChangeText: Function;
   secure?: boolean;
   onEndSubmit?: () => void;
-  color: string;
+  color?: string;
 };
 
 const StyledTextInput = ({

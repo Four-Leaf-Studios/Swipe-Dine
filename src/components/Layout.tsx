@@ -1,4 +1,11 @@
-import { SafeAreaView, StatusBar, StyleSheet, Text, View } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { ReactElement } from "react";
 import LinearGradient from "./LinearGradient";
 import { ResponsiveValue } from "@shopify/restyle";
@@ -23,7 +30,7 @@ export default Layout;
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    flex: 1,
+    height: "100%",
     marginTop: StatusBar.currentHeight,
     position: "relative",
     flexDirection: "column",

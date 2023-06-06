@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import Box from "../components/Box";
 import MaskedViewCustom from "../components/MaskedViewCustom";
@@ -80,7 +80,7 @@ const Signup = ({ navigation }) => {
           flex={
             errors.email || errors.password
               ? 7
-              : { phone: 2, longPhone: 2, tablet: 1.5 }
+              : { phone: 2.5, longPhone: 2, tablet: 1.5 }
           }
           maxHeight={{ phone: "100%", longPhone: "40%", tablet: "100%" }}
           gap={{ phone: "s", tablet: "m" }}
@@ -176,7 +176,7 @@ const Signup = ({ navigation }) => {
         {/* Sign up button */}
         <Box
           width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
-          flex={0.3}
+          flex={0.5}
         >
           <Button
             variant="auth-nav"

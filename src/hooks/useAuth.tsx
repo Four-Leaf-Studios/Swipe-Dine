@@ -4,12 +4,20 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { useContext, useEffect, useMemo } from "react";
-
+import {
+  ref,
+  uploadString,
+  getDownloadURL,
+  uploadBytes,
+  uploadBytesResumable,
+} from "firebase/storage";
 import React, { useState, createContext } from "react";
-import { auth } from "../lib/firebase";
+import { auth, db, storage } from "../lib/firebase";
 import Loading from "../screens/Loading";
+import { collection, doc, updateDoc } from "firebase/firestore";
 interface IAuth {
   user: User | null;
   signUp: (
@@ -23,6 +31,9 @@ interface IAuth {
   logout: () => Promise<void>;
   error: string | null;
   loading: boolean;
+  firstTime: boolean;
+  setFirstTime: Function;
+  saveProfile: (image: string, username: string, user: User) => Promise<void>;
 }
 
 const AuthenticatedUserContext = createContext<IAuth>({
@@ -36,37 +47,45 @@ const AuthenticatedUserContext = createContext<IAuth>({
   logout: async () => {},
   error: null,
   loading: false,
+  firstTime: false,
+  setFirstTime: () => {},
+  saveProfile: async () => {},
 });
 
 export const AuthenticatedUserProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [firstTime, setFirstTime] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
   // Persisting the user.
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // Logged in...
-        setUser(user);
-        setLoading(false);
-      } else {
-        // Not logged in...
-        setUser(null);
-        setLoading(true);
-      }
-      // Temporary, mimics loading data.
-      setTimeout(() => setInitialLoading(false), 4000);
-    });
-  }, []);
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // Check if the user has a profile
+      if (!user.displayName) {
+        setFirstTime(true);
+      } else setFirstTime(false);
+      // Logged in...
+      setUser(user);
+      setLoading(false);
+    } else {
+      // Not logged in...
+      setUser(null);
+      setLoading(true);
+    }
+    // Temporary, mimics loading data.
+    setTimeout(() => setInitialLoading(false), 4000);
+  });
   const signUp = async (email, password) => {
     let errors = {
       email: null,
       password: null,
     };
     setLoading(true);
+
     try {
+      setFirstTime(true);
       await createUserWithEmailAndPassword(auth, email, password);
       return null;
     } catch (error) {
@@ -124,6 +143,48 @@ export const AuthenticatedUserProvider = ({ children }) => {
 
   const logout = async () => signOut(auth);
 
+  const saveProfile = async (imageURI, username, user) => {
+    try {
+      // Convert data URL to a blob
+      const response = await fetch(imageURI);
+      const blob = await response.blob();
+
+      // Create a storage reference with a unique filename
+      const storageRef = ref(
+        storage,
+        `user-profiles/${user.uid}/${Date.now()}`
+      );
+
+      // Upload the blob to Firebase Storage (resumable)
+      const uploadTask = uploadBytesResumable(storageRef, blob);
+
+      // Wait for the upload to complete
+      await new Promise((resolve, reject) => {
+        uploadTask.on("state_changed", null, reject, async () => {
+          // Get the download URL of the uploaded image
+          const imageURL = await getDownloadURL(uploadTask.snapshot.ref);
+
+          // Update the user profile in Firestore
+          const usersRef = collection(db, "users");
+          const usersDocumentRef = doc(usersRef, user.uid);
+          await updateDoc(usersDocumentRef, {
+            displayName: username,
+            photoURL: imageURL,
+          });
+
+          // Update the profile in the authentication system
+          await updateProfile(user, {
+            displayName: username,
+            photoURL: imageURL,
+          });
+
+          console.log("User profile updated successfully");
+        });
+      });
+    } catch (error) {
+      console.log("Error updating user profile:", error);
+    }
+  };
   const memoedValue = useMemo(
     () => ({
       user,
@@ -132,8 +193,11 @@ export const AuthenticatedUserProvider = ({ children }) => {
       loading,
       logout,
       error,
+      firstTime,
+      setFirstTime,
+      saveProfile,
     }),
-    [user, signUp, signIn, loading, error]
+    [user, signUp, signIn, loading, error, firstTime, setFirstTime]
   );
 
   return (

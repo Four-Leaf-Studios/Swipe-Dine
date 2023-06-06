@@ -12,6 +12,7 @@ import Button from "../components/Button";
 import StyledTextInput from "../components/StyledTextInput";
 import useRoom from "../hooks/useRoom";
 import AnimatedLogo from "../components/AnimatedLogo";
+import { useIsFocused } from "@react-navigation/native";
 
 interface Room {
   owner: string;
@@ -19,6 +20,7 @@ interface Room {
   code: string;
 }
 const Match = ({ navigation }) => {
+  const isFocused = useIsFocused();
   const [code, setCode] = useState("");
   const { room, createRoom, joinRoom, loading } = useRoom();
   const handleSubmit = () => {
@@ -27,10 +29,10 @@ const Match = ({ navigation }) => {
   };
 
   useEffect(() => {
-    if (room) {
+    if (room && isFocused) {
       navigation.navigate("Room");
     }
-  }, [room]);
+  }, [room, navigation, isFocused]);
 
   if (loading)
     return (
