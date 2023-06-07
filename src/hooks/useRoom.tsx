@@ -28,6 +28,7 @@ interface Room {
   owner: string;
   members: string[];
   code: string;
+  swiped: Object;
 }
 const useRoom = () => {
   const { user } = useAuth();
@@ -115,6 +116,7 @@ const useRoom = () => {
         owner: user.uid,
         members: [user.uid],
         code: roomCode,
+        swiped: {},
       };
 
       await setDoc(roomRef, roomData);
