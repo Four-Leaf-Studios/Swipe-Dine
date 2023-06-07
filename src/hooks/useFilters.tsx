@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
 import { db } from "../lib/firebase";
-import { collection, doc, onSnapshot } from "firebase/firestore";
-import { useRecoilState } from "recoil";
-import { filtersState, roomFiltersState } from "../atoms/atoms";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
 
 interface Filters {
   BBQ: boolean;
@@ -12,29 +10,48 @@ interface Filters {
   Bars: boolean;
 }
 
-const useFilters = (room = null) => {
+const useFilters = (room = null, initialFilters = null) => {
   const { user } = useAuth();
-  const [filters, setFilters] = useState<Filters | null>({
-    BBQ: false,
-    ["Ice Cream"]: false,
-    ["Fast Food"]: false,
-    Bars: false,
-  });
+  const [filters, setFilters] = useState<Filters | null>(
+    initialFilters
+      ? initialFilters
+      : {
+          BBQ: false,
+          ["Ice Cream"]: false,
+          ["Fast Food"]: false,
+          Bars: false,
+        }
+  );
+
   useEffect(() => {
+    const filtersRef = doc(db, "filters", user.uid);
+
     const unsubscribe = onSnapshot(
-      doc(collection(db, "filters"), user.uid),
+      filtersRef,
       (docSnapshot) => {
         if (docSnapshot.exists()) {
           const filter = room
-            ? docSnapshot.data().room
-            : docSnapshot.data().swipe;
-          if (JSON.stringify(filter) !== JSON.stringify(filters)) {
+            ? docSnapshot.data()?.room
+            : docSnapshot.data()?.swipe;
+          if (
+            filter !== undefined &&
+            JSON.stringify(filter) !== JSON.stringify(filters)
+          ) {
             setFilters(filter);
           }
         } else {
+          // Firestore path does not exist, set default filters here
+          const docRef = doc(db, "filters", user.uid);
+          const data = {
+            swipe: { ...filters },
+            room: { ...filters },
+          };
+          setDoc(docRef, data);
         }
       },
-      (error) => {}
+      (error) => {
+        // Handle error if necessary
+      }
     );
 
     return () => unsubscribe();

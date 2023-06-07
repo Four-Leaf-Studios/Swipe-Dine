@@ -9,10 +9,14 @@ import Layout from "../components/Layout";
 import AnimatedLogo from "../components/AnimatedLogo";
 
 const Discover = ({ navigation, route }) => {
-  const { room } = route.params;
-  const { restaurants, loading, setRestaurants } = useRestaurants(room);
+  const { room, initialFilters } = route.params;
+  const { restaurants, loading, setRestaurants } = useRestaurants(
+    room,
+    initialFilters
+  );
   const [swipeLeftList, setSwipeLeftList] = useState<RestaurantDetails[]>([]);
   const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
+
   const handleSwipe = (direction: string, index: number) => {
     const updatedRestaurants = [...restaurants];
     const restaurant = updatedRestaurants[index];
@@ -37,7 +41,12 @@ const Discover = ({ navigation, route }) => {
         room ? null : (
           <Box paddingRight="l">
             <TouchableOpacity
-              onPress={() => navigation.navigate("Filters", { room: null })}
+              onPress={() =>
+                navigation.navigate("Filters", {
+                  room: null,
+                  initialFilters: initialFilters,
+                })
+              }
             >
               <Text variant="body" color="headerButtonText">
                 Filters
@@ -80,5 +89,3 @@ const Discover = ({ navigation, route }) => {
 };
 
 export default Discover;
-
-const styles = StyleSheet.create({});

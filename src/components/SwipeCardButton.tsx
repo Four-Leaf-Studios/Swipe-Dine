@@ -6,6 +6,9 @@ import LinearGradient from "./LinearGradient";
 import Box from "./Box";
 import Text from "./Text";
 import MaskedViewCustom from "./MaskedViewCustom";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "@shopify/restyle";
+import { Theme } from "../../theme";
 
 type Props = {
   type: string;
@@ -13,9 +16,13 @@ type Props = {
 };
 
 const SwipeCardButton = ({ type, handlePress }: Props) => {
+  const theme = useTheme<Theme>();
+  const { buttonPrimaryBackground } = theme.colors;
   const variants = {
-    x: { variant: "red", value: "X" },
-    heart: { variant: "green", value: "<3" },
+    ["md-close-outline"]: { variant: "red", value: type },
+    ["md-heart-outline"]: { variant: "green", value: type },
+    ["md-heart"]: { variant: "green", value: type },
+    ["md-close"]: { variant: "red", value: type },
   };
 
   const variant = variants[type];
@@ -23,7 +30,7 @@ const SwipeCardButton = ({ type, handlePress }: Props) => {
   const value = variant.value;
 
   return (
-    <Button variant="swipeScreenButton" label="X" onPress={handlePress}>
+    <Button variant="swipeScreenButton" onPress={handlePress}>
       <MaskedViewCustom linearGradientVariant={gradientVariant}>
         <Box
           width={60}
@@ -34,7 +41,7 @@ const SwipeCardButton = ({ type, handlePress }: Props) => {
           borderWidth={3}
           borderRadius={999}
         >
-          <Text variant="subheader">{value}</Text>
+          <Ionicons name={value} size={32} color={buttonPrimaryBackground} />
         </Box>
       </MaskedViewCustom>
     </Button>

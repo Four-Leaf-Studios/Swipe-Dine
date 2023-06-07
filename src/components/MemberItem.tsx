@@ -33,7 +33,11 @@ const MemberItem = ({ memberId }: Props) => {
   return (
     <Box margin="s">
       <Image
-        source={{ uri: data?.photoURL || "" }}
+        source={{
+          uri:
+            data?.photoURL ||
+            "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+        }}
         style={{
           width: 80,
           height: 80,

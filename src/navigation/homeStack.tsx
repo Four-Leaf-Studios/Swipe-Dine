@@ -23,8 +23,16 @@ const HomeStack = () => {
         },
       }}
     >
-      <Stack.Screen name="Home" component={Home} options={{ title: null }} />
-      <Stack.Screen name="Discover" component={Discover} />
+      <Stack.Screen
+        name="Home"
+        component={Home}
+        options={{ title: null, gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="Discover"
+        component={Discover}
+        options={{ gestureEnabled: false }}
+      />
       <Stack.Screen
         name="Filters"
         component={FilterScreen}

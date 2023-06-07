@@ -17,6 +17,12 @@ import { db } from "../lib/firebase";
 import useFilters from "./useFilters";
 import { useRecoilState } from "recoil";
 import { roomState } from "../atoms/atoms";
+import {
+  leaveRoomFirestore,
+  storeGooglePlacesData,
+} from "../lib/firebaseHelpers";
+import { getGooglePlaces } from "../api/google/google";
+import { getUserLocation } from "../utils/geolocation";
 
 interface Room {
   owner: string;
@@ -26,12 +32,10 @@ interface Room {
 const useRoom = () => {
   const { user } = useAuth();
   const [room, setRoom] = useRecoilState(roomState);
-  const { filters, setFilters } = useFilters(true);
-
+  const { filters } = useFilters();
   const [code, setCode] = useState();
-
   const [loading, setLoading] = useState(false);
-
+  const [startBegan, setStartBegan] = useState(false);
   useEffect(() => {
     setLoading(true);
     const roomsRef = collection(db, "rooms");
@@ -86,26 +90,11 @@ const useRoom = () => {
     }
   };
 
-  const leaveRoom = async (roomCode) => {
+  const leaveRoom = async (roomCode, user) => {
     try {
       setLoading(true);
-
-      const roomRef = doc(db, "rooms", roomCode);
-
-      const roomDoc = await getDoc(roomRef);
-
-      const roomData = roomDoc.data() as Room;
-      if (roomData) {
-        const updatedMembers = roomData.members.filter(
-          (member) => member !== user.uid
-        );
-
-        if (roomData.owner === user.uid) {
-          // If the current user is the owner, delete the room document
-          await deleteDoc(roomRef);
-        } else {
-          await updateDoc(roomRef, { members: updatedMembers });
-        }
+      const success = await leaveRoomFirestore(roomCode, user);
+      if (success) {
         setTimeout(() => {
           setRoom(null);
           setLoading(false);
@@ -135,6 +124,42 @@ const useRoom = () => {
       setLoading(false);
     }
   };
+  const handleStart = async () => {
+    setStartBegan(true);
+    if (!room.restaurants) {
+      const location = await getUserLocation(); // Specify your location
+      const keywords = Object.entries(filters ? filters : {})
+        .filter(([_, value]) => value === true)
+        .map(([key]) => key.toLowerCase())
+        .join(" | "); // Specify your keywords
+
+      const results = [];
+      let nextPageToken = null;
+      const placeIds = new Set(); // Set to store unique place IDs
+
+      for (let i = 0; i < 3; i++) {
+        const response = await getGooglePlaces(
+          `${location.latitude},${location.longitude}`,
+          nextPageToken,
+          keywords
+        );
+
+        // Check for duplicates and add only unique places to the results array
+        response.results.forEach((place) => {
+          if (!placeIds.has(place.place_id)) {
+            placeIds.add(place.place_id);
+            results.push(place);
+          }
+        });
+
+        nextPageToken = response.nextPageToken;
+      }
+
+      const roomCode = room.code; // Specify your room code
+      await storeGooglePlacesData(roomCode, results);
+    }
+  };
+
   // Function to generate a random code
   const generateCode = () => {
     const length = 6;
@@ -158,9 +183,10 @@ const useRoom = () => {
     joinRoom,
     leaveRoom,
     filters,
-    setFilters,
     setLoading,
     loading,
+    handleStart,
+    startBegan,
   };
 };
 

@@ -5,6 +5,8 @@ import { useTheme } from "@shopify/restyle";
 import Room from "../screens/Room";
 import Match from "../screens/Match";
 import Discover from "../screens/Discover";
+import FilterScreen from "../screens/FilterScreen";
+import MatchDiscover from "../screens/MatchDiscover";
 
 const Stack = createStackNavigator();
 
@@ -32,8 +34,13 @@ const MatchStack = () => {
         options={{ gestureEnabled: false }}
       />
       <Stack.Screen
-        name="Matching"
-        component={Discover}
+        name="MatchDiscover"
+        component={MatchDiscover}
+        options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="RoomFilters"
+        component={FilterScreen}
         options={{ gestureEnabled: false }}
       />
     </Stack.Navigator>

@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import { getGooglePlaces } from "../api/google/google";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import { getUserLocation } from "../utils/geolocation";
-import { useRecoilValue } from "recoil";
-import { filtersState, roomFiltersState } from "../atoms/atoms";
 import useFilters from "./useFilters";
 
-const useRestaurants = (room) => {
-  const { filters } = useFilters(room);
+const useRestaurants = (room, initialFilters) => {
+  const { filters } = useFilters(room, initialFilters);
   const [restaurants, setRestaurants] = useState<RestaurantDetails[]>([]);
   const [pageToken, setPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -47,22 +45,15 @@ const useRestaurants = (room) => {
           .filter(([_, value]) => value === true)
           .map(([key]) => key.toLowerCase())
           .join(" | ");
-        //fetchRestaurants(filterString);
-        console.log(
-          "Filters : ",
-          filters,
-          "FILTERS UPDATED: ",
-          filtersUpdated,
-          "PREV FILTERS: ",
-          prevFilters,
-          filtersUpdated,
-          "LENGTH:",
-          restaurants.length
-        );
+        fetchRestaurants(filterString);
       }
     }
   }, [restaurants, filtersUpdated, filters]);
 
+  // Update prevFilters when filters change
+  useEffect(() => {
+    setPrevFilters(filters);
+  }, [filters]);
   return { restaurants, loading, setRestaurants };
 };
 

@@ -20,7 +20,17 @@ type Props = {
   borderRadius?: number;
 };
 
-const MaskedViewCustom = ({ children, linearGradientVariant }: Props) => {
+interface MaskedViewProps {
+  maskElement: React.ReactElement<
+    any,
+    string | React.JSXElementConstructor<any>
+  >;
+}
+
+const MaskedViewCustom: React.FC<Props> = ({
+  children,
+  linearGradientVariant,
+}) => {
   return (
     <MaskedView maskElement={children}>
       <LinearGradient variant={linearGradientVariant} gradient />

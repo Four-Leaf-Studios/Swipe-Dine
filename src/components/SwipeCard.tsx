@@ -4,8 +4,9 @@ import {
   PanResponder,
   Pressable,
   StyleSheet,
+  useAnimatedValue,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Card from "./Card";
 import Box from "./Box";
 import Text from "./Text";
@@ -32,15 +33,20 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
   } = useRestaurantDetails(restaurant?.place_id || "");
   const [currentPhoto, setCurrentPhoto] = useState(0);
   const [pan] = useState(new Animated.ValueXY());
-  const [cardOpacity] = useState(new Animated.Value(1));
+  const cardOpacity = useAnimatedValue(1);
+  const indicators = useAnimatedValue(0);
+  const [rotate, setRotate] = useState("0 deg");
 
   const handleSwipeLeft = () => {
+    setRotate("-20 deg");
+
     Animated.timing(pan, {
       toValue: { x: -500, y: 0 },
       duration: 200,
       useNativeDriver: false,
     }).start(() => handleSwipe("left", index));
   };
+
   const handleViewDetails = () => {};
   const handleSwipeRight = () => {
     Animated.timing(pan, {
@@ -48,18 +54,46 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
       duration: 200,
       useNativeDriver: false,
     }).start(() => handleSwipe("right", index));
+    setRotate("20 deg");
   };
 
   const handlePanResponderMove = (_, gesture) => {
     pan.setValue({ x: gesture.dx, y: 0 });
   };
 
+  const handlePanResponderGrant = () => {
+    Animated.timing(indicators, {
+      toValue: 1,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const handlePanResponderTerminate = () => {
+    Animated.timing(indicators, {
+      toValue: 0,
+      useNativeDriver: false,
+    }).start();
+  };
+
   const handlePanResponderRelease = (_, gesture) => {
+    Animated.timing(indicators, {
+      toValue: 0,
+      useNativeDriver: false,
+    }).start();
     if (gesture.dx > 120) {
-      handleSwipeRight();
+      Animated.timing(pan, {
+        toValue: { x: 500, y: 0 },
+        useNativeDriver: false,
+      }).start(() => handleSwipe("right", index));
     } else if (gesture.dx < -120) {
-      handleSwipeLeft();
+      Animated.timing(pan, {
+        toValue: { x: -500, y: 0 },
+        duration: 200,
+        useNativeDriver: false,
+      }).start(() => handleSwipe("left", index));
     } else {
+      setRotate("0 deg");
+
       Animated.spring(pan, {
         toValue: { x: 0, y: 0 },
         useNativeDriver: false,
@@ -70,12 +104,20 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
+    onPanResponderGrant: handlePanResponderGrant,
     onPanResponderMove: handlePanResponderMove,
     onPanResponderRelease: handlePanResponderRelease,
+    onPanResponderTerminate: handlePanResponderTerminate,
   });
 
   const cardStyle = {
-    transform: [{ translateX: pan.x }, { translateY: pan.y }],
+    transform: [
+      { translateX: pan.x },
+      { translateY: pan.y },
+      {
+        rotate: rotate,
+      },
+    ],
     opacity: cardOpacity,
   };
 
@@ -91,13 +133,22 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
 
   const handleNextPhoto = () => {
     setCurrentPhoto((prevPhoto) => {
-      if (prevPhoto === photos.length - 1) {
+      if (prevPhoto === restaurant?.photos?.length - 1) {
         return prevPhoto;
       } else {
         return prevPhoto + 1;
       }
     });
   };
+
+  // Memoize the getPhotoURL function
+  const photoURL = useMemo(() => {
+    if (restaurant?.photos?.length > 0) {
+      return getPhotoURL(restaurant.photos[currentPhoto].photo_reference);
+    } else {
+      return image_url;
+    }
+  }, [restaurant?.photos, currentPhoto, image_url]);
 
   return (
     <Animated.View
@@ -175,13 +226,13 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
               zIndex="z-10"
             >
               <Text variant="subheader" color="white">
-                {name}
+                {restaurant.name}
               </Text>
               <Text variant="body" color="gray">
-                Rating: {rating} / 5
+                Rating: {restaurant.rating} / 5
               </Text>
               <Text variant="body" color="gray">
-                {vicinity}
+                {restaurant.vicinity}
               </Text>
             </Box>
 
@@ -199,10 +250,7 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
           </Box>
           <Image
             source={{
-              uri:
-                photos.length > 0
-                  ? getPhotoURL(photos[currentPhoto].photo_reference)
-                  : image_url,
+              uri: photoURL,
             }}
             alt="Restaurant Photo"
             style={styles.image}
@@ -219,8 +267,78 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
             paddingBottom="l"
             zIndex="z-10"
           >
-            <SwipeCardButton type="x" handlePress={handleSwipeLeft} />
-            <SwipeCardButton type="heart" handlePress={handleSwipeRight} />
+            <SwipeCardButton
+              type="md-close-outline"
+              handlePress={handleSwipeLeft}
+            />
+            <SwipeCardButton
+              type="md-heart-outline"
+              handlePress={handleSwipeRight}
+            />
+          </Box>
+
+          {/* Indicators */}
+          <Box
+            position="absolute"
+            width="100%"
+            height="90%"
+            flexDirection="row"
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            padding="s"
+          >
+            <Animated.View
+              style={{
+                width: 60,
+                height: 60,
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 3,
+                borderRadius: 999,
+                backgroundColor: "white",
+                opacity: indicators.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 0.7],
+                }),
+                transform: [
+                  {
+                    translateX: indicators.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [-500, 0],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <SwipeCardButton type="md-close" handlePress={() => {}} />
+            </Animated.View>
+            <Animated.View
+              style={{
+                width: 60,
+                height: 60,
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                borderWidth: 3,
+                borderRadius: 999,
+                backgroundColor: "white",
+                opacity: indicators.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 0.7],
+                }),
+                transform: [
+                  {
+                    translateX: indicators.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [500, 0],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <SwipeCardButton type="md-heart" handlePress={() => {}} />
+            </Animated.View>
           </Box>
           <LinearGradient variant="shadow" gradient />
         </>

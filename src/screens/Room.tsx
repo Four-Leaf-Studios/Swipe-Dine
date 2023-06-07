@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, FlatList } from "react-native";
+import { TouchableOpacity, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
 import Box from "../components/Box";
 import Text from "../components/Text";
@@ -8,13 +8,25 @@ import AnimatedLogo from "../components/AnimatedLogo";
 import MemberItem from "../components/MemberItem";
 import Button from "../components/Button";
 import useAuth from "../hooks/useAuth";
+import useFilters from "../hooks/useFilters";
+import { getUserLocation } from "../utils/geolocation";
+import { getGooglePlaces } from "../api/google/google";
+import { storeGooglePlacesData } from "../lib/firebaseHelpers";
 
 const Room = ({ navigation }) => {
   const { user } = useAuth();
-  const { room, leaveRoom, loading } = useRoom();
+  const { room, leaveRoom, loading, handleStart, startBegan } = useRoom();
+
   useEffect(() => {
     if (!room) navigation.navigate("Match");
   }, [room]);
+
+  useEffect(() => {
+    if (room?.restaurants)
+      navigation.navigate("MatchDiscover", {
+        room: room,
+      });
+  }, [room?.restaurants]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -23,7 +35,7 @@ const Room = ({ navigation }) => {
         <Box paddingLeft="l">
           <TouchableOpacity
             onPress={async () => {
-              leaveRoom(room?.code);
+              leaveRoom(room?.code, user.uid);
             }}
           >
             <Text variant="body" color="headerButtonText">
@@ -32,6 +44,20 @@ const Room = ({ navigation }) => {
           </TouchableOpacity>
         </Box>
       ),
+      headerRight: () =>
+        room.owner === user.uid ? (
+          <Box paddingRight="l">
+            <TouchableOpacity
+              onPress={async () =>
+                navigation.navigate("RoomFilters", { room: true })
+              }
+            >
+              <Text variant="body" color="headerButtonText">
+                Filters
+              </Text>
+            </TouchableOpacity>
+          </Box>
+        ) : null,
     });
   }, []);
 
@@ -85,8 +111,8 @@ const Room = ({ navigation }) => {
 
       <Button
         variant="home"
-        disabled={room?.owner !== user.uid && true}
-        onPress={() => {}}
+        disabled={room?.owner !== user.uid && !startBegan && true}
+        onPress={handleStart}
       >
         <Text variant="subheader" color="white">
           {room?.owner === user.uid ? "Start" : "Waiting..."}

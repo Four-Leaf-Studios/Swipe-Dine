@@ -10,6 +10,7 @@ import { Theme } from "../../theme";
 import MatchStack from "./matchStack";
 import useAuth from "../hooks/useAuth";
 import CreateProfile from "../screens/Profile";
+import Box from "../components/Box";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -62,7 +63,7 @@ const UserStack = () => {
             if (!focused) return icon;
             return (
               <MaskedViewCustom linearGradientVariant={"main"}>
-                {icon}
+                <Box>{icon}</Box>
               </MaskedViewCustom>
             );
           },

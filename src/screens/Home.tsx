@@ -75,10 +75,11 @@ const Home = ({ navigation }) => {
 
             <Button
               variant="home"
-              onPress={async () => {
-                saveFilters(filters, user.uid);
+              onPress={() => {
+                saveFilters(null, filters, user.uid);
                 navigation.navigate("Discover", {
                   room: null,
+                  initialFilters: filters,
                 });
               }}
             >
