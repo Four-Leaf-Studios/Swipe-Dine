@@ -23,14 +23,14 @@ interface Props {
 }
 
 const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
-  const {
-    photos = [],
-    name = "",
-    rating,
-    price_level,
-    icon_mask_base_uri: image_url,
-    vicinity,
-  } = useRestaurantDetails(restaurant?.place_id || "");
+  // const {
+  //   photos = [],
+  //   name = "",
+  //   rating,
+  //   price_level,
+  //   icon_mask_base_uri: image_url,
+  //   vicinity,
+  // } = useRestaurantDetails(restaurant?.place_id || "");
   const [currentPhoto, setCurrentPhoto] = useState(0);
   const [pan] = useState(new Animated.ValueXY());
   const cardOpacity = useAnimatedValue(1);
@@ -146,9 +146,9 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
     if (restaurant?.photos?.length > 0) {
       return getPhotoURL(restaurant.photos[currentPhoto].photo_reference);
     } else {
-      return image_url;
+      return "";
     }
-  }, [restaurant?.photos, currentPhoto, image_url]);
+  }, [restaurant?.photos, currentPhoto]);
 
   return (
     <Animated.View
@@ -177,7 +177,7 @@ const SwipeCard = ({ restaurant, handleSwipe, index }: Props) => {
               padding="l"
               gap="m"
             >
-              {photos?.map((photo, index) => (
+              {restaurant.photos?.map((photo, index) => (
                 <Box
                   key={photo.photo_reference}
                   flex={1}

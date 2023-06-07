@@ -11,6 +11,7 @@ import MatchStack from "./matchStack";
 import useAuth from "../hooks/useAuth";
 import CreateProfile from "../screens/Profile";
 import Box from "../components/Box";
+import Matched from "../screens/Matched";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -90,5 +91,3 @@ const UserStack = () => {
 };
 
 export default UserStack;
-
-const styles = StyleSheet.create({});

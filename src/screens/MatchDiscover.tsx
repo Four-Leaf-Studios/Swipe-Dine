@@ -72,10 +72,13 @@ const MatchDiscover = ({ navigation, route }) => {
 
   useEffect(() => {
     const matched = checkAllMembersSwiped(room);
-    if (matched)
-      navigation.navigate("Matched", { restaurant: restaurants[matched] });
+    if (matched) {
+      const matchedRestaurant = room.restaurants.find(
+        (restaurant) => restaurant.place_id === matched
+      );
+      navigation.navigate("Matched", { restaurant: matchedRestaurant });
+    }
   }, [room.swiped]);
-
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,

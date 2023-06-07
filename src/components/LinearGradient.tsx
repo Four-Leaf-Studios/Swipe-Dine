@@ -78,7 +78,7 @@ const LinearGradient = ({ children, gradient, ...rest }: Props) => {
             height: "100%",
           }}
         >
-          {children}
+          <>{children}</>
         </ExpoLinearGradient>
       )}
     </Box>
