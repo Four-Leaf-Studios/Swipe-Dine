@@ -1,5 +1,5 @@
 import { Image, Linking, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
 import Text from "../components/Text";
@@ -13,10 +13,27 @@ import useRestaurantDetails from "../hooks/useRestaurantDetails";
 
 const Matched = ({ navigation, route }) => {
   const theme = useTheme<Theme>();
-  const { darkGray } = theme.colors;
-  const { restaurant } = route.params;
-  const restaurantDetails = useRestaurantDetails(restaurant.place_id);
+  const { darkGray, orangeDark } = theme.colors;
+  const { restaurant: restaurantPassed } = route.params;
+  const restaurantDetails = useRestaurantDetails(restaurantPassed.place_id);
+  const [restaurant, setRestaurant] = useState(
+    restaurantDetails ? restaurantDetails : restaurantPassed
+  );
 
+  useEffect(() => {
+    if (
+      restaurantDetails &&
+      JSON.stringify(restaurantDetails) !== JSON.stringify(restaurant)
+    ) {
+      setRestaurant(restaurantDetails);
+    }
+  }, [restaurantDetails]);
+  useEffect(() => {
+    navigation.setOptions({
+      ...navigation.options,
+      title: restaurant.name,
+    });
+  }, []);
   //const restaurantDetails = useRestaurantDetails(restaurant.place_id);
   const handleNavigatePressed = () => {
     const address = restaurant?.vicinity
@@ -51,12 +68,7 @@ const Matched = ({ navigation, route }) => {
   return (
     <Layout variant="main">
       <Box width="100%" flex={1}>
-        <Box position="absolute" right={0} top={0} padding="m" zIndex={"z-30"}>
-          <TouchableOpacity onPress={() => {}}>
-            <Ionicons name="md-star" size={35} color={darkGray} />
-          </TouchableOpacity>
-        </Box>
-        <Box width="100%" flex={0.4}>
+        <Box position="relative" width="100%" flex={0.6}>
           <Image
             source={{
               uri:
@@ -66,6 +78,53 @@ const Matched = ({ navigation, route }) => {
             }}
             style={{ width: "100%", height: "100%", resizeMode: "cover" }}
           />
+          <Box
+            position="absolute"
+            width="100%"
+            height="90%"
+            flexDirection="row"
+            justifyContent={"space-between"}
+            alignItems="flex-end"
+            padding="l"
+          >
+            <TouchableOpacity onPress={handleWebsitePressed}>
+              <Ionicons
+                name="globe-outline"
+                size={50}
+                color={orangeDark}
+                style={{
+                  borderWidth: 2,
+                  borderRadius: 10,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "white",
+                  borderColor: "white",
+                  overflow: "hidden",
+                  shadowColor: "black",
+                  shadowRadius: 8,
+                  shadowOpacity: 0.5,
+                }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleNavigatePressed}>
+              <Ionicons
+                name="md-car"
+                size={50}
+                color={orangeDark}
+                style={{
+                  borderWidth: 2,
+                  borderRadius: 10,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "white",
+                  overflow: "hidden",
+                  borderColor: "white",
+                }}
+              />
+            </TouchableOpacity>
+          </Box>
         </Box>
 
         <Box
@@ -73,12 +132,14 @@ const Matched = ({ navigation, route }) => {
           bottom={0}
           left={0}
           width="100%"
-          height="65%"
-          borderTopLeftRadius={30}
-          borderTopRightRadius={30}
+          height="45%"
+          borderTopLeftRadius={20}
+          borderTopRightRadius={20}
           shadowColor={"black"}
-          shadowRadius={20}
+          shadowRadius={8}
+          shadowOffset={{ width: 0, height: -4 }}
           shadowOpacity={0.5}
+          elevation={4}
           backgroundColor={"white"}
           flexDirection={"column"}
           justifyContent={"flex-start"}
@@ -97,51 +158,14 @@ const Matched = ({ navigation, route }) => {
             paddingRight="l"
             gap="l"
           >
-            <TouchableOpacity onPress={handleWebsitePressed}>
-              <Ionicons
-                name="globe-outline"
-                size={60}
-                color={"white"}
-                style={{
-                  borderWidth: 2,
-                  borderRadius: 10,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: darkGray,
-                  borderColor: darkGray,
-                  overflow: "hidden",
-                }}
-              />
-            </TouchableOpacity>
             <Text
               variant="body"
               color="orangeDark"
               textAlign={"center"}
               style={{ flex: 1 }}
             >
-              {restaurant?.name
-                ? restaurant.name
-                : "HONG KONG CHINESE RESTAURANT"}
+              Reviews
             </Text>
-
-            <TouchableOpacity onPress={handleNavigatePressed}>
-              <Ionicons
-                name="md-car"
-                size={60}
-                color={"white"}
-                style={{
-                  borderWidth: 2,
-                  borderRadius: 10,
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: darkGray,
-                  overflow: "hidden",
-                  borderColor: darkGray,
-                }}
-              />
-            </TouchableOpacity>
           </Box>
           <Box
             width="100%"

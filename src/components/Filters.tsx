@@ -6,7 +6,6 @@ import Box from "./Box";
 
 const Filters = ({ filters, setFilters }) => {
   const filterKeys = Object.keys(filters ? filters : {}); // Accessing the keys of filters
-
   return (
     <FlatList
       data={filterKeys} // Using the keys as the data source

@@ -18,26 +18,30 @@ const Discover = ({ navigation, route }) => {
   const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
 
   const handleSwipe = useCallback((direction: string, place_id: string) => {
-    const updatedRestaurants = [...restaurants];
-    const restaurantIndex = updatedRestaurants.findIndex(
-      (restaurant) => restaurant.place_id === place_id
-    );
+    setRestaurants((prevRestaurants) => {
+      const restaurantIndex = prevRestaurants.findIndex(
+        (restaurant) => restaurant.place_id === place_id
+      );
 
-    if (restaurantIndex !== -1) {
-      const restaurant = updatedRestaurants[restaurantIndex];
+      if (restaurantIndex !== -1) {
+        const updatedRestaurants = [...prevRestaurants];
+        const restaurant = updatedRestaurants[restaurantIndex];
 
-      // Remove the restaurant from the restaurants list
-      updatedRestaurants.splice(restaurantIndex, 1);
+        // Remove the restaurant from the restaurants list
+        updatedRestaurants.splice(restaurantIndex, 1);
 
-      if (direction === "left") {
-        setSwipeLeftList((prevList) => [...prevList, restaurant]);
+        if (direction === "left") {
+          setSwipeLeftList((prevList) => [...prevList, restaurant]);
+        }
+        if (direction === "right") {
+          setSwipeRightList((prevList) => [...prevList, restaurant]);
+        }
+
+        return updatedRestaurants;
       }
-      if (direction === "right") {
-        setSwipeRightList((prevList) => [...prevList, restaurant]);
-      }
 
-      setRestaurants(updatedRestaurants);
-    }
+      return prevRestaurants;
+    });
   }, []);
 
   useEffect(() => {

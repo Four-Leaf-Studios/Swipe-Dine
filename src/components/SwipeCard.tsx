@@ -5,8 +5,9 @@ import {
   Pressable,
   StyleSheet,
   useAnimatedValue,
+  useWindowDimensions,
 } from "react-native";
-import React, { memo, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import Card from "./Card";
 import Box from "./Box";
 import Text from "./Text";
@@ -28,29 +29,35 @@ const SwipeCard = memo(
       restaurantPassed?.place_id,
       discover
     );
-    const [restaurant, setRestaurant] = useState(
-      restaurantDetails ? restaurantDetails : restaurantPassed
-    );
+    const [restaurant, setRestaurant] = useState(restaurantPassed);
+
+    useEffect(() => {
+      if (
+        restaurantDetails &&
+        JSON.stringify(restaurant) !== JSON.stringify(restaurantDetails)
+      )
+        setRestaurant(restaurantDetails);
+    }, [restaurantDetails]);
+
     const [currentPhoto, setCurrentPhoto] = useState(0);
     const [pan] = useState(new Animated.ValueXY());
     const cardOpacity = useAnimatedValue(1);
     const indicators = useAnimatedValue(0);
     const [rotate, setRotate] = useState("0 deg");
-
+    const windowWidth = useWindowDimensions().width;
     const handleSwipeLeft = () => {
       setRotate("-20 deg");
 
       Animated.timing(pan, {
-        toValue: { x: -500, y: 0 },
+        toValue: { x: -windowWidth - 150, y: 0 },
         duration: 200,
         useNativeDriver: false,
       }).start(() => handleSwipe("left", restaurant.place_id));
     };
-
     const handleViewDetails = () => {};
     const handleSwipeRight = () => {
       Animated.timing(pan, {
-        toValue: { x: 500, y: 0 },
+        toValue: { x: windowWidth + 150, y: 0 },
         duration: 200,
         useNativeDriver: false,
       }).start(() => handleSwipe("right", restaurant.place_id));
@@ -130,7 +137,6 @@ const SwipeCard = memo(
         }
       });
     };
-    console.log(restaurant.name);
     const handleNextPhoto = () => {
       setCurrentPhoto((prevPhoto) => {
         if (prevPhoto === restaurant?.photos?.length - 1) {

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Dimensions } from "react-native";
 
 const SECONDARY_API_KEY = "AIzaSyCrY8u4ZvjdQNOe2Z1U1hz0wr5G269vs9E";
 const API_KEY = "AIzaSyBLB4ZE2E8SRTeZ2f9OtY1fXGJ8cdIlvro";
@@ -56,8 +57,10 @@ const getRestaurantDetailsFromGooglePlaces = async (placeId: string) => {
 
 const getPhotoURL = (photoReference) => {
   const baseUrl = "https://maps.googleapis.com/maps/api/place/photo";
-  const maxWidth = 400;
-  const url = `${baseUrl}?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${SECONDARY_API_KEY}`;
+  const { width, height } = Dimensions.get("window");
+  const maxWidth = Math.round(width * 0.9);
+  const maxHeight = Math.round(height * 0.9);
+  const url = `${baseUrl}?maxwidth=${maxWidth}&maxheight=${maxHeight}&photoreference=${photoReference}&key=${SECONDARY_API_KEY}`;
   return url;
 };
 

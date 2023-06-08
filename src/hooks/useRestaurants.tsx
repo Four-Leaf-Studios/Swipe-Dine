@@ -39,14 +39,11 @@ const useRestaurants = (room, initialFilters) => {
       }
     };
     if ((restaurants.length === 0 || filtersUpdated) && filters) {
-      if (filtersUpdated && initialRender) setInitialRender(false);
-      else {
-        const filterString = Object.entries(filters ? filters : {})
-          .filter(([_, value]) => value === true)
-          .map(([key]) => key.toLowerCase())
-          .join(" | ");
-        fetchRestaurants(filterString);
-      }
+      const filterString = Object.entries(filters ? filters : {})
+        .filter(([_, value]) => value === true)
+        .map(([key]) => key.toLowerCase())
+        .join(" | ");
+      fetchRestaurants(filterString);
     }
   }, [restaurants, filtersUpdated, filters]);
 

@@ -15,8 +15,21 @@ const MatchDiscover = ({ navigation, route }) => {
   const [restaurants, setRestaurants] = useState(room?.restaurants);
 
   const handleSwipe = useCallback(async (direction, place_id) => {
-    const updatedRestaurants = [...restaurants];
-    updatedRestaurants.filter((restaurant) => restaurant.place_id !== place_id);
+    setRestaurants((prevRestaurants) => {
+      const restaurantIndex = prevRestaurants.findIndex(
+        (restaurant) => restaurant.place_id === place_id
+      );
+
+      if (restaurantIndex !== -1) {
+        const updatedRestaurants = [...prevRestaurants];
+        const restaurant = updatedRestaurants[restaurantIndex];
+        // Remove the restaurant from the restaurants list
+        updatedRestaurants.splice(restaurantIndex, 1);
+        return updatedRestaurants;
+      }
+
+      return prevRestaurants;
+    });
 
     if (direction === "left") {
       // Handle left swipe logic
@@ -41,8 +54,6 @@ const MatchDiscover = ({ navigation, route }) => {
         await updateDoc(roomDocRef, { swiped: updatedSwiped });
       }
     }
-
-    setRestaurants(updatedRestaurants);
   }, []);
 
   useEffect(() => {

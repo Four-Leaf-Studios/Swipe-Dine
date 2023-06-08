@@ -63,7 +63,7 @@ const AnimatedLogo = ({ ...rest }: Props) => {
       }}
     >
       <Box
-        width={{ phone: 250, tablet: 3 }}
+        width={{ phone: 250, tablet: 350 }}
         height={{ phone: 100, tablet: 150 }}
         flexDirection="row"
         justifyContent="center"

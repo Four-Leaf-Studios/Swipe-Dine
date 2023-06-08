@@ -1,7 +1,6 @@
-import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import Box from "../components/Box";
-import MaskedViewCustom from "../components/MaskedViewCustom";
 import StyledTextInput from "../components/StyledTextInput";
 import Button from "../components/Button";
 import Text from "../components/Text";
@@ -14,7 +13,6 @@ import {
 } from "expo-apple-authentication";
 import { SocialIcon } from "react-native-elements";
 import useAuth from "../hooks/useAuth";
-
 const Signup = ({ navigation }) => {
   const { signUp } = useAuth();
   const [email, setEmail] = useState("");
@@ -80,7 +78,7 @@ const Signup = ({ navigation }) => {
           flex={
             errors.email || errors.password
               ? 7
-              : { phone: 2.5, longPhone: 2, tablet: 1.5 }
+              : { phone: 2.5, longPhone: 2, tablet: 2 }
           }
           maxHeight={{ phone: "100%", longPhone: "40%", tablet: "100%" }}
           gap={{ phone: "s", tablet: "m" }}
