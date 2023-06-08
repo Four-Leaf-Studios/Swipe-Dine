@@ -128,37 +128,51 @@ const useRoom = () => {
   };
   const handleStart = async () => {
     setStartBegan(true);
+    setLoading(true);
     if (!room.restaurants) {
-      const location = await getUserLocation(); // Specify your location
+      const location = await getUserLocation();
       const keywords = Object.entries(filters ? filters : {})
         .filter(([_, value]) => value === true)
         .map(([key]) => key.toLowerCase())
-        .join(" | "); // Specify your keywords
+        .join(" | ");
 
       const results = [];
       let nextPageToken = null;
-      const placeIds = new Set(); // Set to store unique place IDs
+      const placeIds = new Set();
 
-      for (let i = 0; i < 3; i++) {
+      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+      const fetchPage = async () => {
         const response = await getGooglePlaces(
           `${location.latitude},${location.longitude}`,
           nextPageToken,
           keywords
         );
 
-        // Check for duplicates and add only unique places to the results array
-        response.results.forEach((place) => {
-          if (!placeIds.has(place.place_id)) {
-            placeIds.add(place.place_id);
-            results.push(place);
+        if (response.results) {
+          response.results.forEach((place) => {
+            if (!placeIds.has(place.place_id)) {
+              placeIds.add(place.place_id);
+              results.push(place);
+            }
+          });
+
+          nextPageToken = response.nextPageToken;
+
+          if (nextPageToken) {
+            await delay(1000); // Delay between API calls (2 seconds)
+            await fetchPage(); // Call the next page recursively
+          } else {
+            const roomCode = room.code;
+            await storeGooglePlacesData(roomCode, results);
+            setLoading(false);
           }
-        });
+        } else {  
+          console.error(response.error);
+        }
+      };
 
-        nextPageToken = response.nextPageToken;
-      }
-
-      const roomCode = room.code; // Specify your room code
-      await storeGooglePlacesData(roomCode, results);
+      await fetchPage();
     }
   };
 

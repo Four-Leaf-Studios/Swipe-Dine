@@ -1,49 +1,50 @@
 import { TouchableOpacity } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
 import SwipeCard from "../components/SwipeCard";
 import Text from "../components/Text";
 import { leaveRoomFirestore } from "../lib/firebaseHelpers";
 import useAuth from "../hooks/useAuth";
-import useRoom from "../hooks/useRoom";
-import { collection, doc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 
 const MatchDiscover = ({ navigation, route }) => {
   const { user } = useAuth();
   const { room } = route.params;
   const [restaurants, setRestaurants] = useState(room?.restaurants);
-  const handleSwipe = async (direction: string, index: number) => {
-    const updatedRestaurants = restaurants.filter((_, i) => i !== index);
-    // Remove the restaurant from the restaurants list
+
+  const handleSwipe = useCallback(async (direction, place_id) => {
+    const updatedRestaurants = [...restaurants];
+    updatedRestaurants.filter((restaurant) => restaurant.place_id !== place_id);
 
     if (direction === "left") {
+      // Handle left swipe logic
     }
     if (direction === "right") {
-      const swipedPlaceId = restaurants[index].place_id;
-      const updatedSwiped = { ...room.swiped };
+      const roomDocRef = doc(collection(db, "rooms"), room.code);
+      const roomSnapshot = await getDoc(roomDocRef);
+      const roomData = roomSnapshot.data();
 
-      if (updatedSwiped.hasOwnProperty(swipedPlaceId)) {
-        // Place ID already exists in swiped, add user to existing array
-        updatedSwiped[swipedPlaceId] = [
-          ...updatedSwiped[swipedPlaceId],
-          user.uid,
-        ];
-      } else {
-        // Place ID doesn't exist in swiped, create a new array with the user
-        updatedSwiped[swipedPlaceId] = [user.uid];
+      if (roomData) {
+        const updatedSwiped = { ...roomData.swiped };
+
+        if (updatedSwiped.hasOwnProperty(place_id)) {
+          // Place ID already exists in swiped, add user to existing array
+          updatedSwiped[place_id] = [...updatedSwiped[place_id], user.uid];
+        } else {
+          // Place ID doesn't exist in swiped, create a new array with the user
+          updatedSwiped[place_id] = [user.uid];
+        }
+
+        // Update the swiped field in the Firestore document
+        await updateDoc(roomDocRef, { swiped: updatedSwiped });
       }
-
-      // Update the swiped field in the Firestore document
-      // Replace 'roomDocRef' with the reference to the Firestore document
-      const roomCollectionRef = collection(db, "rooms");
-      const roomDocRef = doc(roomCollectionRef, room.code);
-      await updateDoc(roomDocRef, { swiped: updatedSwiped });
     }
 
     setRestaurants(updatedRestaurants);
-  };
+  }, []);
+
   useEffect(() => {
     if (!room) navigation.navigate("Match");
   }, [room]);
@@ -76,9 +77,11 @@ const MatchDiscover = ({ navigation, route }) => {
       const matchedRestaurant = room.restaurants.find(
         (restaurant) => restaurant.place_id === matched
       );
-      navigation.navigate("Matched", { restaurant: matchedRestaurant });
+      if (matchedRestaurant)
+        navigation.navigate("Matched", { restaurant: matchedRestaurant });
     }
   }, [room.swiped]);
+
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
@@ -111,10 +114,10 @@ const MatchDiscover = ({ navigation, route }) => {
         >
           {restaurants.map((restaurant, index) => (
             <SwipeCard
-              key={restaurant.place_id + index}
-              restaurant={restaurant}
+              key={restaurant.place_id}
+              restaurantPassed={restaurant}
               handleSwipe={handleSwipe}
-              index={index}
+              discover
             />
           ))}
         </Box>

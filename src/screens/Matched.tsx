@@ -13,8 +13,9 @@ import useRestaurantDetails from "../hooks/useRestaurantDetails";
 
 const Matched = ({ navigation, route }) => {
   const theme = useTheme<Theme>();
-  const { orangeDark, orange, orangeLight, darkGray } = theme.colors;
+  const { darkGray } = theme.colors;
   const { restaurant } = route.params;
+  const restaurantDetails = useRestaurantDetails(restaurant.place_id);
 
   //const restaurantDetails = useRestaurantDetails(restaurant.place_id);
   const handleNavigatePressed = () => {

@@ -3,7 +3,7 @@ import SwipeCard from "../components/SwipeCard";
 import Box from "../components/Box";
 import Text from "../components/Text";
 import useRestaurants from "../hooks/useRestaurants";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import Layout from "../components/Layout";
 import AnimatedLogo from "../components/AnimatedLogo";
@@ -17,22 +17,28 @@ const Discover = ({ navigation, route }) => {
   const [swipeLeftList, setSwipeLeftList] = useState<RestaurantDetails[]>([]);
   const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
 
-  const handleSwipe = (direction: string, index: number) => {
+  const handleSwipe = useCallback((direction: string, place_id: string) => {
     const updatedRestaurants = [...restaurants];
-    const restaurant = updatedRestaurants[index];
+    const restaurantIndex = updatedRestaurants.findIndex(
+      (restaurant) => restaurant.place_id === place_id
+    );
 
-    // Remove the restaurant from the restaurants list
-    updatedRestaurants.splice(index, 1);
+    if (restaurantIndex !== -1) {
+      const restaurant = updatedRestaurants[restaurantIndex];
 
-    if (direction === "left") {
-      setSwipeLeftList((prevList) => [...prevList, restaurant]);
+      // Remove the restaurant from the restaurants list
+      updatedRestaurants.splice(restaurantIndex, 1);
+
+      if (direction === "left") {
+        setSwipeLeftList((prevList) => [...prevList, restaurant]);
+      }
+      if (direction === "right") {
+        setSwipeRightList((prevList) => [...prevList, restaurant]);
+      }
+
+      setRestaurants(updatedRestaurants);
     }
-    if (direction === "right") {
-      setSwipeRightList((prevList) => [...prevList, restaurant]);
-    }
-
-    setRestaurants(updatedRestaurants);
-  };
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -74,9 +80,9 @@ const Discover = ({ navigation, route }) => {
             restaurants.map((restaurant, index) => (
               <SwipeCard
                 key={restaurant.place_id}
-                restaurant={restaurant}
+                restaurantPassed={restaurant}
                 handleSwipe={handleSwipe}
-                index={index}
+                discover
               />
             ))
           ) : (

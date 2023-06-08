@@ -1,5 +1,6 @@
 import axios from "axios";
 
+const SECONDARY_API_KEY = "AIzaSyCrY8u4ZvjdQNOe2Z1U1hz0wr5G269vs9E";
 const API_KEY = "AIzaSyBLB4ZE2E8SRTeZ2f9OtY1fXGJ8cdIlvro";
 const URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 const URL_DETAILS = "https://maps.googleapis.com/maps/api/place/details/json";
@@ -17,7 +18,7 @@ const getGooglePlaces = async (location, nextPageToken = null, keywords) => {
   try {
     const params: GooglePlacesParams = {
       location: location,
-      key: API_KEY,
+      key: SECONDARY_API_KEY,
       keyword: "restaurant | " + keywords,
       rankby: "distance",
       opennow: true,
@@ -43,7 +44,7 @@ const getRestaurantDetailsFromGooglePlaces = async (placeId: string) => {
   try {
     const response = await axios.get(URL_DETAILS, {
       params: {
-        key: API_KEY,
+        key: SECONDARY_API_KEY,
         place_id: placeId,
       },
     });
@@ -56,7 +57,7 @@ const getRestaurantDetailsFromGooglePlaces = async (placeId: string) => {
 const getPhotoURL = (photoReference) => {
   const baseUrl = "https://maps.googleapis.com/maps/api/place/photo";
   const maxWidth = 400;
-  const url = `${baseUrl}?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${API_KEY}`;
+  const url = `${baseUrl}?maxwidth=${maxWidth}&photoreference=${photoReference}&key=${SECONDARY_API_KEY}`;
   return url;
 };
 

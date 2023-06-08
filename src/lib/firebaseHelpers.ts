@@ -3,9 +3,16 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  onSnapshot,
+  query,
+  serverTimestamp,
+  setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { db } from "./firebase";
+import { RestaurantDetails } from "../api/google/googleTypes";
+import geohash from "ngeohash";
 
 export const saveFilters = async (room, filters, uid) => {
   try {
@@ -55,5 +62,46 @@ export const leaveRoomFirestore = async (roomCode, userId) => {
     // Handle the error
     console.error("Error leaving room:", error);
     throw error;
+  }
+};
+
+export const uploadRestaurantDetailsToFirestore = async (restaurant) => {
+  try {
+    const coordinates = restaurant.geometry.location;
+    const lat = coordinates.lat;
+    const lon = coordinates.lng;
+
+    const hash = geohash.encode(lat, lon);
+    const updatedTimestamp = serverTimestamp();
+
+    const newRestaurant = {
+      ...restaurant,
+      geohash: hash,
+      updated: updatedTimestamp,
+    };
+
+    const collectionsRef = collection(db, "places");
+    const docRef = doc(collectionsRef, newRestaurant.place_id);
+
+    await setDoc(docRef, newRestaurant);
+
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+export const checkDocumentExists = async (placeId) => {
+  try {
+    const docRef = doc(db, "places", placeId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return { exists: true, data: docSnap.data() };
+    } else {
+      return { exists: false, data: null };
+    }
+  } catch (error) {
+    return { exists: false, data: null, error: error.message };
   }
 };
