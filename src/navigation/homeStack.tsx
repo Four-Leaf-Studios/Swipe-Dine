@@ -8,6 +8,7 @@ import FilterScreen from "../screens/FilterScreen";
 import Discover from "../screens/Discover";
 import Logo from "../components/Logo";
 import Box from "../components/Box";
+import Matched from "../screens/Matched";
 
 const Stack = createStackNavigator();
 const HomeStack = () => {
@@ -60,6 +61,11 @@ const HomeStack = () => {
             },
           }),
         }}
+      />
+      <Stack.Screen
+        name="DiscoverMatched"
+        component={Matched}
+        options={{ gestureEnabled: false }}
       />
     </Stack.Navigator>
   );

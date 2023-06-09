@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import HomeStack from "./homeStack";
@@ -12,14 +12,17 @@ import useAuth from "../hooks/useAuth";
 import CreateProfile from "../screens/Profile";
 import Box from "../components/Box";
 import Matched from "../screens/Matched";
+import { fetchUserProfile } from "../lib/firebaseHelpers";
 
 const Tab = createMaterialBottomTabNavigator();
 
 const UserStack = () => {
-  const { firstTime } = useAuth();
+  const { firstTime, user, setUserInfo } = useAuth();
   const theme = useTheme<Theme>();
-  const { mainBackground, buttonPrimaryBackground } = theme.colors;
-
+  const { mainBackground, buttonPrimaryBackground, orangeDark } = theme.colors;
+  useEffect(() => {
+    setUserInfo(fetchUserProfile(user));
+  }, []);
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -34,11 +37,7 @@ const UserStack = () => {
             const size = 24;
             if (route.name === "HomeStack") {
               icon = focused ? (
-                <Ionicons
-                  name={"md-home"}
-                  size={size}
-                  color={buttonPrimaryBackground}
-                />
+                <Ionicons name={"md-home"} size={size} color={orangeDark} />
               ) : (
                 <Ionicons
                   name={"md-home"}
@@ -48,11 +47,7 @@ const UserStack = () => {
               );
             } else if (route.name === "RoomStack") {
               icon = focused ? (
-                <Ionicons
-                  name={"md-heart"}
-                  size={size}
-                  color={buttonPrimaryBackground}
-                />
+                <Ionicons name={"md-heart"} size={size} color={orangeDark} />
               ) : (
                 <Ionicons
                   name={"md-heart"}
@@ -62,11 +57,7 @@ const UserStack = () => {
               );
             }
             if (!focused) return icon;
-            return (
-              <MaskedViewCustom linearGradientVariant={"main"}>
-                <Box>{icon}</Box>
-              </MaskedViewCustom>
-            );
+            return <Box>{icon}</Box>;
           },
         })}
       >

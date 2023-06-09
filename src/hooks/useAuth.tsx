@@ -6,18 +6,12 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { useContext, useEffect, useMemo } from "react";
-import {
-  ref,
-  uploadString,
-  getDownloadURL,
-  uploadBytes,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { useContext, useMemo } from "react";
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import React, { useState, createContext } from "react";
 import { auth, db, storage } from "../lib/firebase";
 import Loading from "../screens/Loading";
-import { collection, doc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 interface IAuth {
   user: User | null;
   signUp: (
@@ -33,6 +27,8 @@ interface IAuth {
   loading: boolean;
   firstTime: boolean;
   setFirstTime: Function;
+  userInfo: Object;
+  setUserInfo: Function;
   saveProfile: (image: string, username: string, user: User) => Promise<void>;
 }
 
@@ -50,11 +46,14 @@ const AuthenticatedUserContext = createContext<IAuth>({
   firstTime: false,
   setFirstTime: () => {},
   saveProfile: async () => {},
+  userInfo: null,
+  setUserInfo: () => {},
 });
 
 export const AuthenticatedUserProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [firstTime, setFirstTime] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -77,6 +76,7 @@ export const AuthenticatedUserProvider = ({ children }) => {
     // Temporary, mimics loading data.
     setTimeout(() => setInitialLoading(false), 4000);
   });
+
   const signUp = async (email, password) => {
     let errors = {
       email: null,
@@ -170,6 +170,9 @@ export const AuthenticatedUserProvider = ({ children }) => {
           await updateDoc(usersDocumentRef, {
             displayName: username,
             photoURL: imageURL,
+            subscription: "basic",
+            discovers: 5,
+            matches: 3,
           });
 
           // Update the profile in the authentication system
@@ -196,8 +199,20 @@ export const AuthenticatedUserProvider = ({ children }) => {
       firstTime,
       setFirstTime,
       saveProfile,
+      userInfo,
+      setUserInfo,
     }),
-    [user, signUp, signIn, loading, error, firstTime, setFirstTime]
+    [
+      user,
+      signUp,
+      signIn,
+      loading,
+      error,
+      firstTime,
+      setFirstTime,
+      userInfo,
+      setUserInfo,
+    ]
   );
 
   return (

@@ -5,7 +5,6 @@ import Box from "../components/Box";
 import Logo from "../components/Logo";
 import StyledTextInput from "../components/StyledTextInput";
 import Button from "../components/Button";
-import MaskedViewCustom from "../components/MaskedViewCustom";
 import Text from "../components/Text";
 
 const ForgotPassword = ({ navigation }) => {

@@ -106,4 +106,13 @@ export const checkDocumentExists = async (placeId) => {
   }
 };
 
-
+export const fetchUserProfile = async (user) => {
+  try {
+    const usersCollection = collection(db, "users");
+    const usersDoc = doc(usersCollection, user.uid);
+    const result = await getDoc(usersDoc);
+    return result;
+  } catch (error) {
+    console.log("Error fetching user profile:", error);
+  }
+};

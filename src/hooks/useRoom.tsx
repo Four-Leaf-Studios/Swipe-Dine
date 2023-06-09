@@ -66,7 +66,7 @@ const useRoom = () => {
 
     return () => {
       unsubscribe();
-      unsubscribeDeletion();
+      unsubscribeDeletion && unsubscribeDeletion();
     };
   }, [user]);
 
@@ -167,7 +167,7 @@ const useRoom = () => {
             await storeGooglePlacesData(roomCode, results);
             setLoading(false);
           }
-        } else {  
+        } else {
           console.error(response.error);
         }
       };

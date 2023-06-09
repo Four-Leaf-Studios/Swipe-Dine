@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import React, { useEffect } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
@@ -8,25 +8,23 @@ import useAuth from "../hooks/useAuth";
 import useFilters from "../hooks/useFilters";
 import Filters from "../components/Filters";
 import { saveFilters } from "../lib/firebaseHelpers";
+import MaskedViewCustom from "../components/MaskedViewCustom";
+import { useTheme } from "@shopify/restyle";
+import { Theme } from "../../theme";
 
 const Home = ({ navigation }) => {
-  const { logout, user } = useAuth();
+  const { logout, user, userInfo } = useAuth();
   const { filters, setFilters } = useFilters();
-
+  const theme = useTheme<Theme>();
+  const { darkGray } = theme.colors;
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
-      headerLeft: () => (
-        <Box paddingLeft="l">
-          <Text variant="body" color="headerButtonText">
-            Swipe & Dine
-          </Text>
-        </Box>
-      ),
+      headerStyle: { backgroundColor: darkGray },
       headerRight: () => (
         <Box paddingRight="l">
           <TouchableOpacity onPress={logout}>
-            <Text variant="body" color="headerButtonText">
+            <Text variant="body" color="white">
               Logout
             </Text>
           </TouchableOpacity>
@@ -40,39 +38,55 @@ const Home = ({ navigation }) => {
         width="100%"
         flex={1}
         flexDirection="column"
-        justifyContent="center"
+        justifyContent="flex-start"
         alignItems="center"
-        padding="s"
-        gap="m"
       >
         <Box
           width="100%"
-          flex={1}
-          flexDirection="column"
-          justifyContent="flex-start"
-          alignItems="center"
-          padding="s"
-          gap="m"
+          height="40%"
+          justifyContent={"center"}
+          alignItems={"center"}
+          backgroundColor="darkGray"
+          paddingBottom="xl"
+        >
+          <Text variant="subheader" color="white">
+            Welcome to{" "}
+            <Text variant="subheader" color="orangeDark">
+              Swipe & Dine!
+            </Text>
+          </Text>
+        </Box>
+        <Box
+          width="100%"
+          position="absolute"
+          bottom={0}
+          height="60%"
+          backgroundColor={"darkGray"}
         >
           <Box
-            flexGrow={0.5}
-            width="100%"
-            flexDirection={"column"}
+            height="100%"
             justifyContent={"space-between"}
             alignItems="center"
-            borderColor="orangeDark"
-            padding="m"
-            borderWidth={3}
-            borderRadius={20}
-            gap={"m"}
+            overflow="hidden"
+            shadowColor={"white"}
+            borderTopLeftRadius={20}
+            borderTopRightRadius={20}
+            backgroundColor={"white"}
+            shadowOpacity={0.25}
+            elevation={4}
+            shadowRadius={4}
+            shadowOffset={{ width: 0, height: -4 }}
+            padding="l"
           >
             <Box width="100%" flex={1} gap={"l"}>
-              <Text variant="body" fontSize={20}>
-                What are you looking for?
-              </Text>
+              <Box padding="s">
+                <Text variant="body" fontSize={20}>
+                  What are you looking for?
+                </Text>
+              </Box>
+
               {filters && <Filters filters={filters} setFilters={setFilters} />}
             </Box>
-
             <Button
               variant="home"
               onPress={() => {
@@ -84,7 +98,7 @@ const Home = ({ navigation }) => {
               }}
             >
               <Text variant="body" color="buttonPrimaryText">
-                Find Restaurants
+                Find Restaurants Nearby
               </Text>
             </Button>
           </Box>

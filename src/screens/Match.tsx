@@ -13,6 +13,8 @@ import StyledTextInput from "../components/StyledTextInput";
 import useRoom from "../hooks/useRoom";
 import AnimatedLogo from "../components/AnimatedLogo";
 import { useIsFocused } from "@react-navigation/native";
+import { useTheme } from "@shopify/restyle";
+import { Theme } from "../../theme";
 
 interface Room {
   owner: string;
@@ -20,6 +22,8 @@ interface Room {
   code: string;
 }
 const Match = ({ navigation }) => {
+  const theme = useTheme<Theme>();
+  const { darkGray } = theme.colors;
   const isFocused = useIsFocused();
   const [code, setCode] = useState("");
   const { room, createRoom, joinRoom, loading } = useRoom();
@@ -27,7 +31,17 @@ const Match = ({ navigation }) => {
     joinRoom(code);
     setCode("");
   };
-
+  useEffect(() => {
+    navigation.setOptions({
+      ...navigation.options,
+      headerStyle: {
+        backgroundColor: loading ? "white" : darkGray,
+      },
+      headerTitleStyle: {
+        color: loading ? darkGray : "white",
+      },
+    });
+  }, [navigation, loading]);
   useEffect(() => {
     if (room && isFocused) {
       navigation.navigate("Room");
@@ -36,7 +50,7 @@ const Match = ({ navigation }) => {
 
   if (loading)
     return (
-      <Layout variant="main">
+      <Layout variant="white">
         <Box
           width="100%"
           height="100%"
@@ -49,39 +63,90 @@ const Match = ({ navigation }) => {
       </Layout>
     );
   return (
-    <Layout variant="main">
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <Layout variant="white">
+      <Box
+        width="100%"
+        flex={1}
+        backgroundColor={"darkGray"}
+        justifyContent={"flex-start"}
+        alignItems={"center"}
+      >
         <Box
-          flex={1}
           width="100%"
-          justifyContent="center"
-          alignItems="center"
-          padding="m"
-          gap={"m"}
+          height="40%"
+          justifyContent={"center"}
+          alignItems={"center"}
+          padding="l"
+          paddingBottom="xl"
         >
-          <Button
-            variant="home"
-            onPress={async () => {
-              createRoom();
-            }}
-          >
-            <Text variant="subheader" color="white">
-              Create a Room
-            </Text>
-          </Button>
-          <Text variant="body">OR</Text>
-          <StyledTextInput
-            variant="room"
-            placeholder={"Join with room code!"}
-            keyboardType={"number-pad"}
-            value={code}
-            message={""}
-            onChangeText={setCode}
-            color={"darkGray"}
-            onEndSubmit={handleSubmit}
-          />
+          <Text variant="body" color="white" fontSize={22}>
+            Create a{" "}
+            <Text variant="subheader" color="orangeDark">
+              ROOM
+            </Text>{" "}
+            and search for{" "}
+            <Text variant="subheader" color="orangeDark">
+              FOOD
+            </Text>{" "}
+            with{" "}
+            <Text variant="subheader" color="orangeDark">
+              FRIENDS
+            </Text>{" "}
+          </Text>
         </Box>
-      </TouchableWithoutFeedback>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <Box
+            position="absolute"
+            height="60%"
+            bottom={0}
+            width="100%"
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor={"darkGray"}
+          >
+            <Box
+              height="100%"
+              width="100%"
+              justifyContent={"space-between"}
+              alignItems="center"
+              overflow="hidden"
+              shadowColor={"white"}
+              borderTopLeftRadius={20}
+              borderTopRightRadius={20}
+              backgroundColor={"white"}
+              shadowOpacity={0.25}
+              elevation={4}
+              shadowRadius={4}
+              shadowOffset={{ width: 0, height: -4 }}
+              padding="l"
+            >
+              <Button
+                variant="home"
+                onPress={async () => {
+                  createRoom();
+                }}
+              >
+                <Text variant="subheader" color="white">
+                  Create a Room
+                </Text>
+              </Button>
+              <Text variant="body" color="darkGray">
+                OR
+              </Text>
+              <StyledTextInput
+                variant="room"
+                placeholder={"Join with room code!"}
+                keyboardType={"number-pad"}
+                value={code}
+                message={""}
+                onChangeText={setCode}
+                color={"darkGray"}
+                onEndSubmit={handleSubmit}
+              />
+            </Box>
+          </Box>
+        </TouchableWithoutFeedback>
+      </Box>
     </Layout>
   );
 };

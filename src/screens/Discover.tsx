@@ -35,6 +35,7 @@ const Discover = ({ navigation, route }) => {
         }
         if (direction === "right") {
           setSwipeRightList((prevList) => [...prevList, restaurant]);
+          navigation.navigate("DiscoverMatched", { restaurant: restaurant });
         }
 
         return updatedRestaurants;
