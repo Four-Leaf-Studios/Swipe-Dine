@@ -15,7 +15,8 @@ import { storeGooglePlacesData } from "../lib/firebaseHelpers";
 
 const Room = ({ navigation }) => {
   const { user } = useAuth();
-  const { room, leaveRoom, loading, handleStart, startBegan } = useRoom();
+  const { room, leaveRoom, loading, handleStart, startBegan, filters } =
+    useRoom();
 
   useEffect(() => {
     if (!room) navigation.navigate("Match");
@@ -49,7 +50,10 @@ const Room = ({ navigation }) => {
           <Box paddingRight="l">
             <TouchableOpacity
               onPress={async () =>
-                navigation.navigate("RoomFilters", { room: true })
+                navigation.navigate("RoomFilters", {
+                  room: true,
+                  filters: filters,
+                })
               }
             >
               <Text variant="body" color="headerButtonText">

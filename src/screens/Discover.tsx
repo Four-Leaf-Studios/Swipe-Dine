@@ -10,7 +10,7 @@ import AnimatedLogo from "../components/AnimatedLogo";
 
 const Discover = ({ navigation, route }) => {
   const { room, initialFilters } = route.params;
-  const { restaurants, loading, setRestaurants } = useRestaurants(
+  const { restaurants, loading, setRestaurants, filters } = useRestaurants(
     room,
     initialFilters
   );
@@ -35,7 +35,10 @@ const Discover = ({ navigation, route }) => {
         }
         if (direction === "right") {
           setSwipeRightList((prevList) => [...prevList, restaurant]);
-          navigation.navigate("DiscoverMatched", { restaurant: restaurant });
+          navigation.navigate("DiscoverMatched", {
+            restaurant: restaurant,
+            filters: filters,
+          });
         }
 
         return updatedRestaurants;
@@ -87,6 +90,7 @@ const Discover = ({ navigation, route }) => {
                 key={restaurant.place_id}
                 restaurantPassed={restaurant}
                 handleSwipe={handleSwipe}
+                filters={filters ? filters : initialFilters}
                 discover
               />
             ))

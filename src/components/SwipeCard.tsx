@@ -21,13 +21,15 @@ interface Props {
   handleSwipe: (direction: string, place_id: string) => void;
   restaurantPassed?: RestaurantDetails;
   discover?: boolean;
+  filters: Object;
 }
 
 const SwipeCard = memo(
-  ({ restaurantPassed, handleSwipe, discover = false }: Props) => {
+  ({ restaurantPassed, handleSwipe, discover = false, filters }: Props) => {
     const restaurantDetails = useRestaurantDetails(
       restaurantPassed?.place_id,
-      discover
+      discover,
+      filters
     );
     const [restaurant, setRestaurant] = useState(restaurantPassed);
 

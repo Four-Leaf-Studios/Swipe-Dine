@@ -1,16 +1,18 @@
 import { Image, StyleSheet, Touchable, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
 import Text from "../components/Text";
 import * as ImagePicker from "expo-image-picker";
-import StyledTextInput from "../components/StyledTextInput";
 import Button from "../components/Button";
 import useAuth from "../hooks/useAuth";
-type Props = {};
+import { useTheme } from "@shopify/restyle";
+import { Theme } from "../../theme";
 
-const Profile = (props: Props) => {
-  const { saveProfile, user, firstTime } = useAuth();
+const Profile = ({ navigation }) => {
+  const theme = useTheme<Theme>();
+  const { darkGray } = theme.colors;
+  const { user } = useAuth();
   const [image, setImage] = useState<string>(
     user.photoURL
       ? user.photoURL
@@ -19,65 +21,164 @@ const Profile = (props: Props) => {
   const [username, setUsername] = useState(
     user.displayName ? user.displayName : ""
   );
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
+
+  useEffect(() => {
+    navigation.setOptions({
+      ...navigation.options,
+      headerStyle: { backgroundColor: darkGray },
+      headerRight: () => (
+        <Box paddingRight="l">
+          <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
+            <Text variant="body" color="white">
+              Settings
+            </Text>
+          </TouchableOpacity>
+        </Box>
+      ),
     });
+  }, [navigation]);
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-    }
-  };
   return (
-    <Layout variant="main">
+    <Layout variant="gray" gradient>
       <Box
-        flex={1}
         width="100%"
-        flexDirection={"column"}
-        justifyContent={"space-between"}
+        flex={1}
+        flexDirection="column"
+        justifyContent="flex-start"
         alignItems="center"
-        padding="m"
-        gap="l"
       >
-        <Text variant="subheader" color="orangeDark">
-          {firstTime ? "Create Profile" : "Edit Profile"}
-        </Text>
-        <TouchableOpacity onPress={pickImage}>
-          <Image
-            source={{ uri: image }}
-            style={{
-              width: 200,
-              height: 200,
-              borderRadius: 999,
-            }}
-          />
-        </TouchableOpacity>
-
-        <StyledTextInput
-          variant="room"
-          placeholder={"Username"}
-          keyboardType={"default"}
-          value={username}
-          message={""}
-          color={"darkGray"}
-          onChangeText={setUsername}
-        />
-        <Button
-          variant="home"
-          onPress={() => saveProfile(image, username, user)}
+        <Box
+          width="100%"
+          height="40%"
+          flexDirection="row"
+          justifyContent={"flex-start"}
+          alignItems={"center"}
+          backgroundColor="darkGray"
+          paddingBottom="xl"
+          padding="l"
+          gap={"m"}
         >
-          <Text variant="subheader" color="buttonPrimaryText">
-            Save Profile
+          <Image
+            source={{ uri: user.photoURL }}
+            style={{ width: 100, height: 100, borderRadius: 999 }}
+          />
+          <Text variant="subheader" color="white">
+            {user.displayName}
           </Text>
-        </Button>
+        </Box>
+        <Box
+          width="100%"
+          position="absolute"
+          height="60%"
+          bottom={0}
+          backgroundColor={"darkGray"}
+        >
+          <Box
+            height="100%"
+            justifyContent={"space-between"}
+            alignItems="center"
+            overflow="hidden"
+            shadowColor={"white"}
+            borderTopLeftRadius={20}
+            borderTopRightRadius={20}
+            backgroundColor={"white"}
+            shadowOpacity={0.25}
+            elevation={4}
+            shadowRadius={4}
+            shadowOffset={{ width: 0, height: -4 }}
+            padding="l"
+            gap={"l"}
+          >
+            <Box flex={1}>
+              <Text variant="body">Your Favorites!</Text>
+            </Box>
+            <Box
+              flex={5}
+              width="100%"
+              shadowColor={"black"}
+              shadowRadius={8}
+              shadowOpacity={0.14}
+              shadowOffset={{ width: 0, height: 4 }}
+              backgroundColor={"white"}
+              borderRadius={10}
+            >
+              <Box
+                flex={1}
+                width="100%"
+                borderRadius={10}
+                flexDirection={"row"}
+                backgroundColor={"darkGray"}
+                overflow="hidden"
+              >
+                <Box flex={1} height="100%">
+                  <Image
+                    source={{
+                      uri: "https://www.eatthis.com/wp-content/uploads/sites/4/2020/06/chilis.jpg?quality=82&strip=1",
+                    }}
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </Box>
+                <Box
+                  flex={2}
+                  height="100%"
+                  justifyContent={"flex-start"}
+                  alignItems="flex-start"
+                  padding="s"
+                >
+                  <Text variant="body" color="white">
+                    Chili's
+                  </Text>
+                </Box>
+              </Box>
+            </Box>
+
+            <Box flex={1}>
+              <Text variant="body">Previously Swiped</Text>
+            </Box>
+            <Box
+              flex={5}
+              width="100%"
+              shadowColor={"black"}
+              shadowRadius={8}
+              shadowOpacity={0.14}
+              shadowOffset={{ width: 0, height: 4 }}
+              backgroundColor={"white"}
+              borderRadius={10}
+            >
+              <Box
+                flex={1}
+                width="100%"
+                borderRadius={10}
+                flexDirection={"row"}
+                backgroundColor={"darkGray"}
+                overflow="hidden"
+              >
+                <Box flex={1} height="100%">
+                  <Image
+                    source={{
+                      uri: "https://www.eatthis.com/wp-content/uploads/sites/4/2020/06/chilis.jpg?quality=82&strip=1",
+                    }}
+                    style={{ width: "100%", height: "100%" }}
+                  />
+                </Box>
+                <Box
+                  flex={2}
+                  height="100%"
+                  justifyContent={"flex-start"}
+                  alignItems="flex-start"
+                  padding="s"
+                >
+                  <Text variant="body" color="white">
+                    Chili's
+                  </Text>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
       </Box>
     </Layout>
   );
 };
 
 export default Profile;
-
-const styles = StyleSheet.create({});

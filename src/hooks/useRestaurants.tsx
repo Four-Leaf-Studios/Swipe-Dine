@@ -51,7 +51,7 @@ const useRestaurants = (room, initialFilters) => {
   useEffect(() => {
     setPrevFilters(filters);
   }, [filters]);
-  return { restaurants, loading, setRestaurants };
+  return { restaurants, loading, setRestaurants, filters };
 };
 
 export default useRestaurants;

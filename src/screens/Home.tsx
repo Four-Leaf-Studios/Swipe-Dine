@@ -7,16 +7,21 @@ import Button from "../components/Button";
 import useAuth from "../hooks/useAuth";
 import useFilters from "../hooks/useFilters";
 import Filters from "../components/Filters";
-import { saveFilters } from "../lib/firebaseHelpers";
+import {
+  fetchNearbyPlacesFromFirestore,
+  saveFilters,
+} from "../lib/firebaseHelpers";
 import MaskedViewCustom from "../components/MaskedViewCustom";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
+import { getUserLocation } from "../utils/geolocation";
 
 const Home = ({ navigation }) => {
   const { logout, user, userInfo } = useAuth();
   const { filters, setFilters } = useFilters();
   const theme = useTheme<Theme>();
   const { darkGray } = theme.colors;
+
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
@@ -32,6 +37,7 @@ const Home = ({ navigation }) => {
       ),
     });
   }, [navigation]);
+
   return (
     <Layout variant="main">
       <Box

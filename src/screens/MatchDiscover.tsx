@@ -11,7 +11,7 @@ import { db } from "../lib/firebase";
 
 const MatchDiscover = ({ navigation, route }) => {
   const { user } = useAuth();
-  const { room } = route.params;
+  const { room, filters } = route.params;
   const [restaurants, setRestaurants] = useState(room?.restaurants);
 
   const handleSwipe = useCallback(async (direction, place_id) => {
@@ -89,7 +89,10 @@ const MatchDiscover = ({ navigation, route }) => {
         (restaurant) => restaurant.place_id === matched
       );
       if (matchedRestaurant)
-        navigation.navigate("Matched", { restaurant: matchedRestaurant });
+        navigation.navigate("Matched", {
+          restaurant: matchedRestaurant,
+          filters: filters,
+        });
     }
   }, [room.swiped]);
 
@@ -128,6 +131,7 @@ const MatchDiscover = ({ navigation, route }) => {
               key={restaurant.place_id}
               restaurantPassed={restaurant}
               handleSwipe={handleSwipe}
+              filters={filters}
               discover
             />
           ))}

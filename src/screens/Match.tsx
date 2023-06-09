@@ -27,10 +27,12 @@ const Match = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [code, setCode] = useState("");
   const { room, createRoom, joinRoom, loading } = useRoom();
+
   const handleSubmit = () => {
     joinRoom(code);
     setCode("");
   };
+
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
@@ -42,6 +44,7 @@ const Match = ({ navigation }) => {
       },
     });
   }, [navigation, loading]);
+
   useEffect(() => {
     if (room && isFocused) {
       navigation.navigate("Room");
@@ -62,6 +65,7 @@ const Match = ({ navigation }) => {
         </Box>
       </Layout>
     );
+
   return (
     <Layout variant="white">
       <Box

@@ -14,8 +14,12 @@ import useRestaurantDetails from "../hooks/useRestaurantDetails";
 const Matched = ({ navigation, route }) => {
   const theme = useTheme<Theme>();
   const { darkGray, orangeDark } = theme.colors;
-  const { restaurant: restaurantPassed } = route.params;
-  const restaurantDetails = useRestaurantDetails(restaurantPassed.place_id);
+  const { restaurant: restaurantPassed, filters } = route.params;
+  const restaurantDetails = useRestaurantDetails(
+    restaurantPassed.place_id,
+    false,
+    filters
+  );
   const [restaurant, setRestaurant] = useState(
     restaurantDetails ? restaurantDetails : restaurantPassed
   );

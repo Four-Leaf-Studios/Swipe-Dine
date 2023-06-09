@@ -3,6 +3,7 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   query,
   serverTimestamp,
@@ -13,6 +14,7 @@ import {
 import { db } from "./firebase";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import geohash from "ngeohash";
+import { getUserLocation } from "../utils/geolocation";
 
 export const saveFilters = async (room, filters, uid) => {
   try {
@@ -81,7 +83,7 @@ export const uploadRestaurantDetailsToFirestore = async (restaurant) => {
     };
 
     const collectionsRef = collection(db, "places");
-    const docRef = doc(collectionsRef, newRestaurant.place_id);
+    const docRef = doc(collectionsRef, restaurant.place_id); // Use the original `restaurant.place_id` instead of `newRestaurant.place_id`
 
     await setDoc(docRef, newRestaurant);
 
@@ -115,4 +117,78 @@ export const fetchUserProfile = async (user) => {
   } catch (error) {
     console.log("Error fetching user profile:", error);
   }
+};
+
+export const fetchNearbyPlacesFromFirestore = async (
+  location,
+  distance, // In Miles
+  filters
+) => {
+  try {
+    const range = getGeohashRange(
+      location.latitude,
+      location.longitude,
+      distance
+    );
+
+    const filterKeys = Object.keys(filters).filter(
+      (key) => filters[key] && key
+    );
+
+    const placesRef = collection(db, "places");
+    const q = query(
+      placesRef,
+      where("geohash", ">=", range.lower),
+      where("geohash", "<=", range.upper),
+      where("types", "array-contains-any", filterKeys)
+    );
+
+    const querySnapshot = await getDocs(q);
+    const places = querySnapshot.docs.map((doc) => doc.data());
+    return places;
+  } catch (error) {
+    // Handle the error here
+    console.error("Error fetching nearby places:", error);
+    return []; // Return an empty array or any other appropriate value
+  }
+};
+
+// Calculate the upper and lower boundary geohashes for
+// a given latitude, longitude, and distance in miles
+const getGeohashRange = (
+  latitude: number,
+  longitude: number,
+  distance: number // miles
+) => {
+  const lat = 0.0144927536231884; // degrees latitude per mile
+  const lon = 0.0181818181818182; // degrees longitude per mile
+
+  const lowerLat = latitude - lat * distance;
+  const lowerLon = longitude - lon * distance;
+
+  const upperLat = latitude + lat * distance;
+  const upperLon = longitude + lon * distance;
+
+  const lower = geohash.encode(lowerLat, lowerLon);
+  const upper = geohash.encode(upperLat, upperLon);
+
+  return {
+    lower,
+    upper,
+  };
+};
+
+export const addFiltersToTypes = (types, filters) => {
+  const existingTypes = types || []; // Get existing types or initialize as an empty array
+  const newTypes = [
+    ...existingTypes,
+    ...Object.keys(filters).filter(
+      (filter) =>
+        filters[filter] !== undefined &&
+        filters[filter] === true && // Filter out undefined values
+        !existingTypes.includes(filter)
+    ),
+  ];
+
+  return Array.from(new Set(newTypes));
 };

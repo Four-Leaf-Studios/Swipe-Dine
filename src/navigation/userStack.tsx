@@ -3,16 +3,16 @@ import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import HomeStack from "./homeStack";
-import MaskedViewCustom from "../components/MaskedViewCustom";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 import MatchStack from "./matchStack";
 import useAuth from "../hooks/useAuth";
-import CreateProfile from "../screens/Profile";
 import Box from "../components/Box";
-import Matched from "../screens/Matched";
 import { fetchUserProfile } from "../lib/firebaseHelpers";
+import Settings from "../screens/Settings";
+import Profile from "../screens/Profile";
+import ProfileStack from "./profileStack";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -55,6 +55,16 @@ const UserStack = () => {
                   color={buttonPrimaryBackground}
                 />
               );
+            } else if (route.name == "ProfileStack") {
+              icon = focused ? (
+                <Ionicons name={"md-person"} size={size} color={orangeDark} />
+              ) : (
+                <Ionicons
+                  name={"md-person"}
+                  size={size}
+                  color={buttonPrimaryBackground}
+                />
+              );
             }
             if (!focused) return icon;
             return <Box>{icon}</Box>;
@@ -72,9 +82,9 @@ const UserStack = () => {
           options={{ title: "Match" }}
         />
         <Tab.Screen
-          name="CreateProfile"
-          component={CreateProfile}
-          options={{ title: "Profile Creation" }}
+          name="ProfileStack"
+          component={ProfileStack}
+          options={{ title: "Profile" }}
         />
       </Tab.Navigator>
     </NavigationContainer>
