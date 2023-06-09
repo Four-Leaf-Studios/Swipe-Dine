@@ -63,5 +63,27 @@ const getPhotoURL = (photoReference) => {
   const url = `${baseUrl}?maxwidth=${maxWidth}&maxheight=${maxHeight}&photoreference=${photoReference}&key=${SECONDARY_API_KEY}`;
   return url;
 };
+global.Buffer = global.Buffer || require("buffer").Buffer;
+const saveImage = async (photoReference) => {
+  try {
+    const baseUrl = "https://maps.googleapis.com/maps/api/place/photo";
+    const { width, height } = Dimensions.get("window");
+    const maxWidth = Math.round(width * 0.9);
+    const maxHeight = Math.round(height * 0.9);
+    const url = `${baseUrl}?maxwidth=${maxWidth}&maxheight=${maxHeight}&photoreference=${photoReference}&key=${SECONDARY_API_KEY}`;
 
-export { getGooglePlaces, getRestaurantDetailsFromGooglePlaces, getPhotoURL };
+    const response = await axios.get(url, { responseType: "arraybuffer" });
+    const imageData = Buffer.from(response.data, "binary").toString("base64");
+    return `data:image/jpeg;base64,${imageData}`;
+  } catch (error) {
+    console.error("Error occurred while saving the image:", error);
+    throw new Error("Failed to save the image.");
+  }
+};
+
+export {
+  getGooglePlaces,
+  getRestaurantDetailsFromGooglePlaces,
+  getPhotoURL,
+  saveImage,
+};

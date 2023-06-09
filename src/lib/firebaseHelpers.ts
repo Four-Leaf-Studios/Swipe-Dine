@@ -11,10 +11,10 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "./firebase";
-import { RestaurantDetails } from "../api/google/googleTypes";
+import { db, storage } from "./firebase";
 import geohash from "ngeohash";
-import { getUserLocation } from "../utils/geolocation";
+import { ref, uploadBytes } from "firebase/storage";
+import { saveImage } from "../api/google/google";
 
 export const saveFilters = async (room, filters, uid) => {
   try {
@@ -80,10 +80,21 @@ export const uploadRestaurantDetailsToFirestore = async (restaurant) => {
       ...restaurant,
       geohash: hash,
       updated: updatedTimestamp,
+      photos: [],
     };
 
     const collectionsRef = collection(db, "places");
-    const docRef = doc(collectionsRef, restaurant.place_id); // Use the original `restaurant.place_id` instead of `newRestaurant.place_id`
+    const docRef = doc(collectionsRef, restaurant.place_id);
+
+    if (restaurant.photos[0].photo_reference)
+      for (const photo of restaurant.photos) {
+        const photoUrl = await saveImage(photo.photo_reference);
+        // Update newRestaurant.photos with Firestore storage URL
+        newRestaurant.photos.push({
+          photoUrl: photoUrl,
+        });
+      }
+    else newRestaurant.photos = restaurant.photos;
 
     await setDoc(docRef, newRestaurant);
 

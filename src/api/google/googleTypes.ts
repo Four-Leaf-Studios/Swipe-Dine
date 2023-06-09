@@ -26,6 +26,7 @@ interface OpeningHours {
 }
 
 interface Photo {
+  photoUrl?: string;
   height: number;
   width: number;
   html_attributions: string[];

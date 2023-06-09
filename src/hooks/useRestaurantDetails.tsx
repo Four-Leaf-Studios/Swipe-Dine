@@ -7,10 +7,12 @@ import {
   uploadRestaurantDetailsToFirestore,
 } from "../lib/firebaseHelpers";
 
-const useRestaurantDetails = (id: string, discover = false, filters) => {
+const useRestaurantDetails = (id: string, discover = false, filters = {}) => {
   const [restaurant, setRestaurant] = useState<RestaurantDetailsGoogle>();
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchRestaurantDetailsFromYelp = async () => {
+      setLoading(true);
       const existsResult = await checkDocumentExists(id);
 
       if (existsResult.exists) {
@@ -41,6 +43,7 @@ const useRestaurantDetails = (id: string, discover = false, filters) => {
         }
 
         setRestaurant(existingRestaurant);
+        setLoading(false);
       } else {
         try {
           if (!discover) {
@@ -50,6 +53,7 @@ const useRestaurantDetails = (id: string, discover = false, filters) => {
               // Update Firestore document with new filters
               data.result.types = addFiltersToTypes(data.result.types, filters);
               await uploadRestaurantDetailsToFirestore(data.result);
+              setLoading(false);
             } else {
               console.error(data.error);
             }
@@ -65,7 +69,7 @@ const useRestaurantDetails = (id: string, discover = false, filters) => {
     }
   }, []);
 
-  return restaurant ? { ...restaurant } : null;
+  return { restaurant: restaurant ? { ...restaurant } : null, loading };
 };
 
 export default useRestaurantDetails;

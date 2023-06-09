@@ -10,12 +10,14 @@ import MaskedViewCustom from "../components/MaskedViewCustom";
 import LinearGradient from "../components/LinearGradient";
 import { getPhotoURL } from "../api/google/google";
 import useRestaurantDetails from "../hooks/useRestaurantDetails";
+import Loading from "./Loading";
+import AnimatedLogo from "../components/AnimatedLogo";
 
 const Matched = ({ navigation, route }) => {
   const theme = useTheme<Theme>();
   const { darkGray, orangeDark } = theme.colors;
   const { restaurant: restaurantPassed, filters } = route.params;
-  const restaurantDetails = useRestaurantDetails(
+  const { restaurant: restaurantDetails, loading } = useRestaurantDetails(
     restaurantPassed.place_id,
     false,
     filters
@@ -68,7 +70,12 @@ const Matched = ({ navigation, route }) => {
       // You can handle the error or display a message to the user if the website cannot be opened
     });
   };
-
+  if (loading)
+    return (
+      <Layout variant="gray" gradient>
+        <AnimatedLogo variant="secondary" />
+      </Layout>
+    );
   return (
     <Layout variant="main">
       <Box width="100%" flex={1}>
@@ -77,7 +84,9 @@ const Matched = ({ navigation, route }) => {
             source={{
               uri:
                 restaurant.photos?.length > 0
-                  ? getPhotoURL(restaurant.photos[0].photo_reference)
+                  ? restaurant.photos[0]?.photoUrl
+                    ? restaurant.photos[0].photoUrl
+                    : getPhotoURL(restaurant.photos[0].photo_reference)
                   : "https://www.eatthis.com/wp-content/uploads/sites/4/2020/06/chilis.jpg?quality=82&strip=1",
             }}
             style={{ width: "100%", height: "100%", resizeMode: "cover" }}

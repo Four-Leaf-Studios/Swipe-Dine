@@ -7,7 +7,7 @@ import {
   useAnimatedValue,
   useWindowDimensions,
 } from "react-native";
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import Card from "./Card";
 import Box from "./Box";
 import Text from "./Text";
@@ -26,13 +26,12 @@ interface Props {
 
 const SwipeCard = memo(
   ({ restaurantPassed, handleSwipe, discover = false, filters }: Props) => {
-    const restaurantDetails = useRestaurantDetails(
+    const { restaurant: restaurantDetails, loading } = useRestaurantDetails(
       restaurantPassed?.place_id,
       discover,
       filters
     );
     const [restaurant, setRestaurant] = useState(restaurantPassed);
-
     useEffect(() => {
       if (
         restaurantDetails &&
@@ -152,7 +151,9 @@ const SwipeCard = memo(
     // Memoize the getPhotoURL function
     const photoURL = useMemo(() => {
       if (restaurant?.photos?.length > 0) {
-        return getPhotoURL(restaurant.photos[currentPhoto].photo_reference);
+        return restaurant.photos[currentPhoto].photoUrl
+          ? restaurant.photos[currentPhoto].photoUrl
+          : getPhotoURL(restaurant.photos[currentPhoto].photo_reference);
       } else {
         return "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/681px-Placeholder_view_vector.svg.png";
       }

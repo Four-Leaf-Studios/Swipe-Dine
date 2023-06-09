@@ -8,10 +8,6 @@ import AnimatedLogo from "../components/AnimatedLogo";
 import MemberItem from "../components/MemberItem";
 import Button from "../components/Button";
 import useAuth from "../hooks/useAuth";
-import useFilters from "../hooks/useFilters";
-import { getUserLocation } from "../utils/geolocation";
-import { getGooglePlaces } from "../api/google/google";
-import { storeGooglePlacesData } from "../lib/firebaseHelpers";
 
 const Room = ({ navigation }) => {
   const { user } = useAuth();
@@ -26,6 +22,7 @@ const Room = ({ navigation }) => {
     if (room?.restaurants)
       navigation.navigate("MatchDiscover", {
         room: room,
+        filters: filters,
       });
   }, [room?.restaurants]);
 
