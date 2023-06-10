@@ -1,7 +1,6 @@
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet } from "react-native";
 import React, { ReactElement } from "react";
 import LinearGradient from "./LinearGradient";
-import Box from "./Box";
 import { ResponsiveValue } from "@shopify/restyle";
 import MaskedView from "@react-native-masked-view/masked-view";
 

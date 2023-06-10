@@ -1,9 +1,17 @@
 {
-"expo": {
-    "name": "Swipe & Dine", 
+  "expo": {
+    "name": "Swipe & Dine",
     "icon": "./assets/images/icon.png",
     "splash": {
-        "image": "./assets/images/Splash.png"
+      "image": "./assets/images/Splash.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "532fcb21-d30b-44e1-ac28-683b56112119"
+      }
+    },
+    "ios": {
+      "bundleIdentifier": "com.michaelheinzman.swipeanddine"
     }
-}
+  }
 }

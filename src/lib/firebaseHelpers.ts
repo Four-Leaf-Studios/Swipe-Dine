@@ -4,16 +4,14 @@ import {
   doc,
   getDoc,
   getDocs,
-  onSnapshot,
   query,
   serverTimestamp,
   setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db, storage } from "./firebase";
+import { db } from "./firebase";
 import geohash from "ngeohash";
-import { ref, uploadBytes } from "firebase/storage";
 import { saveImage } from "../api/google/google";
 
 export const saveFilters = async (room, filters, uid) => {

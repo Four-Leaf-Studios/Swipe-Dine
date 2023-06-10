@@ -1,8 +1,7 @@
-import { FlatList, StyleSheet } from "react-native";
+import { FlatList } from "react-native";
 import React from "react";
 import Button from "./Button";
 import Text from "./Text";
-import Box from "./Box";
 
 const Filters = ({ filters, setFilters }) => {
   const filterKeys = Object.keys(filters ? filters : {}); // Accessing the keys of filters

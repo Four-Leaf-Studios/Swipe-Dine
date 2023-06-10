@@ -6,11 +6,8 @@ import Text from "../components/Text";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
-import MaskedViewCustom from "../components/MaskedViewCustom";
-import LinearGradient from "../components/LinearGradient";
 import { getPhotoURL } from "../api/google/google";
 import useRestaurantDetails from "../hooks/useRestaurantDetails";
-import Loading from "./Loading";
 import AnimatedLogo from "../components/AnimatedLogo";
 
 const Matched = ({ navigation, route }) => {

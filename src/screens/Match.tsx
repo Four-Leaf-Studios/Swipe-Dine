@@ -1,9 +1,4 @@
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  StyleSheet,
-  TouchableWithoutFeedback,
-} from "react-native";
+import { Keyboard, TouchableWithoutFeedback } from "react-native";
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Text from "../components/Text";

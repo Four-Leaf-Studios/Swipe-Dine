@@ -6,8 +6,6 @@ import { Theme } from "../../theme";
 import { useTheme } from "@shopify/restyle";
 import FilterScreen from "../screens/FilterScreen";
 import Discover from "../screens/Discover";
-import Logo from "../components/Logo";
-import Box from "../components/Box";
 import Matched from "../screens/Matched";
 
 const Stack = createStackNavigator();

@@ -1,5 +1,5 @@
 import { TouchableOpacity } from "react-native";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
 import SwipeCard from "../components/SwipeCard";

@@ -1,4 +1,3 @@
-import { KeyboardType, KeyboardTypeOptions, TextInput } from "react-native";
 import {
   SpacingProps,
   BorderProps,

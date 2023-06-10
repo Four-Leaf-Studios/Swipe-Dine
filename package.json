@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
+    "@react-native-community/masked-view": "^0.1.11",
     "@react-native-masked-view/masked-view": "github:react-native-masked-view/masked-view#8b4b2f970e4f0dc3639dd93db8a87fefe286c42e",
     "@react-navigation/material-bottom-tabs": "^6.2.15",
     "@react-navigation/material-top-tabs": "^6.6.2",
@@ -21,6 +22,7 @@
     "react-hook-form": "^7.44.2",
     "react-native": "0.71.8",
     "react-native-elements": "^3.4.3",
+    "react-native-gesture-handler": "~2.9.0",
     "react-native-reanimated": "~2.14.4",
     "react-native-safe-area-context": "4.5.0",
     "react-native-screens": "~3.20.0",

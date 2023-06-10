@@ -1,17 +1,15 @@
-import { Image, StyleSheet, Touchable, TouchableOpacity } from "react-native";
+import { Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
 import Text from "../components/Text";
-import * as ImagePicker from "expo-image-picker";
-import Button from "../components/Button";
 import useAuth from "../hooks/useAuth";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 
 const Profile = ({ navigation }) => {
   const theme = useTheme<Theme>();
-  const { darkGray } = theme.colors;
+  const { darkGray, gray } = theme.colors;
   const { user } = useAuth();
   const [image, setImage] = useState<string>(
     user.photoURL
@@ -26,6 +24,9 @@ const Profile = ({ navigation }) => {
     navigation.setOptions({
       ...navigation.options,
       headerStyle: { backgroundColor: darkGray },
+      headerTitleStyle: {
+        color: "white",
+      },
       headerRight: () => (
         <Box paddingRight="l">
           <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
@@ -59,8 +60,13 @@ const Profile = ({ navigation }) => {
           gap={"m"}
         >
           <Image
-            source={{ uri: user.photoURL }}
-            style={{ width: 100, height: 100, borderRadius: 999 }}
+            source={{ uri: image }}
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: 999,
+              backgroundColor: gray,
+            }}
           />
           <Text variant="subheader" color="white">
             {user.displayName}
@@ -133,7 +139,7 @@ const Profile = ({ navigation }) => {
             </Box>
 
             <Box flex={1}>
-              <Text variant="body">Previously Swiped</Text>
+              <Text variant="body">Previously Matched</Text>
             </Box>
             <Box
               flex={5}

@@ -1,4 +1,3 @@
-import { StyleSheet } from "react-native";
 import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
@@ -10,8 +9,6 @@ import MatchStack from "./matchStack";
 import useAuth from "../hooks/useAuth";
 import Box from "../components/Box";
 import { fetchUserProfile } from "../lib/firebaseHelpers";
-import Settings from "../screens/Settings";
-import Profile from "../screens/Profile";
 import ProfileStack from "./profileStack";
 
 const Tab = createMaterialBottomTabNavigator();

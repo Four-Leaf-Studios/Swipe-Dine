@@ -1,10 +1,7 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet } from "react-native";
 import React from "react";
 import Button from "./Button";
-import MaskedView from "@react-native-masked-view/masked-view";
-import LinearGradient from "./LinearGradient";
 import Box from "./Box";
-import Text from "./Text";
 import MaskedViewCustom from "./MaskedViewCustom";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@shopify/restyle";

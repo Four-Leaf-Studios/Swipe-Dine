@@ -1,5 +1,5 @@
 import { TouchableOpacity, FlatList } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Box from "../components/Box";
 import Text from "../components/Text";
 import useRoom from "../hooks/useRoom";

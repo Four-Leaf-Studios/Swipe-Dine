@@ -1,8 +1,6 @@
-import { Animated, StyleSheet, View, useAnimatedValue } from "react-native";
+import { Animated, StyleSheet, useAnimatedValue } from "react-native";
 import React, { useEffect } from "react";
 import Box from "./Box";
-import MaskedViewCustom from "./MaskedViewCustom";
-import Text from "./Text";
 import Logo from "./Logo";
 import {
   BackgroundColorProps,

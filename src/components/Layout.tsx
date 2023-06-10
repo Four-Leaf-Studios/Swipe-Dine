@@ -1,15 +1,7 @@
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import React, { ReactElement } from "react";
 import LinearGradient from "./LinearGradient";
 import { ResponsiveValue } from "@shopify/restyle";
-import Box from "./Box";
 
 type Props = {
   children?: ReactElement<any>;

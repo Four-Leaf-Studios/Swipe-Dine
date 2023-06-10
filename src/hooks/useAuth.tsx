@@ -11,7 +11,7 @@ import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import React, { useState, createContext } from "react";
 import { auth, db, storage } from "../lib/firebase";
 import Loading from "../screens/Loading";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, updateDoc } from "firebase/firestore";
 interface IAuth {
   user: User | null;
   signUp: (

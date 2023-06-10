@@ -7,7 +7,7 @@ import {
   useAnimatedValue,
   useWindowDimensions,
 } from "react-native";
-import React, { memo, useEffect, useMemo, useRef, useState } from "react";
+import React, { memo, useEffect, useMemo, useState } from "react";
 import Card from "./Card";
 import Box from "./Box";
 import Text from "./Text";

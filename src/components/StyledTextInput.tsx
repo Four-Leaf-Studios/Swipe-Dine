@@ -1,4 +1,4 @@
-import { KeyboardType, KeyboardTypeOptions, TextInput } from "react-native";
+import { KeyboardTypeOptions, TextInput } from "react-native";
 import {
   SpacingProps,
   BorderProps,
@@ -12,9 +12,6 @@ import {
 import { Theme } from "../../theme";
 import Text from "./Text";
 import Box from "./Box";
-import { useState } from "react";
-import MaskedView from "@react-native-masked-view/masked-view";
-import MaskedViewCustom from "./MaskedViewCustom";
 import LinearGradient from "./LinearGradient";
 
 const restyleFunctions = composeRestyleFunctions<Theme, RestyleProps>([
