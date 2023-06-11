@@ -6,23 +6,16 @@ import Box from "../components/Box";
 import Button from "../components/Button";
 import StyledTextInput from "../components/StyledTextInput";
 import useRoom from "../hooks/useRoom";
-import AnimatedLogo from "../components/AnimatedLogo";
 import { useIsFocused } from "@react-navigation/native";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 
-interface Room {
-  owner: string;
-  members: string[];
-  code: string;
-}
 const Match = ({ navigation }) => {
   const theme = useTheme<Theme>();
   const { darkGray } = theme.colors;
   const isFocused = useIsFocused();
   const [code, setCode] = useState("");
   const { room, createRoom, joinRoom, loading } = useRoom();
-
   const handleSubmit = () => {
     joinRoom(code);
     setCode("");
@@ -45,21 +38,6 @@ const Match = ({ navigation }) => {
       navigation.navigate("Room");
     }
   }, [room, navigation, isFocused]);
-
-  if (loading)
-    return (
-      <Layout variant="white">
-        <Box
-          width="100%"
-          height="100%"
-          flexDirection={"row"}
-          justifyContent={"center"}
-          alignItems="center"
-        >
-          <AnimatedLogo variant="secondary" />
-        </Box>
-      </Layout>
-    );
 
   return (
     <Layout variant="white">

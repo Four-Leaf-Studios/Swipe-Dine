@@ -4,15 +4,26 @@ import Box from "../components/Box";
 import Text from "../components/Text";
 import useRoom from "../hooks/useRoom";
 import Layout from "../components/Layout";
-import AnimatedLogo from "../components/AnimatedLogo";
 import MemberItem from "../components/MemberItem";
 import Button from "../components/Button";
 import useAuth from "../hooks/useAuth";
+import { useTheme } from "@shopify/restyle";
+import { Theme } from "../../theme";
+import Filters from "../components/Filters";
 
 const Room = ({ navigation }) => {
+  const theme = useTheme<Theme>();
+  const { darkGray } = theme.colors;
   const { user } = useAuth();
-  const { room, leaveRoom, loading, handleStart, startBegan, filters } =
-    useRoom();
+  const {
+    room,
+    leaveRoom,
+    loading,
+    handleStart,
+    startBegan,
+    filters,
+    setFilters,
+  } = useRoom();
 
   useEffect(() => {
     if (!room) navigation.navigate("Match");
@@ -29,6 +40,9 @@ const Room = ({ navigation }) => {
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
+      headerStyle: { backgroundColor: darkGray },
+      headerTitleStyle: { color: "white" },
+      title: room.code,
       headerLeft: () => (
         <Box paddingLeft="l">
           <TouchableOpacity
@@ -36,90 +50,87 @@ const Room = ({ navigation }) => {
               leaveRoom(room?.code, user.uid);
             }}
           >
-            <Text variant="body" color="headerButtonText">
+            <Text variant="body" color="white">
               Leave Room
             </Text>
           </TouchableOpacity>
         </Box>
       ),
-      headerRight: () =>
-        room.owner === user.uid ? (
-          <Box paddingRight="l">
-            <TouchableOpacity
-              onPress={async () =>
-                navigation.navigate("RoomFilters", {
-                  room: true,
-                  filters: filters,
-                })
-              }
-            >
-              <Text variant="body" color="headerButtonText">
-                Filters
-              </Text>
-            </TouchableOpacity>
-          </Box>
-        ) : null,
     });
   }, []);
 
-  if (loading)
-    return (
-      <Layout variant="main">
-        <Box
-          width="100%"
-          height="100%"
-          flexDirection={"row"}
-          justifyContent={"center"}
-          alignItems="center"
-        >
-          <AnimatedLogo variant="secondary" />
-        </Box>
-      </Layout>
-    );
-
   return (
-    <Box
-      width="100%"
-      flexGrow={1}
-      padding="m"
-      flexDirection="column"
-      justifyContent={"space-between"}
-      alignItems="center"
-      gap={"m"}
-    >
+    <Layout variant="main">
       <Box
-        padding="s"
-        flexDirection={"row"}
-        justifyContent={"center"}
+        width="100%"
+        flex={1}
+        flexDirection="column"
+        justifyContent="flex-start"
         alignItems="center"
       >
-        <Text variant="subheader" color="orangeDark">
-          {room?.code}
-        </Text>
+        <Box
+          width="100%"
+          height="80%"
+          justifyContent={"center"}
+          alignItems={"center"}
+          backgroundColor="darkGray"
+          padding="m"
+          paddingBottom="xl"
+          gap="m"
+        >
+          {room && (
+            <FlatList
+              data={room?.members}
+              keyExtractor={(item) => item}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
+              numColumns={3}
+              renderItem={({ item }) => <MemberItem memberId={item} />}
+            />
+          )}
+        </Box>
+        <Box
+          width="100%"
+          position="absolute"
+          bottom={0}
+          backgroundColor={"darkGray"}
+        >
+          <Box
+            height="100%"
+            justifyContent={"space-between"}
+            alignItems="center"
+            overflow="hidden"
+            shadowColor={"white"}
+            borderTopLeftRadius={20}
+            borderTopRightRadius={20}
+            backgroundColor={"white"}
+            shadowOpacity={0.25}
+            elevation={4}
+            shadowRadius={4}
+            shadowOffset={{ width: 0, height: -4 }}
+            padding="l"
+            gap="l"
+          >
+            <Box width="100%" flex={1} gap={"l"}>
+              {filters && room?.owner === user.uid && (
+                <Filters filters={filters} setFilters={setFilters} />
+              )}
+            </Box>
+            <Button
+              variant="home"
+              disabled={room?.owner !== user.uid && !startBegan && true}
+              onPress={handleStart}
+            >
+              <Text variant="subheader" color="white">
+                {room?.owner === user.uid ? "Start" : "Waiting..."}
+              </Text>
+            </Button>
+          </Box>
+        </Box>
       </Box>
-
-      {room && (
-        <FlatList
-          data={room?.members}
-          keyExtractor={(item) => item}
-          style={{
-            width: "100%",
-          }}
-          numColumns={3}
-          renderItem={({ item }) => <MemberItem memberId={item} />}
-        />
-      )}
-
-      <Button
-        variant="home"
-        disabled={room?.owner !== user.uid && !startBegan && true}
-        onPress={handleStart}
-      >
-        <Text variant="subheader" color="white">
-          {room?.owner === user.uid ? "Start" : "Waiting..."}
-        </Text>
-      </Button>
-    </Box>
+    </Layout>
   );
 };
 

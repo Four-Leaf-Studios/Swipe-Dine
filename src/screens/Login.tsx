@@ -95,7 +95,7 @@ const Login = ({ navigation }) => {
           />
           <StyledTextInput
             placeholder="Password"
-            keyboardType={"visible-password"}
+            keyboardType={"default"}
             value={password}
             message={errors.password}
             variant="login"

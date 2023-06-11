@@ -93,7 +93,7 @@ const Signup = ({ navigation }) => {
           />
           <StyledTextInput
             placeholder="Password"
-            keyboardType={"visible-password"}
+            keyboardType={"default"}
             value={password}
             message={errors.password}
             variant="login"
@@ -102,7 +102,7 @@ const Signup = ({ navigation }) => {
           />
           <StyledTextInput
             placeholder="Confirm Password"
-            keyboardType={"visible-password"}
+            keyboardType={"default"}
             value={confirmPassword}
             message={errors.confirmPassword}
             variant="login"

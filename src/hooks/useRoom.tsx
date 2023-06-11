@@ -30,7 +30,7 @@ interface Room {
 const useRoom = () => {
   const { user } = useAuth();
   const [room, setRoom] = useRecoilState(roomState);
-  const { filters } = useFilters(room);
+  const { filters, setFilters } = useFilters(room);
   const [code, setCode] = useState();
   const [loading, setLoading] = useState(false);
   const [startBegan, setStartBegan] = useState(false);
@@ -200,6 +200,7 @@ const useRoom = () => {
     loading,
     handleStart,
     startBegan,
+    setFilters,
   };
 };
 
