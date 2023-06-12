@@ -7,8 +7,11 @@ import { useCallback, useEffect, useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import Layout from "../components/Layout";
 import AnimatedLogo from "../components/AnimatedLogo";
+import { addRestaurantToMatchedListInFirestore } from "../lib/firebaseHelpers";
+import useAuth from "../hooks/useAuth";
 
 const Discover = ({ navigation, route }) => {
+  const { user } = useAuth();
   const { room, initialFilters } = route.params;
   const { restaurants, loading, setRestaurants, filters } = useRestaurants(
     room,
@@ -35,6 +38,7 @@ const Discover = ({ navigation, route }) => {
         }
         if (direction === "right") {
           setSwipeRightList((prevList) => [...prevList, restaurant]);
+          addRestaurantToMatchedListInFirestore(restaurant.place_id, user.uid);
           navigation.navigate("DiscoverMatched", {
             restaurant: restaurant,
             filters: filters,
@@ -92,6 +96,7 @@ const Discover = ({ navigation, route }) => {
                 handleSwipe={handleSwipe}
                 filters={filters ? filters : initialFilters}
                 discover
+                navigation={navigation}
               />
             ))
           ) : (

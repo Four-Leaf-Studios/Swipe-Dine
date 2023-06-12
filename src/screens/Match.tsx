@@ -40,7 +40,7 @@ const Match = ({ navigation }) => {
   }, [room, navigation, isFocused]);
 
   return (
-    <Layout variant="white">
+    <Layout variant="white" gradient>
       <Box
         width="100%"
         flex={1}

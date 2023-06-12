@@ -7,6 +7,10 @@ interface Filters {
   BBQ: boolean;
   ["Ice Cream"]: boolean;
   ["Fast Food"]: boolean;
+  Japanese: boolean;
+  Chinese: boolean;
+  Mexican: boolean;
+  Indian: boolean;
   Bars: boolean;
 }
 
@@ -20,6 +24,11 @@ const useFilters = (room = null, initialFilters = null) => {
           ["Ice Cream"]: false,
           ["Fast Food"]: false,
           Bars: false,
+          Japanese: false,
+          Chinese: false,
+          Mexican: false,
+          Indian: false,
+          Italian: false,
         }
   );
 
@@ -37,7 +46,18 @@ const useFilters = (room = null, initialFilters = null) => {
             filter !== undefined &&
             JSON.stringify(filter) !== JSON.stringify(filters)
           ) {
-            setFilters(filter);
+            // Merge the new fields from default filters to existing filters
+            const updatedFilters = {
+              ...filter,
+              ...Object.keys(filters).reduce((acc, key) => {
+                if (!(key in filter)) {
+                  acc[key] = filters[key];
+                }
+                return acc;
+              }, {}),
+            };
+
+            setFilters(updatedFilters);
           }
         } else {
           // Firestore path does not exist, set default filters here

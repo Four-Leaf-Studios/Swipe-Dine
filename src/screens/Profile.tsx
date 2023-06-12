@@ -1,4 +1,4 @@
-import { Image, TouchableOpacity } from "react-native";
+import { Dimensions, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
@@ -6,11 +6,15 @@ import Text from "../components/Text";
 import useAuth from "../hooks/useAuth";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
+import { ScrollView } from "react-native-gesture-handler";
+import useUserProfileFromFirestore from "../hooks/useUserProfileFromFirestore";
+import ProfileRestaurantItem from "../components/ProfileRestaurantItem";
 
 const Profile = ({ navigation }) => {
   const theme = useTheme<Theme>();
   const { darkGray, gray } = theme.colors;
   const { user } = useAuth();
+  const { favorites, matched } = useUserProfileFromFirestore();
   const [image, setImage] = useState<string>(
     user.photoURL
       ? user.photoURL
@@ -40,7 +44,7 @@ const Profile = ({ navigation }) => {
   }, [navigation]);
 
   return (
-    <Layout variant="gray" gradient>
+    <Layout variant="white" gradient>
       <Box
         width="100%"
         flex={1}
@@ -51,7 +55,7 @@ const Profile = ({ navigation }) => {
         <Box
           width="100%"
           height="40%"
-          flexDirection="row"
+          flexDirection="column"
           justifyContent={"flex-start"}
           alignItems={"center"}
           backgroundColor="darkGray"
@@ -92,93 +96,58 @@ const Profile = ({ navigation }) => {
             elevation={4}
             shadowRadius={4}
             shadowOffset={{ width: 0, height: -4 }}
-            padding="l"
             gap={"l"}
+            paddingBottom="m"
+            paddingTop="l"
           >
             <Box flex={1}>
-              <Text variant="body">Your Favorites!</Text>
+              <Text variant="body" color="orangeDark">
+                Your Favorites!
+              </Text>
             </Box>
-            <Box
-              flex={5}
-              width="100%"
-              shadowColor={"black"}
-              shadowRadius={8}
-              shadowOpacity={0.14}
-              shadowOffset={{ width: 0, height: 4 }}
-              backgroundColor={"white"}
-              borderRadius={10}
-            >
-              <Box
-                flex={1}
-                width="100%"
-                borderRadius={10}
-                flexDirection={"row"}
-                backgroundColor={"darkGray"}
-                overflow="hidden"
+            <Box flex={5} width="100%">
+              <ScrollView
+                pagingEnabled
+                nestedScrollEnabled
+                horizontal
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                scrollEventThrottle={16}
+                style={{ flex: 1, width: "100%" }}
               >
-                <Box flex={1} height="100%">
-                  <Image
-                    source={{
-                      uri: "https://www.eatthis.com/wp-content/uploads/sites/4/2020/06/chilis.jpg?quality=82&strip=1",
-                    }}
-                    style={{ width: "100%", height: "100%" }}
+                {favorites.map((id) => (
+                  <ProfileRestaurantItem
+                    key={id + "favorites"}
+                    place_id={id}
+                    favorites={favorites}
                   />
-                </Box>
-                <Box
-                  flex={2}
-                  height="100%"
-                  justifyContent={"flex-start"}
-                  alignItems="flex-start"
-                  padding="s"
-                >
-                  <Text variant="body" color="white">
-                    Chili's
-                  </Text>
-                </Box>
-              </Box>
+                ))}
+              </ScrollView>
             </Box>
 
             <Box flex={1}>
-              <Text variant="body">Previously Matched</Text>
+              <Text variant="body" color="orangeDark">
+                Previously Matched
+              </Text>
             </Box>
-            <Box
-              flex={5}
-              width="100%"
-              shadowColor={"black"}
-              shadowRadius={8}
-              shadowOpacity={0.14}
-              shadowOffset={{ width: 0, height: 4 }}
-              backgroundColor={"white"}
-              borderRadius={10}
-            >
-              <Box
-                flex={1}
-                width="100%"
-                borderRadius={10}
-                flexDirection={"row"}
-                backgroundColor={"darkGray"}
-                overflow="hidden"
+            <Box flex={5} width="100%">
+              <ScrollView
+                pagingEnabled
+                nestedScrollEnabled
+                horizontal
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                scrollEventThrottle={16}
+                style={{ flex: 1, width: "100%" }}
               >
-                <Box flex={1} height="100%">
-                  <Image
-                    source={{
-                      uri: "https://www.eatthis.com/wp-content/uploads/sites/4/2020/06/chilis.jpg?quality=82&strip=1",
-                    }}
-                    style={{ width: "100%", height: "100%" }}
+                {matched.map((id) => (
+                  <ProfileRestaurantItem
+                    key={id + "matched"}
+                    place_id={id}
+                    favorites={favorites}
                   />
-                </Box>
-                <Box
-                  flex={2}
-                  height="100%"
-                  justifyContent={"flex-start"}
-                  alignItems="flex-start"
-                  padding="s"
-                >
-                  <Text variant="body" color="white">
-                    Chili's
-                  </Text>
-                </Box>
-              </Box>
+                ))}
+              </ScrollView>
             </Box>
           </Box>
         </Box>

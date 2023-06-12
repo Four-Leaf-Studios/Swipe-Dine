@@ -10,9 +10,10 @@ interface GooglePlacesParams {
   location: string;
   key: string;
   keyword: string;
-  rankby: string;
+  rankby?: string;
   opennow: boolean;
   pagetoken?: string;
+  type?: string;
 }
 
 const getGooglePlaces = async (location, nextPageToken = null, keywords) => {
@@ -20,9 +21,10 @@ const getGooglePlaces = async (location, nextPageToken = null, keywords) => {
     const params: GooglePlacesParams = {
       location: location,
       key: SECONDARY_API_KEY,
-      keyword: "restaurant | " + keywords,
-      rankby: "distance",
+      keyword: keywords,
       opennow: true,
+      rankby: "distance",
+      type: "food",
     };
 
     if (nextPageToken) {

@@ -22,10 +22,17 @@ interface Props {
   restaurantPassed?: RestaurantDetails;
   discover?: boolean;
   filters: Object;
+  navigation: any;
 }
 
 const SwipeCard = memo(
-  ({ restaurantPassed, handleSwipe, discover = false, filters }: Props) => {
+  ({
+    restaurantPassed,
+    handleSwipe,
+    discover = false,
+    filters,
+    navigation,
+  }: Props) => {
     const { restaurant: restaurantDetails, loading } = useRestaurantDetails(
       restaurantPassed?.place_id,
       discover,
@@ -55,7 +62,12 @@ const SwipeCard = memo(
         useNativeDriver: false,
       }).start(() => handleSwipe("left", restaurant.place_id));
     };
-    const handleViewDetails = () => {};
+    const handleViewDetails = () => {
+      navigation.navigate(discover ? "DiscoverMatched" : "Matched", {
+        restaurant: restaurant,
+        filters: filters,
+      });
+    };
     const handleSwipeRight = () => {
       Animated.timing(pan, {
         toValue: { x: windowWidth + 150, y: 0 },

@@ -201,3 +201,119 @@ export const addFiltersToTypes = (types, filters) => {
 
   return Array.from(new Set(newTypes));
 };
+
+export const addRestaurantToMatchedListInFirestore = async (
+  placeId,
+  userId
+) => {
+  try {
+    const usersRef = collection(db, "users");
+    const userRef = doc(usersRef, userId);
+
+    // Get the user's current matched restaurants array
+    const userDoc = await getDoc(userRef);
+    const matchedRestaurants = userDoc.data().matchedRestaurants || [];
+
+    // Check if the placeId is already in the matched restaurants array
+    if (!matchedRestaurants.includes(placeId)) {
+      // Add the new placeId to the matched restaurants array
+      const updatedMatchedRestaurants = [...matchedRestaurants, placeId];
+
+      // Update the user document with the updated matched restaurants array
+      await updateDoc(userRef, {
+        matchedRestaurants: updatedMatchedRestaurants,
+      });
+
+      console.log("Restaurant added to matched list successfully!");
+    } else {
+      console.log("Restaurant already exists in the matched list.");
+    }
+  } catch (error) {
+    console.error("Error adding restaurant to matched list:", error);
+    throw error;
+  }
+};
+
+export const addRestaurantToFavoritesListInFirestore = async (
+  placeId,
+  userId
+) => {
+  try {
+    const usersRef = collection(db, "users");
+    const userRef = doc(usersRef, userId);
+
+    // Get the user's current matched restaurants array
+    const userDoc = await getDoc(userRef);
+    const favoritedRestaurants = userDoc.data().favoritedRestaurants || [];
+
+    // Check if the placeId is already in the matched restaurants array
+    if (!favoritedRestaurants.includes(placeId)) {
+      // Add the new placeId to the matched restaurants array
+      const updatedFavoritedRestaurants = [...favoritedRestaurants, placeId];
+
+      // Update the user document with the updated matched restaurants array
+      await updateDoc(userRef, {
+        favoritedRestaurants: updatedFavoritedRestaurants,
+      });
+
+      console.log("Restaurant added to favorites list successfully!");
+    } else {
+      console.log("Restaurant already exists in the favorite list.");
+    }
+  } catch (error) {
+    console.error("Error adding restaurant to favorite list:", error);
+    throw error;
+  }
+};
+
+export const removeRestaurantFromFavoritesInFirestore = async (
+  placeId,
+  userId
+) => {
+  try {
+    const userRef = doc(db, "users", userId);
+
+    // Get the user's current favorites array
+    const userDoc = await getDoc(userRef);
+    const favorites = userDoc.data().favoritedRestaurants || [];
+
+    // Remove the placeId from the favorites array
+    const updatedFavorites = favorites.filter(
+      (restaurantId) => restaurantId !== placeId
+    );
+
+    // Update the user document with the updated favorites array
+    await updateDoc(userRef, { favoritedRestaurants: updatedFavorites });
+
+    console.log("Restaurant removed from favorites successfully!");
+  } catch (error) {
+    console.error("Error removing restaurant from favorites:", error);
+    throw error;
+  }
+};
+
+export const removeRestaurantFromMatchedInFirestore = async (
+  placeId,
+  userId
+) => {
+  try {
+    const userRef = doc(db, "users", userId);
+
+    // Get the user's current favorites array
+    const userDoc = await getDoc(userRef);
+    const matched = userDoc.data().matchedRestaurants || [];
+
+    // Remove the placeId from the favorites array
+    const updatedMatchedRestaurants = matched.filter(
+      (restaurantId) => restaurantId !== placeId
+    );
+
+    // Update the user document with the updated favorites array
+    await updateDoc(userRef, { matchedRestaurants: updatedMatchedRestaurants });
+
+    console.log("Restaurant removed from matched successfully!");
+  } catch (error) {
+    console.error("Error removing restaurant from matched:", error);
+    throw error;
+  }
+};

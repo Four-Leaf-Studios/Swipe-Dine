@@ -78,8 +78,9 @@ const Home = ({ navigation }) => {
             shadowRadius={4}
             shadowOffset={{ width: 0, height: -4 }}
             padding="l"
+            gap="s"
           >
-            <Box width="100%" flex={1} gap={"l"}>
+            <Box width="100%" flex={1}>
               <Box padding="s">
                 <Text variant="body" fontSize={20}>
                   What are you looking for?

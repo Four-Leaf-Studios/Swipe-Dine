@@ -26,6 +26,9 @@ const Filters = ({ filters, setFilters }) => {
       )}
       // Setting the number of columns
       numColumns={3}
+      contentContainerStyle={{
+        justifyContent: "space-between",
+      }}
     />
   );
 };

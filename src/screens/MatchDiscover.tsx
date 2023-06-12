@@ -4,7 +4,10 @@ import Layout from "../components/Layout";
 import Box from "../components/Box";
 import SwipeCard from "../components/SwipeCard";
 import Text from "../components/Text";
-import { leaveRoomFirestore } from "../lib/firebaseHelpers";
+import {
+  addRestaurantToMatchedListInFirestore,
+  leaveRoomFirestore,
+} from "../lib/firebaseHelpers";
 import useAuth from "../hooks/useAuth";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -88,11 +91,16 @@ const MatchDiscover = ({ navigation, route }) => {
       const matchedRestaurant = room.restaurants.find(
         (restaurant) => restaurant.place_id === matched
       );
-      if (matchedRestaurant)
+      if (matchedRestaurant) {
+        addRestaurantToMatchedListInFirestore(
+          matchedRestaurant.place_id,
+          user.uid
+        );
         navigation.navigate("Matched", {
           restaurant: matchedRestaurant,
           filters: filters,
         });
+      }
     }
   }, [room.swiped]);
 
@@ -133,6 +141,7 @@ const MatchDiscover = ({ navigation, route }) => {
               handleSwipe={handleSwipe}
               filters={filters}
               discover
+              navigation={navigation}
             />
           ))}
         </Box>

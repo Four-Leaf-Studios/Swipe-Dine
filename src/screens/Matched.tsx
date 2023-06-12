@@ -1,4 +1,10 @@
-import { Image, Linking, TouchableOpacity } from "react-native";
+import {
+  Dimensions,
+  Image,
+  Linking,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
@@ -9,6 +15,8 @@ import { Theme } from "../../theme";
 import { getPhotoURL } from "../api/google/google";
 import useRestaurantDetails from "../hooks/useRestaurantDetails";
 import AnimatedLogo from "../components/AnimatedLogo";
+import { ScrollView } from "react-native-gesture-handler";
+import { normalize } from "react-native-elements";
 
 const Matched = ({ navigation, route }) => {
   const theme = useTheme<Theme>();
@@ -31,12 +39,14 @@ const Matched = ({ navigation, route }) => {
       setRestaurant(restaurantDetails);
     }
   }, [restaurantDetails]);
+
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
       title: restaurant.name,
     });
   }, []);
+
   //const restaurantDetails = useRestaurantDetails(restaurant.place_id);
   const handleNavigatePressed = () => {
     const address = restaurant?.vicinity
@@ -58,8 +68,8 @@ const Matched = ({ navigation, route }) => {
   };
 
   const handleWebsitePressed = () => {
-    const websiteUrl = restaurant?.website
-      ? restaurant.website
+    const websiteUrl = restaurant?.url
+      ? restaurant.url
       : "https://www.restaurantwebsite.com"; // Replace with the desired website URL
 
     Linking.openURL(websiteUrl).catch((error) => {
@@ -67,16 +77,19 @@ const Matched = ({ navigation, route }) => {
       // You can handle the error or display a message to the user if the website cannot be opened
     });
   };
-  if (loading)
-    return (
-      <Layout variant="gray" gradient>
-        <AnimatedLogo variant="secondary" />
-      </Layout>
-    );
+
+  const [activeReviewIndex, setActiveReviewIndex] = useState(0);
+
+  const handleScroll = (event) => {
+    const scrollOffset = event.nativeEvent.contentOffset.y;
+    const currentPage = Math.round(scrollOffset / normalize(300)); // Adjust the value as needed
+    setActiveReviewIndex(currentPage);
+  };
+
   return (
     <Layout variant="main">
       <Box width="100%" flex={1}>
-        <Box position="relative" width="100%" flex={0.6}>
+        <Box position="relative" width="100%" flex={0.55}>
           <Image
             source={{
               uri:
@@ -91,7 +104,7 @@ const Matched = ({ navigation, route }) => {
           <Box
             position="absolute"
             width="100%"
-            height="90%"
+            height="80%"
             flexDirection="row"
             justifyContent={"space-between"}
             alignItems="flex-end"
@@ -142,7 +155,7 @@ const Matched = ({ navigation, route }) => {
           bottom={0}
           left={0}
           width="100%"
-          height="45%"
+          height="55%"
           borderTopLeftRadius={20}
           borderTopRightRadius={20}
           shadowColor={"black"}
@@ -162,18 +175,13 @@ const Matched = ({ navigation, route }) => {
             borderTopRightRadius={30}
             flexGrow={0.1}
             flexDirection={"row"}
-            justifyContent={"space-between"}
+            justifyContent={"center"}
             alignItems="center"
             paddingLeft="l"
             paddingRight="l"
             gap="l"
           >
-            <Text
-              variant="body"
-              color="orangeDark"
-              textAlign={"center"}
-              style={{ flex: 1 }}
-            >
+            <Text variant="subheader" color="orangeDark" textAlign={"center"}>
               Reviews
             </Text>
           </Box>
@@ -182,7 +190,52 @@ const Matched = ({ navigation, route }) => {
             flex={1}
             justifyContent={"flex-start"}
             alignItems="center"
-          ></Box>
+          >
+            <ScrollView
+              pagingEnabled
+              nestedScrollEnabled
+              horizontal
+              showsVerticalScrollIndicator={false}
+              scrollEventThrottle={16}
+              style={{ flex: 1, width: "100%" }}
+              onScroll={handleScroll}
+            >
+              {restaurantDetails?.reviews.map((review, index) => (
+                <ScrollView>
+                  <Box
+                    key={index}
+                    width={Dimensions.get("window").width} // Adjust the value as needed
+                    justifyContent="center"
+                    alignItems="center"
+                    padding="l"
+                    gap="l"
+                  >
+                    <Image
+                      source={{ uri: review.profile_photo_url }}
+                      style={{ width: 40, height: 40 }}
+                    />
+
+                    <Text
+                      variant="body"
+                      textAlign={"center"}
+                      color="buttonSecondaryText"
+                      fontWeight="bold"
+                    >
+                      {review.author_name}
+                    </Text>
+
+                    <Text
+                      variant="body"
+                      textAlign={"center"}
+                      color="buttonSecondaryText"
+                    >
+                      {review.text}
+                    </Text>
+                  </Box>
+                </ScrollView>
+              ))}
+            </ScrollView>
+          </Box>
         </Box>
       </Box>
     </Layout>
