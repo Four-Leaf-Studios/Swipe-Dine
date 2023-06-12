@@ -80,6 +80,7 @@ const theme = createTheme({
     l: 24,
     xl: 40,
     auto: "auto",
+    none: 0,
   },
 
   inputVariants: {
@@ -224,6 +225,11 @@ const theme = createTheme({
         phone: 0,
         tablet: 0,
       },
+    },
+    swipeDetailsView: {
+      width: "100%",
+      padding: 0,
+      flex: 15,
     },
     elevated: {
       padding: {

@@ -7,67 +7,84 @@ import {
   uploadRestaurantDetailsToFirestore,
 } from "../lib/firebaseHelpers";
 
-const useRestaurantDetails = (id: string, discover = false, filters = {}) => {
+const useRestaurantDetails = (
+  id: string,
+  discover = false,
+  filters = {},
+  viewDetails = true
+) => {
   const [restaurant, setRestaurant] = useState<RestaurantDetailsGoogle>();
   const [loading, setLoading] = useState(false);
+
+  const handleNewRestaurant = async (
+    id,
+    filters,
+    setRestaurant,
+    setLoading
+  ) => {
+    try {
+      const data = await getRestaurantDetailsFromGooglePlaces(id);
+      if (data.result) {
+        setRestaurant(data.result);
+        await updateExistingRestaurant(data.result, filters);
+        setLoading(false);
+      } else {
+        console.error(data.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  const handleExistingRestaurant = async (
+    existsResult,
+    filters,
+    setRestaurant,
+    setLoading
+  ) => {
+    const existingRestaurant = existsResult.data;
+    const newFilters = Object.entries(filters)
+      .filter(([key, value]) => value === true)
+      .map(([key, value]) => key);
+
+    if (newFilters.length > 0) {
+      await updateExistingRestaurant(existingRestaurant, filters);
+    }
+
+    setRestaurant(existingRestaurant);
+    setLoading(false);
+  };
+
+  const updateExistingRestaurant = async (existingRestaurant, filters) => {
+    existingRestaurant.types = addFiltersToTypes(
+      existingRestaurant.types,
+      filters
+    );
+    await uploadRestaurantDetailsToFirestore(existingRestaurant);
+  };
+
   useEffect(() => {
-    const fetchRestaurantDetailsFromYelp = async () => {
+    const fetchRestaurantDetails = async () => {
       setLoading(true);
       const existsResult = await checkDocumentExists(id);
 
       if (existsResult.exists) {
-        const existingRestaurant = existsResult.data;
-        const existingFilters = existingRestaurant.types || [];
-
-        // Extract filter keys with value true from the filters object
-        const newFilters = Object.entries(filters)
-          .filter(([key, value]) => value === true)
-          .map(([key, value]) => key);
-
-        // Check if filters are different and not already present in the types array
-        const updatedFilters = [
-          ...existingFilters,
-          ...newFilters.filter(
-            (filter) =>
-              !existingFilters.includes(filter) &&
-              !existingRestaurant.types.includes(filter)
-          ),
-        ];
-
-        if (newFilters.length > 0) {
-          existingRestaurant.types = addFiltersToTypes(
-            existingRestaurant.types,
-            filters
-          );
-          await uploadRestaurantDetailsToFirestore(existingRestaurant);
-        }
-
-        setRestaurant(existingRestaurant);
-        setLoading(false);
+        await handleExistingRestaurant(
+          existsResult,
+          filters,
+          setRestaurant,
+          setLoading
+        );
       } else {
-        try {
-          if (!discover) {
-            const data = await getRestaurantDetailsFromGooglePlaces(id);
-            if (data.result) {
-              setRestaurant(data.result);
-              // Update Firestore document with new filters
-              data.result.types = addFiltersToTypes(data.result.types, filters);
-              await uploadRestaurantDetailsToFirestore(data.result);
-              setLoading(false);
-            } else {
-              console.error(data.error);
-            }
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
+        // If useRestaurantDetails was called in a discover page don't fetch details.
+        !discover &&
+          (await handleNewRestaurant(id, filters, setRestaurant, setLoading));
       }
     };
 
     if (!restaurant) {
-      fetchRestaurantDetailsFromYelp();
+      fetchRestaurantDetails();
     }
-  }, []);
+  }, [viewDetails]);
 
   return { restaurant: restaurant ? { ...restaurant } : null, loading };
 };

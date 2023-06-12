@@ -77,7 +77,7 @@ const Discover = ({ navigation, route }) => {
 
   return (
     <Layout variant="main">
-      <Box width="100%" flex={1} padding="s">
+      <Box width="100%" flex={1}>
         <Box
           position="relative"
           width="100%"
