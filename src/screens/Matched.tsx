@@ -201,9 +201,8 @@ const Matched = ({ navigation, route }) => {
               onScroll={handleScroll}
             >
               {restaurantDetails?.reviews.map((review, index) => (
-                <ScrollView>
+                <ScrollView key={index}>
                   <Box
-                    key={index}
                     width={Dimensions.get("window").width} // Adjust the value as needed
                     justifyContent="center"
                     alignItems="center"

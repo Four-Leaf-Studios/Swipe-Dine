@@ -12,6 +12,9 @@
     },
     "ios": {
       "bundleIdentifier": "com.michaelheinzman.swipeanddine"
+    },
+    "android": {
+      "package": "com.michaelheinzman.swipeanddine"
     }
   }
 }

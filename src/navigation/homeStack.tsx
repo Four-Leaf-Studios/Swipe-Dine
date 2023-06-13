@@ -7,6 +7,7 @@ import { useTheme } from "@shopify/restyle";
 import FilterScreen from "../screens/FilterScreen";
 import Discover from "../screens/Discover";
 import Matched from "../screens/Matched";
+import Shop from "../screens/Shop";
 
 const Stack = createStackNavigator();
 const HomeStack = () => {
@@ -21,6 +22,7 @@ const HomeStack = () => {
           color: buttonSecondaryText,
         },
       }}
+      initialRouteName="Store"
     >
       <Stack.Screen
         name="Home"
@@ -63,6 +65,11 @@ const HomeStack = () => {
       <Stack.Screen
         name="DiscoverMatched"
         component={Matched}
+        options={{ gestureEnabled: false }}
+      />
+      <Stack.Screen
+        name="Store"
+        component={Shop}
         options={{ gestureEnabled: false }}
       />
     </Stack.Navigator>

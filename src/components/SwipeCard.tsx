@@ -18,6 +18,7 @@ import { RestaurantDetails } from "../api/google/googleTypes";
 import { getPhotoURL } from "../api/google/google";
 import useRestaurantDetails from "../hooks/useRestaurantDetails";
 import { Ionicons } from "@expo/vector-icons";
+import StarRating from "react-native-star-rating";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 
@@ -36,6 +37,8 @@ const SwipeCard = memo(
     discover: discoverPassed = false,
     filters,
   }: Props) => {
+    const theme = useTheme<Theme>();
+    const { orangeDark } = theme.colors;
     const [discover, setDiscover] = useState(discoverPassed);
     const { restaurant: restaurantDetails, loading } = useRestaurantDetails(
       restaurantPassed?.place_id,
@@ -266,11 +269,21 @@ const SwipeCard = memo(
               </Text>
 
               <Text variant="body" color="gray">
-                Rating: {restaurant.rating} / 5
-              </Text>
-              <Text variant="body" color="gray">
                 {restaurant.vicinity}
               </Text>
+
+              <StarRating
+                disabled={true}
+                maxStars={5}
+                rating={restaurant.rating}
+                iconSet={"Ionicons"}
+                emptyStar={"ios-star-outline"}
+                fullStar={"ios-star"}
+                halfStar={"ios-star-half"}
+                fullStarColor={orangeDark}
+                emptyStarColor="white"
+                starSize={20}
+              />
               <Box flex={1} flexDirection={"row"} gap="s">
                 {restaurant?.vicinity && (
                   <Ionicons

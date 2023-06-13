@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AuthenticatedUserProvider } from "./src/hooks/useAuth";
 import RootNavigation from "./src/navigation/RootNavigation";
 import { RecoilRoot } from "recoil";
+import { GlassfyProvider } from "./src/lib/GlassfyProvider";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -11,9 +12,11 @@ export default function App() {
   return (
     <ThemeProvider theme={activeTheme}>
       <AuthenticatedUserProvider>
-        <RecoilRoot>
-          <RootNavigation />
-        </RecoilRoot>
+        <GlassfyProvider>
+          <RecoilRoot>
+            <RootNavigation />
+          </RecoilRoot>
+        </GlassfyProvider>
       </AuthenticatedUserProvider>
     </ThemeProvider>
   );
