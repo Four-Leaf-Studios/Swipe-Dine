@@ -1,6 +1,7 @@
 import {
   Animated,
   Image,
+  Linking,
   PanResponder,
   Pressable,
   StyleSheet,
@@ -16,7 +17,9 @@ import LinearGradient from "./LinearGradient";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import { getPhotoURL } from "../api/google/google";
 import useRestaurantDetails from "../hooks/useRestaurantDetails";
-import SwipeCardDetailsView from "./SwipeCardDetailsView";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "@shopify/restyle";
+import { Theme } from "../../theme";
 
 interface Props {
   handleSwipe: (direction: string, place_id: string) => void;
@@ -32,10 +35,8 @@ const SwipeCard = memo(
     handleSwipe,
     discover: discoverPassed = false,
     filters,
-    navigation,
   }: Props) => {
     const [discover, setDiscover] = useState(discoverPassed);
-    const [viewDetails, setViewDetails] = useState(false);
     const { restaurant: restaurantDetails, loading } = useRestaurantDetails(
       restaurantPassed?.place_id,
       discover,
@@ -65,10 +66,7 @@ const SwipeCard = memo(
         useNativeDriver: false,
       }).start(() => handleSwipe("left", restaurant.place_id));
     };
-    const handleViewDetails = () => {
-      setDiscover(true);
-      setViewDetails(true);
-    };
+    const handleViewDetails = () => {};
     const handleSwipeRight = () => {
       Animated.timing(pan, {
         toValue: { x: windowWidth + 150, y: 0 },
@@ -172,212 +170,167 @@ const SwipeCard = memo(
       }
     }, [restaurant?.photos, currentPhoto]);
 
+    const handleWebsitePressed = () => {
+      const websiteUrl = restaurant?.url
+        ? restaurant.url
+        : "https://www.restaurantwebsite.com"; // Replace with the desired website URL
+
+      Linking.openURL(websiteUrl).catch((error) => {
+        console.error("Failed to open website:", error);
+        // You can handle the error or display a message to the user if the website cannot be opened
+      });
+    };
+
+    const handleNavigatePressed = () => {
+      const address = restaurant?.vicinity
+        ? restaurant.vicinity
+        : "123 Main St, City, State"; // Replace with the desired address
+
+      Linking.canOpenURL("maps://").then((supported) => {
+        if (supported) {
+          // Open the map application
+          const mapAddress = `${encodeURIComponent(
+            restaurant?.name
+          )},${encodeURIComponent(address)}`;
+          Linking.openURL(`maps://maps.apple.com/?q=${mapAddress}`);
+        } else {
+          console.log("Deep linking not supported on this device.");
+          // You can provide an alternative action or UI for unsupported devices
+        }
+      });
+    };
     return (
       <Animated.View
         style={[styles.swipeCard, cardStyle]}
         {...panResponder.panHandlers}
       >
-        {viewDetails ? (
-          <SwipeCardDetailsView
-            restaurant={restaurant}
-            photoURL={photoURL}
-            closeViewDetails={() => setViewDetails(false)}
-            currentPhoto={currentPhoto}
-            handleNextPhoto={handleNextPhoto}
-            handlePreviousPhoto={handlePreviousPhoto}
-          />
-        ) : (
-          <Card variant={"swipe"}>
-            <>
-              {/* Top Half */}
+        <Card variant={"swipe"}>
+          <>
+            {/* Top Half */}
+            <Box
+              flex={2}
+              position="relative"
+              width="100%"
+              zIndex="z-20"
+              flexDirection="column"
+              justifyContent="flex-start"
+              alignItems="center"
+            >
+              {/* Photo List */}
               <Box
-                flex={2}
-                position="relative"
                 width="100%"
-                zIndex="z-20"
-                flexDirection="column"
+                flex={0.01}
+                flexDirection="row"
+                alignItems="center"
                 justifyContent="flex-start"
-                alignItems="center"
+                padding="l"
+                gap="m"
               >
-                {/* Photo List */}
-                <Box
-                  width="100%"
-                  flex={0.01}
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="flex-start"
-                  padding="l"
-                  gap="m"
-                >
-                  {restaurant.photos?.map((photo, index) => (
-                    <Box
-                      key={photo.photo_reference}
-                      flex={1}
-                      backgroundColor={
-                        index === currentPhoto ? "white" : "gray"
-                      }
-                      height="100%"
-                    ></Box>
-                  ))}
-                </Box>
-
-                <Box
-                  width="100%"
-                  height="100%"
-                  position="absolute"
-                  flexDirection="row"
-                >
-                  <Pressable
-                    style={{ flex: 1, height: "100%" }}
-                    onPress={handlePreviousPhoto}
-                  />
-                  <Pressable
-                    style={{ flex: 1, height: "100%" }}
-                    onPress={handleNextPhoto}
-                  />
-                </Box>
+                {restaurant.photos?.map((photo, index) => (
+                  <Box
+                    key={photo.photo_reference}
+                    flex={1}
+                    backgroundColor={index === currentPhoto ? "white" : "gray"}
+                    height="100%"
+                  ></Box>
+                ))}
               </Box>
 
-              {/* Description */}
               <Box
-                position="relative"
-                flexDirection="column"
-                alignItems="flex-start"
-                justifyContent="flex-end"
                 width="100%"
-                paddingBottom="s"
-                flex={1}
-                zIndex="z-10"
-              >
-                <Box
-                  position="relative"
-                  flexDirection="column"
-                  alignItems="flex-start"
-                  justifyContent="flex-end"
-                  width="100%"
-                  padding="l"
-                  flex={1}
-                  zIndex="z-10"
-                >
-                  <Text variant="subheader" color="white">
-                    {restaurant.name}
-                  </Text>
-                  <Text variant="body" color="gray">
-                    Rating: {restaurant.rating} / 5
-                  </Text>
-                  <Text variant="body" color="gray">
-                    {restaurant.vicinity}
-                  </Text>
-                </Box>
-
-                <Pressable
-                  style={{
-                    position: "absolute",
-                    width: "100%",
-                    height: "100%",
-                    left: 0,
-                    top: 0,
-                    zIndex: 20,
-                  }}
-                  onPress={handleViewDetails}
-                />
-              </Box>
-              <Image
-                source={{
-                  uri: photoURL,
-                }}
-                alt="Restaurant Photo"
-                style={styles.image}
-              />
-
-              {/* Swipe Card Buttons */}
-              <Box
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="space-around"
-                gap="s"
-                width="100%"
-                padding="s"
-                paddingBottom="l"
-                zIndex="z-10"
-              >
-                <SwipeCardButton
-                  type="md-close-outline"
-                  handlePress={handleSwipeLeft}
-                />
-                <SwipeCardButton
-                  type="md-heart-outline"
-                  handlePress={handleSwipeRight}
-                />
-              </Box>
-
-              {/* Indicators */}
-              <Box
+                height="100%"
                 position="absolute"
-                width="100%"
-                height="90%"
                 flexDirection="row"
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                padding="s"
               >
-                <Animated.View
-                  style={{
-                    width: 60,
-                    height: 60,
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderWidth: 3,
-                    borderRadius: 999,
-                    backgroundColor: "white",
-                    opacity: indicators.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, 0.7],
-                    }),
-                    transform: [
-                      {
-                        translateX: indicators.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [-500, 0],
-                        }),
-                      },
-                    ],
-                  }}
-                >
-                  <SwipeCardButton type="md-close" handlePress={() => {}} />
-                </Animated.View>
-                <Animated.View
-                  style={{
-                    width: 60,
-                    height: 60,
-                    flexDirection: "row",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    borderWidth: 3,
-                    borderRadius: 999,
-                    backgroundColor: "white",
-                    opacity: indicators.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, 0.7],
-                    }),
-                    transform: [
-                      {
-                        translateX: indicators.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: [500, 0],
-                        }),
-                      },
-                    ],
-                  }}
-                >
-                  <SwipeCardButton type="md-heart" handlePress={() => {}} />
-                </Animated.View>
+                <Pressable
+                  style={{ flex: 1, height: "100%" }}
+                  onPress={handlePreviousPhoto}
+                />
+                <Pressable
+                  style={{ flex: 1, height: "100%" }}
+                  onPress={handleNextPhoto}
+                />
               </Box>
-              <LinearGradient variant="shadow" gradient />
-            </>
-          </Card>
-        )}
+            </Box>
+
+            {/* Description */}
+            <Box
+              position="relative"
+              flexDirection="column"
+              alignItems="flex-start"
+              justifyContent="flex-end"
+              width="100%"
+              flexGrow={0.3}
+              zIndex="z-10"
+              padding="l"
+              paddingBottom="none"
+              gap="s"
+            >
+              <Text
+                variant="body"
+                color="white"
+                fontWeight={"bold"}
+                fontSize={22}
+              >
+                {restaurant.name}
+              </Text>
+
+              <Text variant="body" color="gray">
+                Rating: {restaurant.rating} / 5
+              </Text>
+              <Text variant="body" color="gray">
+                {restaurant.vicinity}
+              </Text>
+              <Box flex={1} flexDirection={"row"} gap="s">
+                {restaurant?.url && (
+                  <Ionicons
+                    name="md-globe-outline"
+                    size={35}
+                    color={"white"}
+                    onPress={handleWebsitePressed}
+                  />
+                )}
+                {restaurant?.vicinity && (
+                  <Ionicons
+                    name="md-car-outline"
+                    size={35}
+                    color={"white"}
+                    onPress={handleNavigatePressed}
+                  />
+                )}
+              </Box>
+            </Box>
+            <Image
+              source={{
+                uri: photoURL,
+              }}
+              alt="Restaurant Photo"
+              style={styles.image}
+            />
+
+            {/* Swipe Card Buttons */}
+            <Box
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="space-around"
+              gap="s"
+              width="100%"
+              padding="s"
+              paddingBottom="s"
+              zIndex="z-10"
+            >
+              <SwipeCardButton
+                type="md-close-outline"
+                handlePress={handleSwipeLeft}
+              />
+              <SwipeCardButton
+                type="md-heart-outline"
+                handlePress={handleSwipeRight}
+              />
+            </Box>
+            <LinearGradient variant="shadow" gradient />
+          </>
+        </Card>
       </Animated.View>
     );
   }

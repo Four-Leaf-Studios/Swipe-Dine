@@ -30,15 +30,15 @@ const SwipeCardButton = ({ type, handlePress }: Props) => {
     <Button variant="swipeScreenButton" onPress={handlePress}>
       <MaskedViewCustom linearGradientVariant={gradientVariant}>
         <Box
-          width={60}
-          height={60}
+          width={50}
+          height={50}
           flexDirection="row"
           justifyContent="center"
           alignItems="center"
           borderWidth={3}
           borderRadius={999}
         >
-          <Ionicons name={value} size={32} color={buttonPrimaryBackground} />
+          <Ionicons name={value} size={28} color={buttonPrimaryBackground} />
         </Box>
       </MaskedViewCustom>
     </Button>
