@@ -161,25 +161,14 @@ const SwipeCard = memo(
 
     // Memoize the getPhotoURL function
     const photoURL = useMemo(() => {
-      if (restaurant?.photos?.length > 0) {
+      if (restaurant?.photos?.length > 0 && !loading) {
         return restaurant.photos[currentPhoto].photoUrl
           ? restaurant.photos[currentPhoto].photoUrl
           : getPhotoURL(restaurant.photos[currentPhoto].photo_reference);
       } else {
         return "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/681px-Placeholder_view_vector.svg.png";
       }
-    }, [restaurant?.photos, currentPhoto]);
-
-    const handleWebsitePressed = () => {
-      const websiteUrl = restaurant?.url
-        ? restaurant.url
-        : "https://www.restaurantwebsite.com"; // Replace with the desired website URL
-
-      Linking.openURL(websiteUrl).catch((error) => {
-        console.error("Failed to open website:", error);
-        // You can handle the error or display a message to the user if the website cannot be opened
-      });
-    };
+    }, [restaurant?.photos, currentPhoto, loading]);
 
     const handleNavigatePressed = () => {
       const address = restaurant?.vicinity
@@ -199,6 +188,7 @@ const SwipeCard = memo(
         }
       });
     };
+
     return (
       <Animated.View
         style={[styles.swipeCard, cardStyle]}
@@ -282,14 +272,6 @@ const SwipeCard = memo(
                 {restaurant.vicinity}
               </Text>
               <Box flex={1} flexDirection={"row"} gap="s">
-                {restaurant?.url && (
-                  <Ionicons
-                    name="md-globe-outline"
-                    size={35}
-                    color={"white"}
-                    onPress={handleWebsitePressed}
-                  />
-                )}
                 {restaurant?.vicinity && (
                   <Ionicons
                     name="md-car-outline"

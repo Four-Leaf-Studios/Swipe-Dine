@@ -22,11 +22,7 @@ export const saveFilters = async (room, filters, uid) => {
     await updateDoc(userDoc, {
       [room ? "room" : "swipe"]: filters,
     });
-
-    console.log("Filters saved successfully!");
-  } catch (error) {
-    console.log("Error saving filters:", error);
-  }
+  } catch (error) {}
 };
 
 export const storeGooglePlacesData = async (roomCode, data) => {
@@ -123,9 +119,7 @@ export const fetchUserProfile = async (user) => {
     const usersDoc = doc(usersCollection, user.uid);
     const result = await getDoc(usersDoc);
     return result;
-  } catch (error) {
-    console.log("Error fetching user profile:", error);
-  }
+  } catch (error) {}
 };
 
 export const fetchNearbyPlacesFromFirestore = async (
@@ -223,13 +217,9 @@ export const addRestaurantToMatchedListInFirestore = async (
       await updateDoc(userRef, {
         matchedRestaurants: updatedMatchedRestaurants,
       });
-
-      console.log("Restaurant added to matched list successfully!");
     } else {
-      console.log("Restaurant already exists in the matched list.");
     }
   } catch (error) {
-    console.error("Error adding restaurant to matched list:", error);
     throw error;
   }
 };
@@ -255,13 +245,9 @@ export const addRestaurantToFavoritesListInFirestore = async (
       await updateDoc(userRef, {
         favoritedRestaurants: updatedFavoritedRestaurants,
       });
-
-      console.log("Restaurant added to favorites list successfully!");
     } else {
-      console.log("Restaurant already exists in the favorite list.");
     }
   } catch (error) {
-    console.error("Error adding restaurant to favorite list:", error);
     throw error;
   }
 };
@@ -284,10 +270,7 @@ export const removeRestaurantFromFavoritesInFirestore = async (
 
     // Update the user document with the updated favorites array
     await updateDoc(userRef, { favoritedRestaurants: updatedFavorites });
-
-    console.log("Restaurant removed from favorites successfully!");
   } catch (error) {
-    console.error("Error removing restaurant from favorites:", error);
     throw error;
   }
 };
@@ -310,10 +293,7 @@ export const removeRestaurantFromMatchedInFirestore = async (
 
     // Update the user document with the updated favorites array
     await updateDoc(userRef, { matchedRestaurants: updatedMatchedRestaurants });
-
-    console.log("Restaurant removed from matched successfully!");
   } catch (error) {
-    console.error("Error removing restaurant from matched:", error);
     throw error;
   }
 };

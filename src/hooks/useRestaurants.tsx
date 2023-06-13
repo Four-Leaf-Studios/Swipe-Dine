@@ -3,6 +3,8 @@ import { getGooglePlaces } from "../api/google/google";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import { getUserLocation } from "../utils/geolocation";
 import useFilters from "./useFilters";
+import { db } from "../lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const useRestaurants = (room, initialFilters) => {
   const { filters } = useFilters(room, initialFilters);
@@ -17,7 +19,21 @@ const useRestaurants = (room, initialFilters) => {
       JSON.stringify(prevFilters) === JSON.stringify(filters) ? false : true;
 
   useEffect(() => {
-    const fetchRestaurants = async (filter) => {
+    const checkFirestoreAndUpdate = async (restaurant) => {
+      try {
+        const docRef = doc(db, "places", restaurant.place_id);
+        const docSnapshot = await getDoc(docRef);
+        if (docSnapshot.exists) {
+          const updatedRestaurant = docSnapshot.data();
+          return { ...restaurant, ...updatedRestaurant };
+        }
+      } catch (error) {
+        console.error("Error fetching Firestore document:", error);
+      }
+      return restaurant;
+    };
+
+    const fetchAndUpdateRestaurants = async (filter) => {
       const location = await getUserLocation();
       const data = await getGooglePlaces(
         `${location.latitude},${location.longitude}`,
@@ -25,12 +41,15 @@ const useRestaurants = (room, initialFilters) => {
         filter
       );
       if (data.results) {
+        const updatedRestaurants = await Promise.all(
+          data.results.map(checkFirestoreAndUpdate)
+        );
         if (filtersUpdated) {
           setPrevFilters(filters);
-          setRestaurants(data.results);
+          setRestaurants(updatedRestaurants);
           setPageToken(null);
         } else {
-          setRestaurants((list) => [...list, ...data.results]);
+          setRestaurants((list) => [...list, ...updatedRestaurants]);
           setPageToken(data.nextPageToken);
         }
       } else {
@@ -38,12 +57,14 @@ const useRestaurants = (room, initialFilters) => {
         return null;
       }
     };
+
     if ((restaurants.length === 0 || filtersUpdated) && filters) {
       const filterString = Object.entries(filters ? filters : {})
         .filter(([_, value]) => value === true)
         .map(([key]) => key.toLowerCase())
         .join(" | ");
-      fetchRestaurants(filterString);
+
+      fetchAndUpdateRestaurants(filterString);
     }
   }, [restaurants, filtersUpdated, filters]);
 
@@ -51,6 +72,7 @@ const useRestaurants = (room, initialFilters) => {
   useEffect(() => {
     setPrevFilters(filters);
   }, [filters]);
+
   return { restaurants, loading, setRestaurants, filters };
 };
 

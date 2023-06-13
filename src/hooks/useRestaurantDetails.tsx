@@ -16,18 +16,12 @@ const useRestaurantDetails = (
   const [restaurant, setRestaurant] = useState<RestaurantDetailsGoogle>();
   const [loading, setLoading] = useState(false);
 
-  const handleNewRestaurant = async (
-    id,
-    filters,
-    setRestaurant,
-    setLoading
-  ) => {
+  const handleNewRestaurant = async (id, filters, setRestaurant) => {
     try {
       const data = await getRestaurantDetailsFromGooglePlaces(id);
       if (data.result) {
         setRestaurant(data.result);
         await updateExistingRestaurant(data.result, filters);
-        setLoading(false);
       } else {
         console.error(data.error);
       }
@@ -38,8 +32,7 @@ const useRestaurantDetails = (
   const handleExistingRestaurant = async (
     existsResult,
     filters,
-    setRestaurant,
-    setLoading
+    setRestaurant
   ) => {
     const existingRestaurant = existsResult.data;
     const newFilters = Object.entries(filters)
@@ -51,7 +44,6 @@ const useRestaurantDetails = (
     }
 
     setRestaurant(existingRestaurant);
-    setLoading(false);
   };
 
   const updateExistingRestaurant = async (existingRestaurant, filters) => {
@@ -68,16 +60,12 @@ const useRestaurantDetails = (
       const existsResult = await checkDocumentExists(id);
 
       if (existsResult.exists) {
-        await handleExistingRestaurant(
-          existsResult,
-          filters,
-          setRestaurant,
-          setLoading
-        );
+        await handleExistingRestaurant(existsResult, filters, setRestaurant);
+        setLoading(false);
       } else {
         // If useRestaurantDetails was called in a discover page don't fetch details.
-        !discover &&
-          (await handleNewRestaurant(id, filters, setRestaurant, setLoading));
+        !discover && (await handleNewRestaurant(id, filters, setRestaurant));
+        setLoading(false);
       }
     };
 
