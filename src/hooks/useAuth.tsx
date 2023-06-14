@@ -4,16 +4,16 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
-  updateProfile,
 } from "firebase/auth";
-import { useContext, useMemo } from "react";
-import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
+import { useContext, useEffect, useMemo } from "react";
 import React, { useState, createContext } from "react";
-import { auth, db, storage } from "../lib/firebase";
+import { auth, db } from "../lib/firebase";
 import Loading from "../screens/Loading";
-import { collection, doc, updateDoc } from "firebase/firestore";
+import { fetchUserProfile } from "../lib/firebaseHelpers";
+import { doc, onSnapshot } from "firebase/firestore";
+
 interface IAuth {
-  user: User | null;
+  user: User | null | UserInfo;
   signUp: (
     email: string,
     password: string
@@ -27,9 +27,24 @@ interface IAuth {
   loading: boolean;
   firstTime: boolean;
   setFirstTime: Function;
-  userInfo: Object;
-  setUserInfo: Function;
-  saveProfile: (image: string, username: string, user: User) => Promise<void>;
+  setUserProfile: Function;
+  userProfile: UserInfo | null;
+}
+
+export interface UserInfo {
+  email: string;
+  photoURL: string;
+  displayName: string;
+  uid: string;
+  discovers: number;
+  rooms: number;
+  favoritedRestaurants: string[];
+  matchedRestaurants: string[];
+  subscriptions: {
+    free: boolean;
+    standard: boolean;
+    premium: boolean;
+  };
 }
 
 const AuthenticatedUserContext = createContext<IAuth>({
@@ -45,37 +60,63 @@ const AuthenticatedUserContext = createContext<IAuth>({
   loading: false,
   firstTime: false,
   setFirstTime: () => {},
-  saveProfile: async () => {},
-  userInfo: null,
-  setUserInfo: () => {},
+  setUserProfile: () => {},
+  userProfile: null,
 });
 
 export const AuthenticatedUserProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [userInfo, setUserInfo] = useState(null);
+  const [userProfile, setUserProfile] = useState<UserInfo | null>(null);
   const [firstTime, setFirstTime] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
-  // Persisting the user.
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // Check if the user has a profile
-      if (!user.displayName) {
-        setFirstTime(true);
-      } else setFirstTime(false);
-      // Logged in...
-      setUser(user);
-      setLoading(false);
-    } else {
-      // Not logged in...
-      setUser(null);
-      setLoading(true);
-    }
-    // Temporary, mimics loading data.
-    setTimeout(() => setInitialLoading(false), 4000);
-  });
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Check if the user has a profile
+        if (!user.displayName) {
+          setFirstTime(true);
+        } else {
+          setFirstTime(false);
+        }
+
+        // Logged in...
+        try {
+          const profile: UserInfo = await fetchUserProfile(user);
+          setUserProfile(profile);
+          setUser(user);
+          setLoading(false);
+        } catch (error) {}
+      } else {
+        // Not logged in...
+        setUser(null);
+        setLoading(true);
+      }
+      // Temporary, mimics loading data.
+      setTimeout(() => setInitialLoading(false), 4000);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+    const usersRef = doc(db, "users", user?.uid);
+
+    const unsubscribe = onSnapshot(usersRef, (snapshot) => {
+      // Handle the user document update here
+      const userData = snapshot.data() as UserInfo;
+      setUserProfile(userData);
+      // Perform any necessary actions or update state based on userData
+    });
+
+    return () => {
+      // Unsubscribe from the Firestore listener when the component unmounts
+      unsubscribe();
+    };
+  }, [user?.uid]);
 
   const signUp = async (email, password) => {
     let errors = {
@@ -117,6 +158,7 @@ export const AuthenticatedUserProvider = ({ children }) => {
     try {
       // Perform sign-in logic here, e.g., using Firebase's signInWithEmailAndPassword
       await signInWithEmailAndPassword(auth, email, password);
+
       return null; // Sign in successful
     } catch (error) {
       switch (error.code) {
@@ -143,51 +185,6 @@ export const AuthenticatedUserProvider = ({ children }) => {
 
   const logout = async () => signOut(auth);
 
-  const saveProfile = async (imageURI, username, user) => {
-    try {
-      // Convert data URL to a blob
-      const response = await fetch(imageURI);
-      const blob = await response.blob();
-
-      // Create a storage reference with a unique filename
-      const storageRef = ref(
-        storage,
-        `user-profiles/${user.uid}/${Date.now()}`
-      );
-
-      // Upload the blob to Firebase Storage (resumable)
-      const uploadTask = uploadBytesResumable(storageRef, blob);
-
-      // Wait for the upload to complete
-      await new Promise((resolve, reject) => {
-        uploadTask.on("state_changed", null, reject, async () => {
-          // Get the download URL of the uploaded image
-          const imageURL = await getDownloadURL(uploadTask.snapshot.ref);
-
-          // Update the user profile in Firestore
-          const usersRef = collection(db, "users");
-          const usersDocumentRef = doc(usersRef, user.uid);
-          await updateDoc(usersDocumentRef, {
-            displayName: username,
-            photoURL: imageURL,
-            subscription: "basic",
-            discovers: 5,
-            matches: 3,
-          });
-
-          // Update the profile in the authentication system
-          await updateProfile(user, {
-            displayName: username,
-            photoURL: imageURL,
-          });
-
-          console.log("User profile updated successfully");
-        });
-      });
-    } catch (error) {
-      console.log("Error updating user profile:", error);
-    }
-  };
   const memoedValue = useMemo(
     () => ({
       user,
@@ -198,21 +195,10 @@ export const AuthenticatedUserProvider = ({ children }) => {
       error,
       firstTime,
       setFirstTime,
-      saveProfile,
-      userInfo,
-      setUserInfo,
+      setUserProfile,
+      userProfile,
     }),
-    [
-      user,
-      signUp,
-      signIn,
-      loading,
-      error,
-      firstTime,
-      setFirstTime,
-      userInfo,
-      setUserInfo,
-    ]
+    [user, signUp, signIn, loading, error, firstTime, setFirstTime]
   );
 
   return (

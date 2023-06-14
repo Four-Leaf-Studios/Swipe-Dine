@@ -5,9 +5,14 @@ import Button from "../components/Button";
 import Text from "../components/Text";
 import Box from "../components/Box";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import OfferingGroup from "../components/OfferingGroup";
+import Layout from "../components/Layout";
+import UserPermissions from "../components/UserPermissions";
+import useAuth, { UserInfo } from "../hooks/useAuth";
 
 const Shop = ({ navigation }) => {
-  const { offerings, user, restorePermissions } = useGlassfy();
+  const { userProfile: user } = useAuth();
+  const { offerings, restorePermissions } = useGlassfy();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -26,6 +31,21 @@ const Shop = ({ navigation }) => {
           </TouchableOpacity>
         </Box>
       ),
+      headerLeft: () => (
+        <Box
+          flex={1}
+          width="100%"
+          justifyContent={"center"}
+          alignItems="flex-start"
+          paddingLeft="l"
+        >
+          <TouchableOpacity onPress={() => navigation.navigate("Home")}>
+            <Text variant="body" color="orangeDark" textAlign={"left"}>
+              Back
+            </Text>
+          </TouchableOpacity>
+        </Box>
+      ),
     });
   }, []);
 
@@ -37,27 +57,17 @@ const Shop = ({ navigation }) => {
       alert(e);
     }
   };
-
-  console.log(offerings);
   return (
-    <View>
-      <Text>Shop</Text>
-      {offerings.map((group) => (
-        <>
-          <Text key={group.offeringId} variant="body" color="darkGray">
-            {group.offeringId}
-          </Text>
-          {group.skus.map((sku) => (
-            <Text key={sku.skuId} variant="body" color="darkGray">
-              {sku.skuId}
-            </Text>
-          ))}
-        </>
-      ))}
-    </View>
+    <Layout variant="main">
+      <Box width="100%" flex={1}>
+        {offerings.map((group) => (
+          <OfferingGroup group={group} key={group.offeringId} />
+        ))}
+
+        <UserPermissions user={user as UserInfo} />
+      </Box>
+    </Layout>
   );
 };
 
 export default Shop;
-
-const styles = StyleSheet.create({});

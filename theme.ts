@@ -159,6 +159,14 @@ const theme = createTheme({
       maxHeight: 100,
       padding: "m",
     },
+    homeDisabled: {
+      width: "100%",
+      backgroundColor: "gray",
+      justifyContent: "center",
+      alignItems: "center", 
+      maxHeight: 100,
+      padding: "m",
+    },
     logout: {
       zIndex: "z-0",
       flex: 1,

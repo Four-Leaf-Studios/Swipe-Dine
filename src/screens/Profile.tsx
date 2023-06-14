@@ -13,15 +13,12 @@ import ProfileRestaurantItem from "../components/ProfileRestaurantItem";
 const Profile = ({ navigation }) => {
   const theme = useTheme<Theme>();
   const { darkGray, gray } = theme.colors;
-  const { user } = useAuth();
+  const { userProfile: user } = useAuth();
   const { favorites, matched } = useUserProfileFromFirestore();
   const [image, setImage] = useState<string>(
     user.photoURL
       ? user.photoURL
       : "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
-  );
-  const [username, setUsername] = useState(
-    user.displayName ? user.displayName : ""
   );
 
   useEffect(() => {

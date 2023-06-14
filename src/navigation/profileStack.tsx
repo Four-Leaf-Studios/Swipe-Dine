@@ -4,9 +4,11 @@ import { Theme } from "../../theme";
 import { useTheme } from "@shopify/restyle";
 import Profile from "../screens/Profile";
 import Settings from "../screens/Settings";
+import useAuth from "../hooks/useAuth";
 
 const Stack = createStackNavigator();
 const ProfileStack = () => {
+  const { firstTime } = useAuth();
   const theme = useTheme<Theme>();
   const { headerButtonText, buttonSecondaryText } = theme.colors;
   return (
@@ -18,6 +20,7 @@ const ProfileStack = () => {
           color: buttonSecondaryText,
         },
       }}
+      initialRouteName={firstTime ? "Settings" : "Profile"}
     >
       <Stack.Screen
         name="Profile"

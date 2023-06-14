@@ -14,7 +14,7 @@ import Filters from "../components/Filters";
 const Room = ({ navigation }) => {
   const theme = useTheme<Theme>();
   const { darkGray } = theme.colors;
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const {
     room,
     leaveRoom,
@@ -124,7 +124,12 @@ const Room = ({ navigation }) => {
               onPress={handleStart}
             >
               <Text variant="subheader" color="white">
-                {room?.owner === user.uid ? "Start" : "Waiting..."}
+                {room?.owner === user.uid ? "Start" : "Waiting..."}{" "}
+                {room?.owner === user.uid && (
+                  <Text variant="body" color="white" fontWeight="bold">
+                    ({userProfile.rooms})
+                  </Text>
+                )}
               </Text>
             </Button>
           </Box>

@@ -22,7 +22,7 @@ const HomeStack = () => {
           color: buttonSecondaryText,
         },
       }}
-      initialRouteName="Store"
+      initialRouteName="Home"
     >
       <Stack.Screen
         name="Home"

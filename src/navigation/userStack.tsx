@@ -14,12 +14,10 @@ import ProfileStack from "./profileStack";
 const Tab = createMaterialBottomTabNavigator();
 
 const UserStack = () => {
-  const { firstTime, user, setUserInfo } = useAuth();
+  const { firstTime } = useAuth();
   const theme = useTheme<Theme>();
   const { mainBackground, buttonPrimaryBackground, orangeDark } = theme.colors;
-  useEffect(() => {
-    setUserInfo(fetchUserProfile(user));
-  }, []);
+
   return (
     <NavigationContainer>
       <Tab.Navigator
@@ -27,7 +25,7 @@ const UserStack = () => {
         labeled={true}
         barStyle={{ backgroundColor: mainBackground }}
         sceneAnimationType="shifting"
-        initialRouteName={firstTime ? "CreateProfile" : "Home"}
+        initialRouteName={firstTime ? "ProfileStack" : "Home"}
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused }) => {
             let icon;

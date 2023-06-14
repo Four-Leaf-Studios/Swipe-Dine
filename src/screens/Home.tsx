@@ -7,12 +7,15 @@ import Button from "../components/Button";
 import useAuth from "../hooks/useAuth";
 import useFilters from "../hooks/useFilters";
 import Filters from "../components/Filters";
-import { saveFilters } from "../lib/firebaseHelpers";
+import {
+  saveFilters,
+  updateUserProfileInFirestore,
+} from "../lib/firebaseHelpers";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 
 const Home = ({ navigation }) => {
-  const { logout, user, userInfo } = useAuth();
+  const { logout, user, userProfile } = useAuth();
   const { filters, setFilters } = useFilters();
   const theme = useTheme<Theme>();
   const { darkGray } = theme.colors;
@@ -30,8 +33,34 @@ const Home = ({ navigation }) => {
           </TouchableOpacity>
         </Box>
       ),
+      headerLeft: () => (
+        <Box paddingLeft="l">
+          <TouchableOpacity onPress={() => navigation.navigate("Store")}>
+            <Text variant="body" color="white">
+              Shop
+            </Text>
+          </TouchableOpacity>
+        </Box>
+      ),
     });
   }, [navigation]);
+
+  const searchRestaurants = async () => {
+    if (userProfile.discovers === 0) {
+      return;
+    }
+
+    saveFilters(null, filters, user.uid);
+    await updateUserProfileInFirestore(user.uid, {
+      ...userProfile,
+      discovers: userProfile.discovers - 1,
+    });
+
+    navigation.navigate("Discover", {
+      room: null,
+      initialFilters: filters,
+    });
+  };
 
   return (
     <Layout variant="main">
@@ -49,6 +78,7 @@ const Home = ({ navigation }) => {
           alignItems={"center"}
           backgroundColor="darkGray"
           paddingBottom="xl"
+          gap={"xl"}
         >
           <Text variant="subheader" color="white">
             Welcome to{" "}
@@ -90,17 +120,20 @@ const Home = ({ navigation }) => {
               {filters && <Filters filters={filters} setFilters={setFilters} />}
             </Box>
             <Button
-              variant="home"
-              onPress={() => {
-                saveFilters(null, filters, user.uid);
-                navigation.navigate("Discover", {
-                  room: null,
-                  initialFilters: filters,
-                });
-              }}
+              variant={userProfile.discovers === 0 ? "homeDisabled" : "home"}
+              disabled={userProfile.discovers === 0}
+              onPress={searchRestaurants}
             >
               <Text variant="body" color="buttonPrimaryText">
-                Find Restaurants Nearby
+                Find Restaurants Nearby{" "}
+                <Text
+                  variant="body"
+                  color="buttonPrimaryText"
+                  fontWeight={"bold"}
+                  textAlign={"right"}
+                >
+                  {userProfile.discovers}{" "}
+                </Text>
               </Text>
             </Button>
           </Box>
@@ -111,5 +144,3 @@ const Home = ({ navigation }) => {
 };
 
 export default Home;
-
-const styles = StyleSheet.create({});

@@ -9,10 +9,20 @@ import Layout from "../components/Layout";
 import StyledTextInput from "../components/StyledTextInput";
 import Button from "../components/Button";
 import * as ImagePicker from "expo-image-picker";
+import { saveProfile } from "../lib/firebaseHelpers";
 
 const Settings = ({ navigation }) => {
   const theme = useTheme<Theme>();
   const { darkGray } = theme.colors;
+  const {
+    setFirstTime,
+    firstTime,
+    setUserProfile,
+    userProfile: userprofile,
+    user,
+  } = useAuth();
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
@@ -23,7 +33,6 @@ const Settings = ({ navigation }) => {
     });
   }, [navigation]);
 
-  const { saveProfile, user, firstTime } = useAuth();
   const [image, setImage] = useState<string>(
     user.photoURL
       ? user.photoURL
@@ -46,7 +55,18 @@ const Settings = ({ navigation }) => {
     }
   };
 
-  const handleSaveProfile = () => saveProfile(image, username, user);
+  const handleSaveProfile = async () => {
+    setLoading(true);
+    const profile = await saveProfile(image, username, user);
+    if (profile) {
+      setFirstTime(false);
+      setUserProfile((userprofile) => {
+        return { ...userprofile, ...profile };
+      });
+    }
+    setLoading(false);
+  };
+
   return (
     <Layout variant="main">
       <Box
@@ -106,9 +126,19 @@ const Settings = ({ navigation }) => {
               color={"darkGray"}
               onChangeText={setUsername}
             />
-            <Button variant="home" onPress={handleSaveProfile}>
+            <Button
+              disabled={loading}
+              variant="home"
+              onPress={handleSaveProfile}
+            >
               <Text variant="subheader" color="buttonPrimaryText">
-                Save Profile
+                {loading
+                  ? firstTime
+                    ? "Saving Profile"
+                    : "Updating Profile"
+                  : firstTime
+                  ? "Save Profile"
+                  : "Update Profile"}
               </Text>
             </Button>
           </Box>

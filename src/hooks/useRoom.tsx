@@ -17,6 +17,7 @@ import { roomState } from "../atoms/atoms";
 import {
   leaveRoomFirestore,
   storeGooglePlacesData,
+  updateUserProfileInFirestore,
 } from "../lib/firebaseHelpers";
 import { getGooglePlaces } from "../api/google/google";
 import { getUserLocation } from "../utils/geolocation";
@@ -28,7 +29,7 @@ interface Room {
   swiped: Object;
 }
 const useRoom = () => {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const [room, setRoom] = useRecoilState(roomState);
   const { filters, setFilters } = useFilters(room);
   const [code, setCode] = useState();
@@ -170,6 +171,10 @@ const useRoom = () => {
       };
 
       await fetchPage();
+      await updateUserProfileInFirestore(user.uid, {
+        ...userProfile,
+        rooms: userProfile.rooms - 1,
+      });
     }
   };
 

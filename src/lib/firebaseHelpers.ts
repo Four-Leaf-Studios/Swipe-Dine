@@ -10,9 +10,12 @@ import {
   updateDoc,
   where,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { db, storage } from "./firebase";
 import geohash from "ngeohash";
 import { saveImage } from "../api/google/google";
+import { updateProfile } from "firebase/auth";
+import { UserInfo } from "../hooks/useAuth";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 export const saveFilters = async (room, filters, uid) => {
   try {
@@ -118,7 +121,7 @@ export const fetchUserProfile = async (user) => {
     const usersCollection = collection(db, "users");
     const usersDoc = doc(usersCollection, user.uid);
     const result = await getDoc(usersDoc);
-    return result;
+    return result.data() as UserInfo;
   } catch (error) {}
 };
 
@@ -295,5 +298,55 @@ export const removeRestaurantFromMatchedInFirestore = async (
     await updateDoc(userRef, { matchedRestaurants: updatedMatchedRestaurants });
   } catch (error) {
     throw error;
+  }
+};
+
+export const updateUserProfileInFirestore = async (uid, userProfile) => {
+  try {
+    const userRef = doc(db, "users", uid);
+    await updateDoc(userRef, userProfile);
+  } catch (error) {}
+};
+
+export const saveProfile = async (imageURI, username, user) => {
+  try {
+    // Convert data URL to a blob
+    const response = await fetch(imageURI);
+    const blob = await response.blob();
+
+    // Create a storage reference with a unique filename
+    const storageRef = ref(storage, `user-profiles/${user.uid}/${Date.now()}`);
+
+    // Upload the blob to Firebase Storage (resumable)
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+
+    const uploadSnapshot = await uploadTask;
+
+    if (uploadSnapshot.state === "success") {
+      const imageURL = await getDownloadURL(uploadSnapshot.ref);
+
+      // Update the user profile in Firestore
+      const usersRef = collection(db, "users");
+      const usersDocumentRef = doc(usersRef, user.uid);
+      const newUserInfo = {
+        email: user.email,
+        uid: user.uid,
+        displayName: username,
+        photoURL: imageURL,
+      };
+      await updateDoc(usersDocumentRef, { ...newUserInfo });
+
+      // Update the profile in the authentication system
+      await updateProfile(user, {
+        displayName: username,
+        photoURL: imageURL,
+      });
+
+      return newUserInfo;
+    } else {
+      return null;
+    }
+  } catch (error) {
+    return null;
   }
 };

@@ -5,19 +5,15 @@ import {
   GlassfyPermission,
   GlassfySku,
   GlassfyTransaction,
-  GLASSFY_LOGLEVEL,
 } from "react-native-glassfy-module";
+import useAuth, { UserInfo } from "../hooks/useAuth";
+import { updateUserProfileInFirestore } from "./firebaseHelpers";
 
 interface GlassfyProps {
   purchase?: (sku: GlassfySku) => Promise<void>;
   restorePermissions?: () => Promise<GlassfySku>;
-  user: UserState;
+  user: UserInfo;
   offerings: GlassfyOffering[];
-}
-
-export interface UserState {
-  standard: boolean;
-  premium: boolean;
 }
 
 const GlassfyContext = createContext<GlassfyProps | null>(null);
@@ -28,14 +24,9 @@ const GLASSFY_KEY = "106dd4829d344aeab49e1554ecf4ea08";
 
 // Provide Glassfy functions to our app
 export const GlassfyProvider = ({ children }: any) => {
-  const [user, setUser] = useState<UserState>({
-    standard: false,
-    premium: false,
-  });
+  const { userProfile: user, setUserProfile: setUser } = useAuth();
   const [offerings, setOfferings] = useState<GlassfyOffering[]>([]);
-
   const [isReady, setIsReady] = useState(false);
-
   useEffect(() => {
     const init = async () => {
       // Intialise Glassfy and set our provider ready
@@ -79,14 +70,13 @@ export const GlassfyProvider = ({ children }: any) => {
 
   // Update user state based on previous purchases
   const handleExistingPermissions = (permissions: GlassfyPermission[]) => {
-    const newUser: UserState = { standard: false, premium: false };
-
+    const newUser = { ...user };
     for (const perm of permissions) {
       if (perm.isValid) {
         if (perm.permissionId === "standard_features") {
-          newUser.standard = true;
+          newUser.subscriptions.standard = true;
         } else if (perm.permissionId === "premium_features") {
-          newUser.premium = true;
+          newUser.subscriptions.premium = true;
         }
       }
     }
@@ -94,18 +84,41 @@ export const GlassfyProvider = ({ children }: any) => {
   };
 
   // Update the user state based on what we purchased
-  const handleSuccessfulTransactionResult = (
+  const handleSuccessfulTransactionResult = async (
     transaction: GlassfyTransaction,
     sku: GlassfySku
   ) => {
     const productID = (transaction as any).productId;
-
-    if (productID.indexOf("monthly_standard_subscription_8.99") >= 0) {
-      setUser({ ...user, standard: true });
+    let discovers = user.discovers || 0;
+    let rooms = user.rooms || 0;
+    let newUser = null;
+    if (productID.indexOf("swipeanddine_standard_monthly_8.99_7days_0") >= 0) {
+      newUser = {
+        ...user,
+        subscriptions: {
+          ...user.subscriptions,
+          free: false,
+          standard: true,
+        },
+        discovers: (discovers += +sku.extravars.discovers),
+        rooms: (rooms += +sku.extravars.rooms),
+      };
+      setUser(newUser);
     }
-    if (productID.indexOf("monthly_premium_subscription_12.99") >= 0) {
-      setUser({ ...user, premium: true });
+    if (productID.indexOf("swipeanddine_premium_monthly_12.99_7days_0") >= 0) {
+      newUser = {
+        ...user,
+        subscriptions: {
+          ...user.subscriptions,
+          free: false,
+          premium: true,
+        },
+        discovers: (discovers += +sku.extravars.discovers),
+        rooms: (rooms += +sku.extravars.discovers),
+      };
+      setUser(newUser);
     }
+    updateUserProfileInFirestore(user.uid, newUser);
   };
 
   const value = {
