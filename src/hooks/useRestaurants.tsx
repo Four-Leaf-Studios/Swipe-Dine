@@ -3,8 +3,7 @@ import { getGooglePlaces } from "../api/google/google";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import { getUserLocation } from "../utils/geolocation";
 import useFilters from "./useFilters";
-import { db } from "../lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 
 const useRestaurants = (room, initialFilters) => {
   const { filters } = useFilters(room, initialFilters);
@@ -21,8 +20,8 @@ const useRestaurants = (room, initialFilters) => {
   useEffect(() => {
     const checkFirestoreAndUpdate = async (restaurant) => {
       try {
-        const docRef = doc(db, "places", restaurant.place_id);
-        const docSnapshot = await getDoc(docRef);
+        const docRef = firestore().doc(`places/${restaurant.place_id}`);
+        const docSnapshot = await docRef.get();
         if (docSnapshot.exists) {
           const updatedRestaurant = docSnapshot.data();
           return { ...restaurant, ...updatedRestaurant };

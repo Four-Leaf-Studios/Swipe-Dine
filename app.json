@@ -11,10 +11,24 @@
       }
     },
     "ios": {
-      "bundleIdentifier": "com.michaelheinzman.swipeanddine"
+      "bundleIdentifier": "com.michaelheinzman.swipeanddine",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
-      "package": "com.michaelheinzman.swipeanddine"
-    }
+      "package": "com.michaelheinzman.swipeanddine",
+      "googleServicesFile": "./google-services.json"
+    },
+    "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+       [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ]
   }
 }

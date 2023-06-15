@@ -1,7 +1,6 @@
 import { Image, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../lib/firebase";
 import Box from "./Box";
 
 type Props = {

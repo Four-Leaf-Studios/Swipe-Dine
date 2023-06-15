@@ -1,27 +1,12 @@
-import {
-  User,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
 import { useContext, useEffect, useMemo } from "react";
 import React, { useState, createContext } from "react";
-import { auth, db } from "../lib/firebase";
 import Loading from "../screens/Loading";
 import { fetchUserProfile } from "../lib/firebaseHelpers";
-import { doc, onSnapshot } from "firebase/firestore";
+import fireAuth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 
 interface IAuth {
-  user: User | null | UserInfo;
-  signUp: (
-    email: string,
-    password: string
-  ) => Promise<null | { email: string | null; password: string | null }>;
-  signIn: (
-    email: string,
-    password: string
-  ) => Promise<null | { email: string | null; password: string | null }>;
+  user: FirebaseAuthTypes.User | null | UserInfo;
   logout: () => Promise<void>;
   error: string | null;
   loading: boolean;
@@ -49,12 +34,6 @@ export interface UserInfo {
 
 const AuthenticatedUserContext = createContext<IAuth>({
   user: null,
-  signUp: async (email: string, password: string) => {
-    return Promise.reject("signUp function not implemented");
-  },
-  signIn: async (email: string, password: string) => {
-    return Promise.reject("signUp function not implemented");
-  },
   logout: async () => {},
   error: null,
   loading: false,
@@ -66,14 +45,14 @@ const AuthenticatedUserContext = createContext<IAuth>({
 
 export const AuthenticatedUserProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
   const [userProfile, setUserProfile] = useState<UserInfo | null>(null);
   const [firstTime, setFirstTime] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    const unsubscribe = fireAuth().onAuthStateChanged(async (user) => {
       if (user) {
         // Check if the user has a profile
         if (!user.displayName) {
@@ -103,9 +82,9 @@ export const AuthenticatedUserProvider = ({ children }) => {
 
   useEffect(() => {
     if (!user?.uid) return;
-    const usersRef = doc(db, "users", user?.uid);
+    const usersRef = firestore().doc(`users/${user.uid}`);
 
-    const unsubscribe = onSnapshot(usersRef, (snapshot) => {
+    const unsubscribe = usersRef.onSnapshot((snapshot) => {
       // Handle the user document update here
       const userData = snapshot.data() as UserInfo;
       setUserProfile(userData);
@@ -118,78 +97,11 @@ export const AuthenticatedUserProvider = ({ children }) => {
     };
   }, [user?.uid]);
 
-  const signUp = async (email, password) => {
-    let errors = {
-      email: null,
-      password: null,
-    };
-    setLoading(true);
-
-    try {
-      setFirstTime(true);
-      await createUserWithEmailAndPassword(auth, email, password);
-      return null;
-    } catch (error) {
-      switch (error.code) {
-        case "auth/email-already-in-use":
-          errors.email = "The email address is already in use.";
-          break;
-        case "auth/invalid-email":
-          errors.email = "The email address is invalid.";
-          break;
-        case "auth/weak-password":
-          errors.password = "The password is too weak.";
-          break;
-        default:
-          errors.email = "An error occurred during sign up.";
-          break;
-      }
-      setLoading(false);
-      return errors;
-    }
-  };
-
-  const signIn = async (email, password) => {
-    let errors = {
-      email: null,
-      password: null,
-    };
-
-    try {
-      // Perform sign-in logic here, e.g., using Firebase's signInWithEmailAndPassword
-      await signInWithEmailAndPassword(auth, email, password);
-
-      return null; // Sign in successful
-    } catch (error) {
-      switch (error.code) {
-        case "auth/invalid-email":
-          errors.email = "The email address is invalid.";
-          break;
-        case "auth/user-disabled":
-          errors.email = "The user account has been disabled.";
-          break;
-        case "auth/user-not-found":
-          errors.email = "User not found.";
-          break;
-        case "auth/wrong-password":
-          errors.password = "Invalid password.";
-          break;
-        default:
-          errors.email = "An error occurred during sign in.";
-          break;
-      }
-
-      return errors;
-    }
-  };
-
-  const logout = async () => signOut(auth);
+  const logout = async () => fireAuth().signOut();
 
   const memoedValue = useMemo(
     () => ({
       user,
-      signUp,
-      signIn,
       loading,
       logout,
       error,
@@ -198,7 +110,7 @@ export const AuthenticatedUserProvider = ({ children }) => {
       setUserProfile,
       userProfile,
     }),
-    [user, signUp, signIn, loading, error, firstTime, setFirstTime]
+    [user, loading, error, firstTime, setFirstTime]
   );
 
   return (

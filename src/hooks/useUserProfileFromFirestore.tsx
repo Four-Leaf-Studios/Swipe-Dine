@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
-import { db } from "../lib/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 
 const useUserProfileFromFirestore = () => {

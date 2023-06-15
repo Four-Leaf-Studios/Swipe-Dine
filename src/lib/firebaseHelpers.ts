@@ -1,47 +1,41 @@
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  serverTimestamp,
-  setDoc,
-  updateDoc,
-  where,
-} from "firebase/firestore";
-import { db, storage } from "./firebase";
 import geohash from "ngeohash";
-import { saveImage } from "../api/google/google";
-import { updateProfile } from "firebase/auth";
-import { UserInfo } from "../hooks/useAuth";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import firestore from "@react-native-firebase/firestore";
+import storage from "@react-native-firebase/storage";
+import auth from "@react-native-firebase/auth";
+import firebase from "@react-native-firebase/app";
+import { serverTimestamp } from "firebase/firestore";
 
 export const saveFilters = async (room, filters, uid) => {
   try {
-    const filtersCollection = collection(db, "filters");
-    const userDoc = doc(filtersCollection, uid);
+    const userDoc = firestore().doc(`filters/${uid}`);
 
-    await updateDoc(userDoc, {
+    await userDoc.update({
       [room ? "room" : "swipe"]: filters,
     });
-  } catch (error) {}
+  } catch (error) {
+    // Handle the error
+    console.error("Error saving filters:", error);
+    throw error;
+  }
 };
 
 export const storeGooglePlacesData = async (roomCode, data) => {
-  const roomRef = collection(db, "rooms");
-  const docRef = doc(roomRef, roomCode);
-  await updateDoc(docRef, {
-    restaurants: data,
-  });
+  try {
+    const doc = firestore().doc(`rooms/${roomCode}`);
+    await doc.update({
+      restaurants: data,
+    });
+  } catch (error) {
+    // Handle the error
+    console.error("Error storing Google Places data:", error);
+    throw error;
+  }
 };
 
 export const leaveRoomFirestore = async (roomCode, userId) => {
   try {
-    const roomRef = doc(db, "rooms", roomCode);
-
-    const roomDoc = await getDoc(roomRef);
-
+    const roomRef = firestore().doc(`rooms/${roomCode}`);
+    const roomDoc = await roomRef.get();
     const roomData = roomDoc.data();
     if (roomData) {
       const updatedMembers = roomData.members.filter(
@@ -50,9 +44,9 @@ export const leaveRoomFirestore = async (roomCode, userId) => {
 
       if (roomData.owner === userId) {
         // If the current user is the owner, delete the room document
-        await deleteDoc(roomRef);
+        await roomRef.delete();
       } else {
-        await updateDoc(roomRef, { members: updatedMembers });
+        await roomRef.update({ members: updatedMembers });
       }
       return true;
     }
@@ -80,10 +74,9 @@ export const uploadRestaurantDetailsToFirestore = async (restaurant) => {
       photos: [],
     };
 
-    const collectionsRef = collection(db, "places");
-    const docRef = doc(collectionsRef, restaurant.place_id);
+    const docRef = firestore().doc(`places/${restaurant.place_id}`);
 
-    if (restaurant.photos[0].photo_reference)
+    if (restaurant.photos[0].photo_reference) {
       for (const photo of restaurant.photos) {
         const photoUrl = await saveImage(photo.photo_reference);
         // Update newRestaurant.photos with Firestore storage URL
@@ -91,9 +84,11 @@ export const uploadRestaurantDetailsToFirestore = async (restaurant) => {
           photoUrl: photoUrl,
         });
       }
-    else newRestaurant.photos = restaurant.photos;
+    } else {
+      newRestaurant.photos = restaurant.photos;
+    }
 
-    await setDoc(docRef, newRestaurant);
+    await docRef.set(newRestaurant);
 
     return { success: true, error: null };
   } catch (error) {
@@ -103,10 +98,10 @@ export const uploadRestaurantDetailsToFirestore = async (restaurant) => {
 
 export const checkDocumentExists = async (placeId) => {
   try {
-    const docRef = doc(db, "places", placeId);
-    const docSnap = await getDoc(docRef);
+    const docRef = firestore().doc(`places/${placeId}`);
+    const docSnap = await docRef.get();
 
-    if (docSnap.exists()) {
+    if (docSnap.exists) {
       return { exists: true, data: docSnap.data() };
     } else {
       return { exists: false, data: null };
@@ -118,11 +113,14 @@ export const checkDocumentExists = async (placeId) => {
 
 export const fetchUserProfile = async (user) => {
   try {
-    const usersCollection = collection(db, "users");
-    const usersDoc = doc(usersCollection, user.uid);
-    const result = await getDoc(usersDoc);
-    return result.data() as UserInfo;
-  } catch (error) {}
+    const usersDoc = firestore().doc(`users/${user.uid}`);
+    const result = await usersDoc.get();
+    return result.data();
+  } catch (error) {
+    // Handle the error
+    console.error("Error fetching user profile:", error);
+    throw error;
+  }
 };
 
 export const fetchNearbyPlacesFromFirestore = async (
@@ -141,31 +139,25 @@ export const fetchNearbyPlacesFromFirestore = async (
       (key) => filters[key] && key
     );
 
-    const placesRef = collection(db, "places");
-    const q = query(
-      placesRef,
-      where("geohash", ">=", range.lower),
-      where("geohash", "<=", range.upper),
-      where("types", "array-contains-any", filterKeys)
-    );
+    const placesRef = firestore().collection("places");
+    const querySnapshot = await placesRef
+      .where("geohash", ">=", range.lower)
+      .where("geohash", "<=", range.upper)
+      .where("types", "array-contains-any", filterKeys)
+      .get();
 
-    const querySnapshot = await getDocs(q);
     const places = querySnapshot.docs.map((doc) => doc.data());
     return places;
   } catch (error) {
-    // Handle the error here
+    // Handle the error
     console.error("Error fetching nearby places:", error);
-    return []; // Return an empty array or any other appropriate value
+    return [];
   }
 };
 
 // Calculate the upper and lower boundary geohashes for
 // a given latitude, longitude, and distance in miles
-const getGeohashRange = (
-  latitude: number,
-  longitude: number,
-  distance: number // miles
-) => {
+const getGeohashRange = (latitude, longitude, distance) => {
   const lat = 0.0144927536231884; // degrees latitude per mile
   const lon = 0.0181818181818182; // degrees longitude per mile
 
@@ -204,11 +196,10 @@ export const addRestaurantToMatchedListInFirestore = async (
   userId
 ) => {
   try {
-    const usersRef = collection(db, "users");
-    const userRef = doc(usersRef, userId);
+    const userRef = firestore().doc(`users/${userId}`);
 
     // Get the user's current matched restaurants array
-    const userDoc = await getDoc(userRef);
+    const userDoc = await userRef.get();
     const matchedRestaurants = userDoc.data().matchedRestaurants || [];
 
     // Check if the placeId is already in the matched restaurants array
@@ -217,12 +208,13 @@ export const addRestaurantToMatchedListInFirestore = async (
       const updatedMatchedRestaurants = [...matchedRestaurants, placeId];
 
       // Update the user document with the updated matched restaurants array
-      await updateDoc(userRef, {
+      await userRef.update({
         matchedRestaurants: updatedMatchedRestaurants,
       });
-    } else {
     }
   } catch (error) {
+    // Handle the error
+    console.error("Error adding restaurant to matched list:", error);
     throw error;
   }
 };
@@ -232,25 +224,25 @@ export const addRestaurantToFavoritesListInFirestore = async (
   userId
 ) => {
   try {
-    const usersRef = collection(db, "users");
-    const userRef = doc(usersRef, userId);
+    const userRef = firestore().doc(`users/${userId}`);
 
-    // Get the user's current matched restaurants array
-    const userDoc = await getDoc(userRef);
+    // Get the user's current favorited restaurants array
+    const userDoc = await userRef.get();
     const favoritedRestaurants = userDoc.data().favoritedRestaurants || [];
 
-    // Check if the placeId is already in the matched restaurants array
+    // Check if the placeId is already in the favorited restaurants array
     if (!favoritedRestaurants.includes(placeId)) {
-      // Add the new placeId to the matched restaurants array
+      // Add the new placeId to the favorited restaurants array
       const updatedFavoritedRestaurants = [...favoritedRestaurants, placeId];
 
-      // Update the user document with the updated matched restaurants array
-      await updateDoc(userRef, {
+      // Update the user document with the updated favorited restaurants array
+      await userRef.update({
         favoritedRestaurants: updatedFavoritedRestaurants,
       });
-    } else {
     }
   } catch (error) {
+    // Handle the error
+    console.error("Error adding restaurant to favorites list:", error);
     throw error;
   }
 };
@@ -260,10 +252,10 @@ export const removeRestaurantFromFavoritesInFirestore = async (
   userId
 ) => {
   try {
-    const userRef = doc(db, "users", userId);
+    const userRef = firestore().doc(`users/${userId}`);
 
     // Get the user's current favorites array
-    const userDoc = await getDoc(userRef);
+    const userDoc = await userRef.get();
     const favorites = userDoc.data().favoritedRestaurants || [];
 
     // Remove the placeId from the favorites array
@@ -272,8 +264,10 @@ export const removeRestaurantFromFavoritesInFirestore = async (
     );
 
     // Update the user document with the updated favorites array
-    await updateDoc(userRef, { favoritedRestaurants: updatedFavorites });
+    await userRef.update({ favoritedRestaurants: updatedFavorites });
   } catch (error) {
+    // Handle the error
+    console.error("Error removing restaurant from favorites:", error);
     throw error;
   }
 };
@@ -283,29 +277,35 @@ export const removeRestaurantFromMatchedInFirestore = async (
   userId
 ) => {
   try {
-    const userRef = doc(db, "users", userId);
+    const userRef = firestore().doc(`users/${userId}`);
 
-    // Get the user's current favorites array
-    const userDoc = await getDoc(userRef);
+    // Get the user's current matched restaurants array
+    const userDoc = await userRef.get();
     const matched = userDoc.data().matchedRestaurants || [];
 
-    // Remove the placeId from the favorites array
+    // Remove the placeId from the matched restaurants array
     const updatedMatchedRestaurants = matched.filter(
       (restaurantId) => restaurantId !== placeId
     );
 
-    // Update the user document with the updated favorites array
-    await updateDoc(userRef, { matchedRestaurants: updatedMatchedRestaurants });
+    // Update the user document with the updated matched restaurants array
+    await userRef.update({ matchedRestaurants: updatedMatchedRestaurants });
   } catch (error) {
+    // Handle the error
+    console.error("Error removing restaurant from matched:", error);
     throw error;
   }
 };
 
 export const updateUserProfileInFirestore = async (uid, userProfile) => {
   try {
-    const userRef = doc(db, "users", uid);
-    await updateDoc(userRef, userProfile);
-  } catch (error) {}
+    const userRef = firestore().doc(`users/${uid}`);
+    await userRef.update(userProfile);
+  } catch (error) {
+    // Handle the error
+    console.error("Error updating user profile:", error);
+    throw error;
+  }
 };
 
 export const saveProfile = async (imageURI, username, user) => {
@@ -315,38 +315,108 @@ export const saveProfile = async (imageURI, username, user) => {
     const blob = await response.blob();
 
     // Create a storage reference with a unique filename
-    const storageRef = ref(storage, `user-profiles/${user.uid}/${Date.now()}`);
+    const storageRef = storage().ref(
+      `user-profiles/${user.uid}/${Date.now().toString()}`
+    );
 
     // Upload the blob to Firebase Storage (resumable)
-    const uploadTask = uploadBytesResumable(storageRef, blob);
+    await storageRef.put(blob);
 
-    const uploadSnapshot = await uploadTask;
+    const imageURL = await storageRef.getDownloadURL();
 
-    if (uploadSnapshot.state === "success") {
-      const imageURL = await getDownloadURL(uploadSnapshot.ref);
+    // Update the user profile in Firestore
+    const userRef = firebase.firestore().collection("users").doc(user.uid);
+    await userRef.update({
+      displayName: username,
+      photoURL: imageURL,
+    });
 
-      // Update the user profile in Firestore
-      const usersRef = collection(db, "users");
-      const usersDocumentRef = doc(usersRef, user.uid);
-      const newUserInfo = {
-        email: user.email,
-        uid: user.uid,
-        displayName: username,
-        photoURL: imageURL,
-      };
-      await updateDoc(usersDocumentRef, { ...newUserInfo });
+    // Update the profile in the authentication system
+    await auth().currentUser.updateProfile({
+      displayName: username,
+      photoURL: imageURL,
+    });
 
-      // Update the profile in the authentication system
-      await updateProfile(user, {
-        displayName: username,
-        photoURL: imageURL,
-      });
-
-      return newUserInfo;
-    } else {
-      return null;
-    }
+    return {
+      email: user.email,
+      uid: user.uid,
+      displayName: username,
+      photoURL: imageURL,
+    };
   } catch (error) {
-    return null;
+    // Handle the error
+    console.error("Error saving profile:", error);
+    throw error;
+  }
+};
+
+export const saveImage = async (photoReference) => {
+  try {
+    const storageRef = storage().ref();
+
+    // Create a unique filename
+    const fileName = `${Date.now().toString()}.jpg`;
+
+    // Specify the file path in the storage bucket
+    const fileRef = storageRef.child(`tmp/${fileName}`);
+
+    // Save the image using the put method
+    await fileRef.putString(photoReference, "base64");
+
+    // Get the download URL for the saved image
+    const imageUrl = await fileRef.getDownloadURL();
+
+    return imageUrl;
+  } catch (error) {
+    // Handle the error
+    console.error("Error saving image:", error);
+    throw error;
+  }
+};
+
+export const updateProfileInFirestore = async (uid, profileData) => {
+  try {
+    const userDoc = firestore().doc(`users/${uid}`);
+    await userDoc.update(profileData);
+  } catch (error) {
+    // Handle the error
+    console.error("Error updating profile:", error);
+    throw error;
+  }
+};
+
+export const uploadProfileImageToStorage = async (uid, imageURI) => {
+  try {
+    // Convert data URL to a blob
+    const response = await fetch(imageURI);
+    const blob = await response.blob();
+
+    // Create a storage reference with a unique filename
+    const storageRef = storage().ref(`profile-images/${uid}`);
+
+    // Upload the blob to Firebase Storage (resumable)
+    const uploadTask = await storageRef.put(blob);
+    const imageURL = await storage()
+      .ref(`profile-images/${uid}`)
+      .getDownloadURL();
+    return imageURL;
+  } catch (error) {
+    // Handle the error
+    console.error("Error uploading profile image:", error);
+    throw error;
+  }
+};
+
+export const fetchProfileImageFromStorage = async (uid) => {
+  try {
+    const storageRef = storage().ref(`profile-images/${uid}`);
+
+    const imageURL = await storageRef.getDownloadURL();
+
+    return imageURL;
+  } catch (error) {
+    // Handle the error
+    console.error("Error fetching profile image:", error);
+    throw error;
   }
 };

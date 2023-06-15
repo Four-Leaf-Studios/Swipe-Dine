@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
-import { db } from "../lib/firebase";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
+
+// Assuming you have initialized the Firestore app and have the 'db' reference
 
 interface Filters {
   BBQ: boolean;
@@ -33,12 +34,11 @@ const useFilters = (room = null, initialFilters = null) => {
   );
 
   useEffect(() => {
-    const filtersRef = doc(db, "filters", user.uid);
+    const filtersRef = firestore().doc(`filters/${user.uid}`);
 
-    const unsubscribe = onSnapshot(
-      filtersRef,
+    const unsubscribe = filtersRef.onSnapshot(
       (docSnapshot) => {
-        if (docSnapshot.exists()) {
+        if (docSnapshot.exists) {
           const filter = room
             ? docSnapshot.data()?.room
             : docSnapshot.data()?.swipe;
@@ -61,12 +61,12 @@ const useFilters = (room = null, initialFilters = null) => {
           }
         } else {
           // Firestore path does not exist, set default filters here
-          const docRef = doc(db, "filters", user.uid);
+          const docRef = firestore().doc(`filters/${user.uid}`);
           const data = {
             swipe: { ...filters },
             room: { ...filters },
           };
-          setDoc(docRef, data);
+          docRef.set(data);
         }
       },
       (error) => {

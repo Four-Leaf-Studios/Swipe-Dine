@@ -10,7 +10,6 @@ import {
 } from "../lib/firebaseHelpers";
 import useAuth from "../hooks/useAuth";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "../lib/firebase";
 
 const MatchDiscover = ({ navigation, route }) => {
   const { user } = useAuth();
