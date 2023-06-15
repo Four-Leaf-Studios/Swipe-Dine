@@ -1,5 +1,5 @@
 import { StyleSheet, View } from "react-native";
-import React, { useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useGlassfy } from "../lib/GlassfyProvider";
 import Button from "../components/Button";
 import Text from "../components/Text";
@@ -9,11 +9,11 @@ import OfferingGroup from "../components/OfferingGroup";
 import Layout from "../components/Layout";
 import UserPermissions from "../components/UserPermissions";
 import useAuth, { UserInfo } from "../hooks/useAuth";
+import { useRevenueCat } from "../lib/RevenueCatProvider";
 
 const Shop = ({ navigation }) => {
   const { userProfile: user } = useAuth();
-  const { offerings, restorePermissions } = useGlassfy();
-
+  const { offering } = useRevenueCat();
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -51,8 +51,6 @@ const Shop = ({ navigation }) => {
 
   const restore = async () => {
     try {
-      const permissions = await restorePermissions!();
-      console.log(permissions);
     } catch (e) {
       alert(e);
     }
@@ -60,8 +58,12 @@ const Shop = ({ navigation }) => {
   return (
     <Layout variant="main">
       <Box width="100%" flex={1}>
-        {offerings.map((group) => (
-          <OfferingGroup group={group} key={group.offeringId} />
+        {offering.availablePackages.map((packagePurchased) => (
+          <OfferingGroup
+            product={packagePurchased.product}
+            packagePurchased={packagePurchased}
+            key={packagePurchased.product.identifier}
+          />
         ))}
 
         <UserPermissions user={user as UserInfo} />
