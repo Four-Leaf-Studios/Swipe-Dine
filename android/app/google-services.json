@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "291562557089",
+    "project_id": "foodr-388417",
+    "storage_bucket": "foodr-388417.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:291562557089:android:3e16e30828e75ee3926ae0",
+        "android_client_info": {
+          "package_name": "com.michaelheinzman.swipeanddine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "291562557089-5ub6j1bk73kcrqok9spp0l5704n56lj0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd5K6C8JSXM2whBJOpf6tvEUBfsR_jQbk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "291562557089-5ub6j1bk73kcrqok9spp0l5704n56lj0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "291562557089-ulmkmkhlrde1sc2rqall4c6skdno5nh6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.michaelheinzman.swipeanddine"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

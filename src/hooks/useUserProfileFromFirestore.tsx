@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
 import useAuth from "./useAuth";
-import { doc, onSnapshot } from "firebase/firestore";
-
+import firestore from "@react-native-firebase/firestore";
 const useUserProfileFromFirestore = () => {
   const { user } = useAuth();
   const [favorites, setFavorites] = useState([]);
   const [matched, setMatched] = useState([]);
 
   useEffect(() => {
-    const userRef = doc(db, "users", user.uid);
+    const userRef = firestore().collection("users").doc(user.uid);
 
-    const unsubscribe = onSnapshot(userRef, (snapshot) => {
+    const unsubscribe = userRef.onSnapshot((snapshot) => {
       const userData = snapshot.data();
       if (userData) {
         const favorites = userData.favorites;

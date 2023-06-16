@@ -111,9 +111,16 @@ const Home = ({ navigation }) => {
             gap="s"
           >
             <Box width="100%" flex={1}>
-              <Box padding="s">
+              <Box padding="s" gap="s">
                 <Text variant="body" fontSize={20}>
                   What are you looking for?
+                </Text>
+                <Text variant="body">
+                  Better results when using one filter at a time if location
+                  isn't in our database yet.
+                  <Text variant="body" color="orangeDark">
+                    (for now)
+                  </Text>
                 </Text>
               </Box>
 

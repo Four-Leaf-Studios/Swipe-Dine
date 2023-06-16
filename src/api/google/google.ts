@@ -65,8 +65,10 @@ const getPhotoURL = (photoReference) => {
   const url = `${baseUrl}?maxwidth=${maxWidth}&maxheight=${maxHeight}&photoreference=${photoReference}&key=${SECONDARY_API_KEY}`;
   return url;
 };
+
+import storage from "@react-native-firebase/storage";
 global.Buffer = global.Buffer || require("buffer").Buffer;
-const saveImage = async (photoReference) => {
+const saveImage = async (photoReference, place_id) => {
   try {
     const baseUrl = "https://maps.googleapis.com/maps/api/place/photo";
     const { width, height } = Dimensions.get("window");
@@ -75,8 +77,18 @@ const saveImage = async (photoReference) => {
     const url = `${baseUrl}?maxwidth=${maxWidth}&maxheight=${maxHeight}&photoreference=${photoReference}&key=${SECONDARY_API_KEY}`;
 
     const response = await axios.get(url, { responseType: "arraybuffer" });
-    const imageData = Buffer.from(response.data, "binary").toString("base64");
-    return `data:image/jpeg;base64,${imageData}`;
+    const imageData = Buffer.from(response.data, "binary");
+
+    // Generate a unique filename or use a custom one
+    const filename = `places/${place_id}/${Date.now()}.jpg`;
+
+    // Upload the image to Firebase Storage
+    const reference = storage().ref(filename);
+    await reference.put(imageData);
+
+    // Get the storage URL for the uploaded image
+    const storageUrl = await reference.getDownloadURL();
+    return storageUrl;
   } catch (error) {
     console.error("Error occurred while saving the image:", error);
     throw new Error("Failed to save the image.");

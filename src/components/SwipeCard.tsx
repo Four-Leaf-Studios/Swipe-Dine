@@ -46,6 +46,7 @@ const SwipeCard = memo(
       filters
     );
     const [restaurant, setRestaurant] = useState(restaurantPassed);
+
     useEffect(() => {
       if (
         restaurantDetails &&
@@ -186,7 +187,6 @@ const SwipeCard = memo(
           )},${encodeURIComponent(address)}`;
           Linking.openURL(`maps://maps.apple.com/?q=${mapAddress}`);
         } else {
-          console.log("Deep linking not supported on this device.");
           // You can provide an alternative action or UI for unsupported devices
         }
       });

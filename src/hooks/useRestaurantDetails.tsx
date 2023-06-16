@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { RestaurantDetails as RestaurantDetailsGoogle } from "../api/google/googleTypes";
 import { getRestaurantDetailsFromGooglePlaces } from "../api/google/google";
 import {
-  addFiltersToTypes,
   checkDocumentExists,
-  uploadRestaurantDetailsToFirestore,
+  uploadRestaurantToFirestore,
 } from "../lib/firebaseHelpers";
 
 const useRestaurantDetails = (
@@ -47,11 +46,7 @@ const useRestaurantDetails = (
   };
 
   const updateExistingRestaurant = async (existingRestaurant, filters) => {
-    existingRestaurant.types = addFiltersToTypes(
-      existingRestaurant.types,
-      filters
-    );
-    await uploadRestaurantDetailsToFirestore(existingRestaurant);
+    await uploadRestaurantToFirestore(existingRestaurant, filters);
   };
 
   useEffect(() => {
@@ -59,12 +54,13 @@ const useRestaurantDetails = (
       setLoading(true);
       const existsResult = await checkDocumentExists(id);
 
-      if (existsResult.exists) {
+      if (existsResult.exists && existsResult.data?.reviews) {
         await handleExistingRestaurant(existsResult, filters, setRestaurant);
         setLoading(false);
       } else {
         // If useRestaurantDetails was called in a discover page don't fetch details.
         !discover && (await handleNewRestaurant(id, filters, setRestaurant));
+        setRestaurant(existsResult.data);
         setLoading(false);
       }
     };
@@ -73,7 +69,6 @@ const useRestaurantDetails = (
       fetchRestaurantDetails();
     }
   }, [viewDetails]);
-
   return { restaurant: restaurant ? { ...restaurant } : null, loading };
 };
 

@@ -94,7 +94,7 @@ const Matched = ({ navigation, route }) => {
             source={{
               uri:
                 restaurant.photos?.length > 0
-                  ? restaurant.photos[0]?.photoUrl
+                  ? restaurant.photos[0].photoUrl
                     ? restaurant.photos[0].photoUrl
                     : getPhotoURL(restaurant.photos[0].photo_reference)
                   : "https://www.eatthis.com/wp-content/uploads/sites/4/2020/06/chilis.jpg?quality=82&strip=1",
@@ -200,39 +200,40 @@ const Matched = ({ navigation, route }) => {
               style={{ flex: 1, width: "100%" }}
               onScroll={handleScroll}
             >
-              {restaurantDetails?.reviews.map((review, index) => (
-                <ScrollView key={index}>
-                  <Box
-                    width={Dimensions.get("window").width} // Adjust the value as needed
-                    justifyContent="center"
-                    alignItems="center"
-                    padding="l"
-                    gap="l"
-                  >
-                    <Image
-                      source={{ uri: review.profile_photo_url }}
-                      style={{ width: 40, height: 40 }}
-                    />
-
-                    <Text
-                      variant="body"
-                      textAlign={"center"}
-                      color="buttonSecondaryText"
-                      fontWeight="bold"
+              {restaurantDetails?.reviews &&
+                restaurantDetails?.reviews?.map((review, index) => (
+                  <ScrollView key={index}>
+                    <Box
+                      width={Dimensions.get("window").width} // Adjust the value as needed
+                      justifyContent="center"
+                      alignItems="center"
+                      padding="l"
+                      gap="l"
                     >
-                      {review.author_name}
-                    </Text>
+                      <Image
+                        source={{ uri: review.profile_photo_url }}
+                        style={{ width: 40, height: 40 }}
+                      />
 
-                    <Text
-                      variant="body"
-                      textAlign={"center"}
-                      color="buttonSecondaryText"
-                    >
-                      {review.text}
-                    </Text>
-                  </Box>
-                </ScrollView>
-              ))}
+                      <Text
+                        variant="body"
+                        textAlign={"center"}
+                        color="buttonSecondaryText"
+                        fontWeight="bold"
+                      >
+                        {review.author_name}
+                      </Text>
+
+                      <Text
+                        variant="body"
+                        textAlign={"center"}
+                        color="buttonSecondaryText"
+                      >
+                        {review.text}
+                      </Text>
+                    </Box>
+                  </ScrollView>
+                ))}
             </ScrollView>
           </Box>
         </Box>

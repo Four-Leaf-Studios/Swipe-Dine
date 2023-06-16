@@ -59,7 +59,9 @@ const ProfileRestaurantItem = ({ place_id, favorites }) => {
           <Box flex={1} height="100%">
             <Image
               source={{
-                uri: restaurant?.photos[0].photoUrl,
+                uri: restaurant?.photos
+                  ? restaurant?.photos[0].photoUrl
+                  : "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Placeholder_view_vector.svg/681px-Placeholder_view_vector.svg.png",
               }}
               style={{ width: "100%", height: "100%" }}
             />

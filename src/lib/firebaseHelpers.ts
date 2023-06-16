@@ -3,7 +3,8 @@ import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 import firebase from "@react-native-firebase/app";
-import { serverTimestamp } from "firebase/firestore";
+import { query, serverTimestamp } from "firebase/firestore";
+import { saveImage } from "../api/google/google";
 
 export const saveFilters = async (room, filters, uid) => {
   try {
@@ -58,7 +59,11 @@ export const leaveRoomFirestore = async (roomCode, userId) => {
   }
 };
 
-export const uploadRestaurantDetailsToFirestore = async (restaurant) => {
+export const uploadRestaurantToFirestore = async (
+  restaurant,
+  filters,
+  newDoc = false
+) => {
   try {
     const coordinates = restaurant.geometry.location;
     const lat = coordinates.lat;
@@ -67,32 +72,46 @@ export const uploadRestaurantDetailsToFirestore = async (restaurant) => {
     const hash = geohash.encode(lat, lon);
     const updatedTimestamp = serverTimestamp();
 
+    const filtersTrue = Object.keys(filters).filter(
+      (key) => filters[key] === true
+    );
+    let filter = filtersTrue.length === 1 ? filtersTrue : null;
+    filter = filter.filter((filter) => !restaurant?.types?.includes(filter));
     const newRestaurant = {
       ...restaurant,
       geohash: hash,
       updated: updatedTimestamp,
       photos: [],
+      types: filter
+        ? [...restaurant?.types, ...filter]
+        : [...restaurant?.types],
     };
 
-    const docRef = firestore().doc(`places/${restaurant.place_id}`);
+    const docRef = firestore().collection("places").doc(restaurant.place_id);
+    if (restaurant?.photos)
+      if (restaurant.photos[0].photo_reference) {
+        for (const photo of restaurant.photos) {
+          const byteImage = await saveImage(
+            photo.photo_reference,
+            restaurant.place_id
+          );
 
-    if (restaurant.photos[0].photo_reference) {
-      for (const photo of restaurant.photos) {
-        const photoUrl = await saveImage(photo.photo_reference);
-        // Update newRestaurant.photos with Firestore storage URL
-        newRestaurant.photos.push({
-          photoUrl: photoUrl,
-        });
+          // Update newRestaurant.photos with the Firestore storage URL
+          newRestaurant.photos.push({
+            photoUrl: byteImage,
+          });
+        }
+      } else {
+        newRestaurant.photos = restaurant.photos;
       }
-    } else {
-      newRestaurant.photos = restaurant.photos;
-    }
 
-    await docRef.set(newRestaurant);
+    newDoc
+      ? await docRef.set(newRestaurant)
+      : await docRef.update(newRestaurant);
 
-    return { success: true, error: null };
+    return { success: true, error: null, data: newRestaurant };
   } catch (error) {
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, data: null };
   }
 };
 
@@ -126,7 +145,8 @@ export const fetchUserProfile = async (user) => {
 export const fetchNearbyPlacesFromFirestore = async (
   location,
   distance, // In Miles
-  filters
+  filters,
+  pageToken
 ) => {
   try {
     const range = getGeohashRange(
@@ -138,20 +158,25 @@ export const fetchNearbyPlacesFromFirestore = async (
     const filterKeys = Object.keys(filters).filter(
       (key) => filters[key] && key
     );
-
     const placesRef = firestore().collection("places");
-    const querySnapshot = await placesRef
+    let q = placesRef
       .where("geohash", ">=", range.lower)
       .where("geohash", "<=", range.upper)
-      .where("types", "array-contains-any", filterKeys)
+      .where("types", "array-contains-any", filterKeys);
+
+    const querySnapshot = await q
+      .orderBy("geohash")
+      .startAfter(pageToken)
+      .limit(60)
       .get();
 
+    const nextPageToken = querySnapshot.docs[querySnapshot.docs.length - 1];
     const places = querySnapshot.docs.map((doc) => doc.data());
-    return places;
+    return { results: places, nextPageToken: nextPageToken };
   } catch (error) {
     // Handle the error
     console.error("Error fetching nearby places:", error);
-    return [];
+    return { results: [], nextPageToken: null };
   }
 };
 
@@ -346,30 +371,6 @@ export const saveProfile = async (imageURI, username, user) => {
   } catch (error) {
     // Handle the error
     console.error("Error saving profile:", error);
-    throw error;
-  }
-};
-
-export const saveImage = async (photoReference) => {
-  try {
-    const storageRef = storage().ref();
-
-    // Create a unique filename
-    const fileName = `${Date.now().toString()}.jpg`;
-
-    // Specify the file path in the storage bucket
-    const fileRef = storageRef.child(`tmp/${fileName}`);
-
-    // Save the image using the put method
-    await fileRef.putString(photoReference, "base64");
-
-    // Get the download URL for the saved image
-    const imageUrl = await fileRef.getDownloadURL();
-
-    return imageUrl;
-  } catch (error) {
-    // Handle the error
-    console.error("Error saving image:", error);
     throw error;
   }
 };

@@ -23,7 +23,7 @@ const Discover = ({ navigation, route }) => {
   const handleSwipe = useCallback((direction: string, place_id: string) => {
     setRestaurants((prevRestaurants) => {
       const restaurantIndex = prevRestaurants.findIndex(
-        (restaurant) => restaurant.place_id === place_id
+        (restaurant) => restaurant?.place_id === place_id
       );
 
       if (restaurantIndex !== -1) {
@@ -38,7 +38,10 @@ const Discover = ({ navigation, route }) => {
         }
         if (direction === "right") {
           setSwipeRightList((prevList) => [...prevList, restaurant]);
-          addRestaurantToMatchedListInFirestore(restaurant.place_id, user.uid);
+          addRestaurantToMatchedListInFirestore(
+            restaurant?.place_id,
+            user?.uid
+          );
           navigation.navigate("DiscoverMatched", {
             restaurant: restaurant,
             filters: filters,

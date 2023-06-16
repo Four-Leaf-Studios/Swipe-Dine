@@ -34,7 +34,7 @@ const useFilters = (room = null, initialFilters = null) => {
   );
 
   useEffect(() => {
-    const filtersRef = firestore().doc(`filters/${user.uid}`);
+    const filtersRef = firestore().collection("filters").doc(user.uid);
 
     const unsubscribe = filtersRef.onSnapshot(
       (docSnapshot) => {
@@ -61,7 +61,7 @@ const useFilters = (room = null, initialFilters = null) => {
           }
         } else {
           // Firestore path does not exist, set default filters here
-          const docRef = firestore().doc(`filters/${user.uid}`);
+          const docRef = firestore().collection("filters").doc(user.uid);
           const data = {
             swipe: { ...filters },
             room: { ...filters },

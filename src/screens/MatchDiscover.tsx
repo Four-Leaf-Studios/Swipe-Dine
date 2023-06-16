@@ -9,7 +9,7 @@ import {
   leaveRoomFirestore,
 } from "../lib/firebaseHelpers";
 import useAuth from "../hooks/useAuth";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 
 const MatchDiscover = ({ navigation, route }) => {
   const { user } = useAuth();
@@ -37,8 +37,8 @@ const MatchDiscover = ({ navigation, route }) => {
       // Handle left swipe logic
     }
     if (direction === "right") {
-      const roomDocRef = doc(collection(db, "rooms"), room.code);
-      const roomSnapshot = await getDoc(roomDocRef);
+      const roomDocRef = firestore().collection("rooms").doc(room.code);
+      const roomSnapshot = await roomDocRef.get();
       const roomData = roomSnapshot.data();
 
       if (roomData) {
@@ -53,7 +53,7 @@ const MatchDiscover = ({ navigation, route }) => {
         }
 
         // Update the swiped field in the Firestore document
-        await updateDoc(roomDocRef, { swiped: updatedSwiped });
+        await roomDocRef.update({ swiped: updatedSwiped });
       }
     }
   }, []);
