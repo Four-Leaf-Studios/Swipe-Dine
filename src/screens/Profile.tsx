@@ -1,9 +1,8 @@
-import { Dimensions, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import { Image, TouchableOpacity } from "react-native";
+import React, { useEffect } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
 import Text from "../components/Text";
-import useAuth from "../hooks/useAuth";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 import { ScrollView } from "react-native-gesture-handler";
@@ -13,13 +12,11 @@ import ProfileRestaurantItem from "../components/ProfileRestaurantItem";
 const Profile = ({ navigation }) => {
   const theme = useTheme<Theme>();
   const { darkGray, gray } = theme.colors;
-  const { userProfile: user } = useAuth();
-  const { favorites, matched } = useUserProfileFromFirestore();
-  const [image, setImage] = useState<string>(
-    user.photoURL
-      ? user.photoURL
-      : "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
-  );
+  const {
+    favorites,
+    matched,
+    userProfile: user,
+  } = useUserProfileFromFirestore();
 
   useEffect(() => {
     navigation.setOptions({
@@ -61,7 +58,11 @@ const Profile = ({ navigation }) => {
           gap={"m"}
         >
           <Image
-            source={{ uri: image }}
+            source={{
+              uri: user?.photoURL
+                ? user?.photoURL
+                : "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+            }}
             style={{
               width: 100,
               height: 100,
@@ -70,7 +71,7 @@ const Profile = ({ navigation }) => {
             }}
           />
           <Text variant="subheader" color="white">
-            {user.displayName}
+            {user?.displayName}
           </Text>
         </Box>
         <Box

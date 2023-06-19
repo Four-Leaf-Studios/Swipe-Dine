@@ -1,7 +1,4 @@
-import { StyleSheet, View } from "react-native";
-import React, { useEffect, useLayoutEffect } from "react";
-import { useGlassfy } from "../lib/GlassfyProvider";
-import Button from "../components/Button";
+import React, { useLayoutEffect } from "react";
 import Text from "../components/Text";
 import Box from "../components/Box";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -57,7 +54,7 @@ const Shop = ({ navigation }) => {
   };
   return (
     <Layout variant="main">
-      <Box width="100%" flex={1}>
+      <Box width="100%" flex={1} gap={"l"} padding="l">
         {offering.availablePackages.map((packagePurchased) => (
           <OfferingGroup
             product={packagePurchased.product}
@@ -65,8 +62,6 @@ const Shop = ({ navigation }) => {
             key={packagePurchased.product.identifier}
           />
         ))}
-
-        <UserPermissions user={user as UserInfo} />
       </Box>
     </Layout>
   );

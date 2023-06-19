@@ -6,9 +6,9 @@ import React, {
   ReactNode,
 } from "react";
 import Purchases, {
+  CustomerInfo,
   LOG_LEVEL,
   PurchasesOffering,
-  PurchasesOfferings,
   PurchasesStoreProduct,
 } from "react-native-purchases";
 import useAuth from "../hooks/useAuth";
@@ -20,9 +20,9 @@ type PurchaserInfo = {
   // Example: subscriptions: string[];
   // Example: purchases: string[];
   fetchOfferings: () => {};
-  products: PurchasesStoreProduct[];
   offering: PurchasesOffering;
   makePurchase: Function;
+  activeSubscriptions: CustomerInfo["activeSubscriptions"];
 };
 
 type RevenueCatContextType = PurchaserInfo | null;
@@ -41,12 +41,9 @@ export const useRevenueCat = (): RevenueCatContextType =>
 // RevenueCatProvider component
 export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
   const { user } = useAuth();
-  const [purchaserInfo, setPurchaserInfo] = useState<PurchaserInfo | null>(
-    null
-  );
-  const [products, setProducts] = useState<PurchasesStoreProduct[] | null>(
-    null
-  );
+  const [activeSubscriptions, setActiveSubscriptions] = useState<
+    CustomerInfo["activeSubscriptions"] | null
+  >(null);
   const [offering, setOffering] = useState<PurchasesOffering | null>(null);
 
   useEffect(() => {
@@ -62,18 +59,18 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
         });
         // identify Purchases SDK with new Firebase user
         await fetchOfferings();
+        await fetchCustomerInfo();
       }
     };
 
     init();
   }, [user]);
 
-  const fetchProducts = async () => {
-    const prods = await Purchases.getProducts([
-      "ios_swipeanddine_standard_monthly_8.99_rev",
-      "ios_swipeanddine_premium_monthly_12.99",
-    ]);
-    setProducts(prods);
+  const fetchCustomerInfo = async () => {
+    try {
+      const info = await Purchases.getCustomerInfo();
+      setActiveSubscriptions(info.activeSubscriptions);
+    } catch (error) {}
   };
 
   const fetchOfferings = async () => {
@@ -94,42 +91,12 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
     // Using packages
     try {
       const purchaseMade = await Purchases.purchasePackage(packagePurchased);
-      if (
-        typeof purchaseMade.customerInfo.entitlements.active[
-          "Standard Features"
-        ] !== "undefined"
-      ) {
-        // Unlock that great standard content.
-        console.log("Standard Features unlocked.");
-      } else if (
-        typeof purchaseMade.customerInfo.entitlements.active[
-          "Premium Features"
-        ] !== "undefined"
-      ) {
-        // Unlock premium content.
-        console.log("Premium Features Unlocked.");
-      }
+      setActiveSubscriptions(purchaseMade.customerInfo.activeSubscriptions);
     } catch (e) {
       if (!e.userCancelled) {
       }
     }
   };
-
-  const fetchCustomerInfo = async () => {
-    try {
-      const customerInfo = await Purchases.getCustomerInfo();
-      if (
-        typeof customerInfo.entitlements.active[
-          "<my_entitlement_identifier>"
-        ] !== "undefined"
-      ) {
-        // Grant user "pro" access
-      }
-    } catch (e) {
-      // Error fetching purchaser info
-    }
-  };
-
   const restorePurchases = async () => {
     try {
       const restore = await Purchases.restorePurchases();
@@ -137,8 +104,7 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
   };
 
   const value = {
-    purchaserInfo,
-    products,
+    activeSubscriptions,
     restorePurchases,
     offering,
     fetchOfferings,
