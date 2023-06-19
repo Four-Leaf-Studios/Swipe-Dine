@@ -97,12 +97,7 @@ const Match = ({ navigation }) => {
               shadowOffset={{ width: 0, height: -4 }}
               padding="l"
             >
-              <Button
-                variant="home"
-                onPress={async () => {
-                  createRoom();
-                }}
-              >
+              <Button variant="home" onPress={createRoom}>
                 <Text variant="subheader" color="white">
                   Create a Room
                 </Text>

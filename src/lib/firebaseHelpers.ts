@@ -35,7 +35,7 @@ export const storeGooglePlacesData = async (roomCode, data) => {
 
 export const leaveRoomFirestore = async (roomCode, userId) => {
   try {
-    const roomRef = firestore().doc(`rooms/${roomCode}`);
+    const roomRef = firestore().collection("rooms").doc(roomCode);
     const roomDoc = await roomRef.get();
     const roomData = roomDoc.data();
     if (roomData) {
@@ -75,8 +75,11 @@ export const uploadRestaurantToFirestore = async (
     const filtersTrue = Object.keys(filters).filter(
       (key) => filters[key] === true
     );
+
     let filter = filtersTrue.length === 1 ? filtersTrue : null;
-    filter = filter.filter((filter) => !restaurant?.types?.includes(filter));
+    if (filter)
+      filter = filter.filter((filter) => !restaurant?.types?.includes(filter));
+
     const newRestaurant = {
       ...restaurant,
       geohash: hash,
@@ -221,7 +224,7 @@ export const addRestaurantToMatchedListInFirestore = async (
   userId
 ) => {
   try {
-    const userRef = firestore().doc(`users/${userId}`);
+    const userRef = firestore().collection("users").doc(userId);
 
     // Get the user's current matched restaurants array
     const userDoc = await userRef.get();
@@ -249,7 +252,7 @@ export const addRestaurantToFavoritesListInFirestore = async (
   userId
 ) => {
   try {
-    const userRef = firestore().doc(`users/${userId}`);
+    const userRef = firestore().collection("users").doc(userId);
 
     // Get the user's current favorited restaurants array
     const userDoc = await userRef.get();

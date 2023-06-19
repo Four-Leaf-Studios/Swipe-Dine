@@ -139,7 +139,7 @@ const Home = ({ navigation }) => {
                   fontWeight={"bold"}
                   textAlign={"right"}
                 >
-                  {userProfile.discovers}{" "}
+                  {userProfile?.discovers}
                 </Text>
               </Text>
             </Button>

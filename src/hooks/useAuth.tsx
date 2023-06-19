@@ -26,9 +26,9 @@ export interface UserInfo {
   favoritedRestaurants: string[];
   matchedRestaurants: string[];
   subscriptions: {
-    free: boolean;
-    standard: boolean;
-    premium: boolean;
+    free: string;
+    standard: string;
+    premium: string;
   };
 }
 
@@ -63,7 +63,7 @@ export const AuthenticatedUserProvider = ({ children }) => {
 
         // Logged in...
         try {
-          const profile: UserInfo = await fetchUserProfile(user);
+          const profile: UserInfo = (await fetchUserProfile(user)) as UserInfo;
           setUserProfile(profile);
           setUser(user);
           setLoading(false);
@@ -82,7 +82,7 @@ export const AuthenticatedUserProvider = ({ children }) => {
 
   useEffect(() => {
     if (!user?.uid) return;
-    const usersRef = firestore().doc(`users/${user.uid}`);
+    const usersRef = firestore().collection("users").doc(user.uid);
 
     const unsubscribe = usersRef.onSnapshot((snapshot) => {
       // Handle the user document update here
@@ -92,7 +92,7 @@ export const AuthenticatedUserProvider = ({ children }) => {
     });
 
     return () => {
-      // Unsubscribe from the Firestore listener when the component unmounts
+      // Unsubscribe from the Firestore listener when the component unmountsr
       unsubscribe();
     };
   }, [user?.uid]);
@@ -110,7 +110,7 @@ export const AuthenticatedUserProvider = ({ children }) => {
       setUserProfile,
       userProfile,
     }),
-    [user, loading, error, firstTime, setFirstTime]
+    [user, loading, error, firstTime, setFirstTime, userProfile]
   );
 
   return (

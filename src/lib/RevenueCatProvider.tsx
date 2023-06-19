@@ -13,6 +13,7 @@ import Purchases, {
 } from "react-native-purchases";
 import useAuth from "../hooks/useAuth";
 import { Platform } from "react-native";
+import { updateProfileInFirestore } from "./firebaseHelpers";
 
 // Define the types
 type PurchaserInfo = {
@@ -40,7 +41,7 @@ export const useRevenueCat = (): RevenueCatContextType =>
 
 // RevenueCatProvider component
 export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
-  const { user } = useAuth();
+  const { user, userProfile } = useAuth();
   const [activeSubscriptions, setActiveSubscriptions] = useState<
     CustomerInfo["activeSubscriptions"] | null
   >(null);
@@ -70,6 +71,37 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
     try {
       const info = await Purchases.getCustomerInfo();
       setActiveSubscriptions(info.activeSubscriptions);
+      const premium = info.entitlements.active["Premium Features"];
+      const standard = info.entitlements.active["Standard Features"];
+
+      const discovers = userProfile?.discovers || 0;
+      const rooms = userProfile?.rooms || 0;
+
+      if (standard?.isActive) {
+        if (userProfile?.subscriptions?.standard !== standard.expirationDate)
+          await updateProfileInFirestore(user.uid, {
+            ...userProfile,
+            subscriptions: {
+              ...userProfile.subscriptions,
+              standard: standard.expirationDate,
+            },
+            discovers: discovers + 10,
+            rooms: rooms + 5,
+          });
+      }
+
+      if (premium?.isActive) {
+        if (userProfile?.subscriptions?.premium !== premium.expirationDate)
+          await updateProfileInFirestore(user.uid, {
+            ...userProfile,
+            subscriptions: {
+              ...userProfile.subscriptions,
+              premium: premium.expirationDate, 
+            },
+            discovers: discovers + 20,
+            rooms: rooms + 10,
+          });
+      }
     } catch (error) {}
   };
 

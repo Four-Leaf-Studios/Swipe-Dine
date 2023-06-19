@@ -1,6 +1,6 @@
 import { Image, StyleSheet } from "react-native";
 import React, { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 import Box from "./Box";
 
 type Props = {
@@ -16,8 +16,8 @@ const MemberItem = ({ memberId }: Props) => {
   const [data, setData] = useState<UserProfile>();
   useEffect(() => {
     const findMemberData = async (memberId: string) => {
-      const userRef = doc(db, "users", memberId);
-      const userDoc = await getDoc(userRef);
+      const userRef = firestore().collection("users").doc(memberId);
+      const userDoc = await userRef.get();
       setData(userDoc.data() as UserProfile);
     };
     findMemberData(memberId);
@@ -42,5 +42,3 @@ const MemberItem = ({ memberId }: Props) => {
 };
 
 export default MemberItem;
-
-const styles = StyleSheet.create({});
