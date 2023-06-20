@@ -10,6 +10,7 @@ import StyledTextInput from "../components/StyledTextInput";
 import Button from "../components/Button";
 import * as ImagePicker from "expo-image-picker";
 import { saveProfile } from "../lib/firebaseHelpers";
+import CustomImage from "../components/CustomImage";
 
 const Settings = ({ navigation }) => {
   const theme = useTheme<Theme>();
@@ -85,14 +86,7 @@ const Settings = ({ navigation }) => {
           paddingBottom="xl"
         >
           <TouchableOpacity onPress={pickImage}>
-            <Image
-              source={{ uri: image }}
-              style={{
-                width: 150,
-                height: 150,
-                borderRadius: 999,
-              }}
-            />
+            <CustomImage uri={image} variant="settings" />
           </TouchableOpacity>
         </Box>
         <Box

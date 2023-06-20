@@ -13,6 +13,7 @@ import {
 
 import { Theme } from "../../theme";
 import { ReactElement } from "react";
+import Box from "./Box";
 type RestyleProps = SpacingProps<Theme> &
   BorderProps<Theme> &
   BackgroundColorProps<Theme> &

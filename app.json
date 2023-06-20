@@ -1,3 +1,4 @@
+
 {
   "expo": {
     "name": "Swipe & Dine",
@@ -12,7 +13,8 @@
     },
     "ios": {
       "bundleIdentifier": "com.michaelheinzman.swipeanddine",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "supportsTablet": true
     },
     "android": {
       "package": "com.michaelheinzman.swipeanddine",
@@ -24,11 +26,15 @@
        [
         "expo-build-properties",
         {
-          "ios": {
+          "ios": { 
             "useFrameworks": "static"
           }
         }
       ]
     ]
+  },
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-6650165506489456~2520889695",
+    "ios_app_id": "ca-app-pub-6650165506489456~2076967333"
   }
-}
+}   

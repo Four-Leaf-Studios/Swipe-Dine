@@ -29,12 +29,11 @@ const Login = ({ navigation }) => {
     <Layout variant="main">
       <Box
         width={{ phone: "100%" }}
-        flexGrow={{ phone: 1, tablet: 0.8, largeTablet: 0.6 }}
+        flexGrow={{ phone: 0.6, tablet: 0.8, largeTablet: 0.6 }}
         flexDirection="column"
         justifyContent="center"
         alignItems="center"
         padding="l"
-        gap="m"
       >
         {/* Logo */}
         <Box
@@ -50,15 +49,17 @@ const Login = ({ navigation }) => {
         {/* Apple Sign In */}
         <Box
           width={{ phone: "100%", tablet: "60%", largeTablet: "50%" }}
-          flex={0.5}
-          minHeight={{ phone: 40, tablet: 60 }}
+          flex={1}
+          maxHeight={{ phone: 80, tablet: 150 }}
+          paddingRight="l"
+          paddingLeft="l"
         >
           <AppleAuthentication.AppleAuthenticationButton
             buttonType={
               AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN
             }
             buttonStyle={
-              AppleAuthentication.AppleAuthenticationButtonStyle.WHITE
+              AppleAuthentication.AppleAuthenticationButtonStyle.BLACK
             }
             cornerRadius={5}
             style={{

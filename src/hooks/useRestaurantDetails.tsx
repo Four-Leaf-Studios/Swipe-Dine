@@ -5,6 +5,9 @@ import {
   checkDocumentExists,
   uploadRestaurantToFirestore,
 } from "../lib/firebaseHelpers";
+import { getUserLocation } from "../utils/geolocation";
+import { distanceTo } from "geolocation-utils";
+import { convertDistance } from "geolib";
 
 const useRestaurantDetails = (
   id: string,
@@ -14,7 +17,7 @@ const useRestaurantDetails = (
 ) => {
   const [restaurant, setRestaurant] = useState<RestaurantDetailsGoogle>();
   const [loading, setLoading] = useState(false);
-
+  const [milesAway, setMilesAway] = useState(null);
   const handleNewRestaurant = async (id, filters, setRestaurant) => {
     try {
       const data = await getRestaurantDetailsFromGooglePlaces(id);
@@ -69,7 +72,28 @@ const useRestaurantDetails = (
       fetchRestaurantDetails();
     }
   }, [viewDetails]);
-  return { restaurant: restaurant ? { ...restaurant } : null, loading };
+
+  useEffect(() => {
+    const getDistanceBetweenRestaurant = async () => {
+      try {
+        const location = await getUserLocation();
+        const distance = await distanceTo(
+          location,
+          restaurant.geometry.location
+        );
+        const milesDistance = await convertDistance(distance, "mi").toFixed(2);
+        setMilesAway(milesDistance);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (restaurant && !milesAway) getDistanceBetweenRestaurant();
+  }, [restaurant]);
+  return {
+    restaurant: restaurant ? { ...restaurant } : null,
+    loading,
+    milesAway: milesAway,
+  };
 };
 
 export default useRestaurantDetails;

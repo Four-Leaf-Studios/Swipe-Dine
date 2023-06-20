@@ -14,6 +14,7 @@ import Purchases, {
 import useAuth from "../hooks/useAuth";
 import { Platform } from "react-native";
 import { updateProfileInFirestore } from "./firebaseHelpers";
+import { Timestamp } from "firebase/firestore";
 
 // Define the types
 type PurchaserInfo = {
@@ -77,6 +78,21 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
       const discovers = userProfile?.discovers || 0;
       const rooms = userProfile?.rooms || 0;
 
+      if (!standard?.isActive && !premium?.isActive) {
+        if (
+          userProfile?.subscriptions.standard &&
+          userProfile?.subscriptions.premium
+        ) {
+          await updateProfileInFirestore(user.uid, {
+            ...userProfile,
+            subscriptions: {
+              free: Timestamp.now(),
+              standard: null,
+              premium: null,
+            },
+          });
+        }
+      }
       if (standard?.isActive) {
         if (userProfile?.subscriptions?.standard !== standard.expirationDate)
           await updateProfileInFirestore(user.uid, {
@@ -84,6 +100,8 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
             subscriptions: {
               ...userProfile.subscriptions,
               standard: standard.expirationDate,
+              premium: null,
+              free: null,
             },
             discovers: discovers + 10,
             rooms: rooms + 5,
@@ -96,7 +114,9 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
             ...userProfile,
             subscriptions: {
               ...userProfile.subscriptions,
-              premium: premium.expirationDate, 
+              premium: premium.expirationDate,
+              standard: null,
+              free: null,
             },
             discovers: discovers + 20,
             rooms: rooms + 10,

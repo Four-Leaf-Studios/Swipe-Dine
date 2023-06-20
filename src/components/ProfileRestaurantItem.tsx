@@ -32,6 +32,7 @@ const ProfileRestaurantItem = ({ place_id, favorites }) => {
     removeRestaurantFromFavoritesInFirestore(place_id, user.uid);
     removeRestaurantFromMatchedInFirestore(place_id, user.uid);
   };
+  const tablet = Dimensions.get("window").width > 500;
   return (
     <Box
       width={Dimensions.get("window").width}
@@ -77,29 +78,38 @@ const ProfileRestaurantItem = ({ place_id, favorites }) => {
             <Box
               flex={1.5}
               height="100%"
-              justifyContent={"flex-start"}
+              justifyContent={"space-between"}
               alignItems="flex-start"
               paddingBottom="s"
             >
               <Text variant="body" color="white">
                 {restaurant?.name}
               </Text>
+
+              <Ionicons
+                name="md-car-outline"
+                size={tablet ? 50 : 32}
+                color={"white"}
+                onPress={() => {}}
+              />
             </Box>
 
             <Box flex={0.5}></Box>
           </Box>
+
           <Box
             position={"absolute"}
             top={0}
             right={0}
-            padding="s"
+            padding="m"
+            paddingTop="s"
             height="100%"
             justifyContent={"space-between"}
-            alignItems="center"
+            alignItems="flex-end"
           >
             <Ionicons
               name="md-star"
-              size={25}
+              size={tablet ? 36 : 25}
               color={favorited ? orangeDark : "white"}
               onPress={handleFavoritedPressed}
             />

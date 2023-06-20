@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import HomeStack from "./homeStack";
@@ -8,7 +7,6 @@ import { Theme } from "../../theme";
 import MatchStack from "./matchStack";
 import useAuth from "../hooks/useAuth";
 import Box from "../components/Box";
-import { fetchUserProfile } from "../lib/firebaseHelpers";
 import ProfileStack from "./profileStack";
 
 const Tab = createMaterialBottomTabNavigator();
@@ -79,7 +77,9 @@ const UserStack = () => {
         <Tab.Screen
           name="ProfileStack"
           component={ProfileStack}
-          options={{ title: "Profile" }}
+          options={{
+            title: "Profile",
+          }}
         />
       </Tab.Navigator>
     </NavigationContainer>

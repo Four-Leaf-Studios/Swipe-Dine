@@ -123,14 +123,34 @@ const Room = ({ navigation }) => {
               disabled={room?.owner !== user.uid && !startBegan && true}
               onPress={handleStart}
             >
-              <Text variant="subheader" color="white">
-                {room?.owner === user.uid ? "Start" : "Waiting..."}{" "}
+              <Box
+                width="100%"
+                height="100%"
+                flexDirection={"row"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                gap={{ phone: "s", tablet: "m" }}
+              >
+                <Text variant="subheader" color="white">
+                  {room?.owner === user.uid ? "Start" : "Waiting..."}{" "}
+                </Text>
                 {room?.owner === user.uid && (
-                  <Text variant="body" color="white" fontWeight="bold">
-                    ({userProfile.rooms})
-                  </Text>
+                  <Box
+                    padding={{ phone: "s", tablet: "m" }}
+                    backgroundColor={"darkGray"}
+                    borderRadius={999}
+                  >
+                    <Text
+                      variant="body"
+                      color="buttonPrimaryText"
+                      fontWeight={"bold"}
+                      textAlign={"right"}
+                    >
+                      {userProfile?.discovers}
+                    </Text>
+                  </Box>
                 )}
-              </Text>
+              </Box>
             </Button>
           </Box>
         </Box>

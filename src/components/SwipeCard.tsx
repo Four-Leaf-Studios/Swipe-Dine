@@ -18,10 +18,10 @@ import { RestaurantDetails } from "../api/google/googleTypes";
 import { getPhotoURL } from "../api/google/google";
 import useRestaurantDetails from "../hooks/useRestaurantDetails";
 import { Ionicons } from "@expo/vector-icons";
-import StarRating from "react-native-star-rating";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
-
+import StarRating from "react-native-star-rating";
+import { TouchableOpacity } from "react-native-gesture-handler";
 interface Props {
   handleSwipe: (direction: string, place_id: string) => void;
   restaurantPassed?: RestaurantDetails;
@@ -40,11 +40,11 @@ const SwipeCard = memo(
     const theme = useTheme<Theme>();
     const { orangeDark } = theme.colors;
     const [discover, setDiscover] = useState(discoverPassed);
-    const { restaurant: restaurantDetails, loading } = useRestaurantDetails(
-      restaurantPassed?.place_id,
-      discover,
-      filters
-    );
+    const {
+      restaurant: restaurantDetails,
+      loading,
+      milesAway,
+    } = useRestaurantDetails(restaurantPassed?.place_id, discover, filters);
     const [restaurant, setRestaurant] = useState(restaurantPassed);
 
     useEffect(() => {
@@ -61,6 +61,7 @@ const SwipeCard = memo(
     const indicators = useAnimatedValue(0);
     const [rotate, setRotate] = useState("0 deg");
     const windowWidth = useWindowDimensions().width;
+
     const handleSwipeLeft = () => {
       setRotate("-20 deg");
 
@@ -284,7 +285,14 @@ const SwipeCard = memo(
                 emptyStarColor="white"
                 starSize={20}
               />
-              <Box flex={1} flexDirection={"row"} gap="s">
+
+              <Box
+                flex={1}
+                flexDirection={"row"}
+                gap="s"
+                justifyContent={"center"}
+                alignItems="center"
+              >
                 {restaurant?.vicinity && (
                   <Ionicons
                     name="md-car-outline"
@@ -293,6 +301,14 @@ const SwipeCard = memo(
                     onPress={handleNavigatePressed}
                   />
                 )}
+                <Text
+                  variant="body"
+                  color="white"
+                  fontWeight={"bold"}
+                  textAlign={"center"}
+                >
+                  {milesAway} MILES AWAY{" "}
+                </Text>
               </Box>
             </Box>
             <Image

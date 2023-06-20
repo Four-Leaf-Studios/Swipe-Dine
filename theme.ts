@@ -82,7 +82,10 @@ const theme = createTheme({
     auto: "auto",
     none: 0,
   },
-
+  filterColumns: {
+    phone: 3,
+    tablet: 5,
+  },
   inputVariants: {
     defaults: {
       height: 60,
@@ -103,9 +106,28 @@ const theme = createTheme({
       borderRadius: 4,
       width: { phone: "100%", tablet: "100%" },
       flex: 1,
-      minHeight: { phone: 50 },
-      maxHeight: { phone: 60, tablet: 70 },
+      minHeight: { phone: 50, longPhone: 60, tablet: 60 },
+      maxHeight: { phone: 60, longPhone: 70, tablet: 80 },
       textAlign: "center",
+      fontSize: { phone: 16, tablet: 32 },
+    },
+  },
+  imageVariants: {
+    defaults: {
+      width: "100%",
+      height: "100%",
+    },
+    profile: {
+      width: { phone: 100, tablet: 200 },
+      height: { phone: 100, tablet: 200 },
+      borderRadius: 999,
+      backgroundColor: "gray",
+    },
+    settings: {
+      height: { phone: 150, tablet: 250 },
+      width: { phone: 150, tablet: 250 },
+      borderRadius: 999,
+      backgroundColor: "gray",
     },
   },
   textVariants: {
@@ -118,14 +140,14 @@ const theme = createTheme({
     },
     header: {
       fontWeight: "bold",
-      fontSize: { phone: 34, tablet: 48 },
+      fontSize: { phone: 34, longPhone: 38, tablet: 48 },
     },
     subheader: {
       fontWeight: "600",
-      fontSize: { phone: 28, tablet: 34 },
+      fontSize: { phone: 28, longPhone: 32, tablet: 38 },
     },
     body: {
-      fontSize: { phone: 16, tablet: 28 },
+      fontSize: { phone: 16, longPhone: 20, tablet: 32 },
     },
   },
   logoVariants: {
@@ -151,21 +173,29 @@ const theme = createTheme({
       justifyContent: "center",
       backgroundColor: "buttonPrimaryBackground",
     },
+    match: {
+      width: "100%",
+      backgroundColor: "orangeDark",
+      justifyContent: "center",
+      alignItems: "center",
+      maxHeight: { phone: 100, longPhone: 150, tablet: 200 },
+      padding: { phone: "m", longPhone: "l", tablet: "l" },
+    },
     home: {
       width: "100%",
       backgroundColor: "orangeDark",
       justifyContent: "center",
       alignItems: "center",
-      maxHeight: 100,
-      padding: "m",
+      maxHeight: { phone: 100, longPhone: 150, tablet: 200 },
+      padding: { phone: "m", longPhone: "m", tablet: "l" },
     },
     homeDisabled: {
       width: "100%",
       backgroundColor: "gray",
       justifyContent: "center",
-      alignItems: "center", 
+      alignItems: "center",
       maxHeight: 100,
-      padding: "m",
+      padding: { phone: "m", longPhone: "l", tablet: "l" },
     },
     logout: {
       zIndex: "z-0",
@@ -179,7 +209,8 @@ const theme = createTheme({
       borderColor: "gray",
       justifyContent: "center",
       alignItems: "center",
-      padding: "s",
+      padding: { phone: "s", tablet: "m" },
+      flex: 1 / 3,
     },
     filterOn: {
       margin: "s",
@@ -189,7 +220,8 @@ const theme = createTheme({
       borderColor: "orangeDark",
       justifyContent: "center",
       alignItems: "center",
-      padding: "s",
+      padding: { phone: "s", tablet: "m" },
+      flex: 1 / 3,
     },
     swipeScreenButton: {
       height: 60,

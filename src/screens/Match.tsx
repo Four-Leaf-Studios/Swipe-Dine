@@ -50,23 +50,37 @@ const Match = ({ navigation }) => {
       >
         <Box
           width="100%"
-          height="40%"
+          height={{ phone: "40%", longPhone: "60%", tablet: "70%" }}
           justifyContent={"center"}
           alignItems={"center"}
           padding="l"
           paddingBottom="xl"
         >
-          <Text variant="body" color="white" fontSize={22}>
+          <Text
+            variant={{ phone: "body", tablet: "subheader" }}
+            color="white"
+            fontSize={{ phone: 22, tablet: 36 }}
+            fontWeight={"normal"}
+          >
             Create a{" "}
-            <Text variant="subheader" color="orangeDark">
+            <Text
+              variant={{ phone: "subheader", tablet: "header" }}
+              color="orangeDark"
+            >
               ROOM
             </Text>{" "}
             and search for{" "}
-            <Text variant="subheader" color="orangeDark">
+            <Text
+              variant={{ phone: "subheader", tablet: "header" }}
+              color="orangeDark"
+            >
               FOOD
             </Text>{" "}
             with{" "}
-            <Text variant="subheader" color="orangeDark">
+            <Text
+              variant={{ phone: "subheader", tablet: "header" }}
+              color="orangeDark"
+            >
               FRIENDS
             </Text>{" "}
           </Text>
@@ -74,7 +88,7 @@ const Match = ({ navigation }) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <Box
             position="absolute"
-            height="60%"
+            height={{ phone: "60%", longPhone: "40%", tablet: "30%" }}
             bottom={0}
             width="100%"
             justifyContent="center"
@@ -97,8 +111,8 @@ const Match = ({ navigation }) => {
               shadowOffset={{ width: 0, height: -4 }}
               padding="l"
             >
-              <Button variant="home" onPress={createRoom}>
-                <Text variant="subheader" color="white">
+              <Button variant="match" onPress={createRoom}>
+                <Text variant="body" color="white">
                   Create a Room
                 </Text>
               </Button>

@@ -5,6 +5,7 @@ import { useTheme } from "@shopify/restyle";
 import Profile from "../screens/Profile";
 import Settings from "../screens/Settings";
 import useAuth from "../hooks/useAuth";
+import Text from "../components/Text";
 
 const Stack = createStackNavigator();
 const ProfileStack = () => {
@@ -25,7 +26,9 @@ const ProfileStack = () => {
       <Stack.Screen
         name="Profile"
         component={Profile}
-        options={{ title: "Profile" }}
+        options={{
+          title: "Profile",
+        }}
       />
       <Stack.Screen
         name="Settings"

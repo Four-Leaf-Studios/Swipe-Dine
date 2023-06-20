@@ -1,10 +1,13 @@
-import { FlatList } from "react-native";
+import { Dimensions, FlatList } from "react-native";
 import React from "react";
 import Button from "./Button";
 import Text from "./Text";
+import { useTheme } from "@shopify/restyle";
+import { Theme } from "../../theme";
 
 const Filters = ({ filters, setFilters }) => {
-  const filterKeys = Object.keys(filters ? filters : {}); // Accessing the keys of filters
+  const filterKeys = Object.keys(filters ? filters : {});
+
   return (
     <FlatList
       data={filterKeys} // Using the keys as the data source
@@ -24,11 +27,9 @@ const Filters = ({ filters, setFilters }) => {
           </Text>
         </Button>
       )}
-      // Setting the number of columns
       numColumns={3}
-      contentContainerStyle={{
-        justifyContent: "space-between",
-      }}
+      // Setting the number of columns
+      style={{ width: "100%" }}
     />
   );
 };

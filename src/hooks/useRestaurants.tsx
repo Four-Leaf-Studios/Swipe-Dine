@@ -19,7 +19,7 @@ const useRestaurants = (room, initialFilters) => {
   const [initialList, setInitialList] = useState([]);
   const [firebase, setFirebase] = useState(false);
   const [noRestaurantsLeft, setNoRestaurantsLeft] = useState(false);
-  const [initialRender, setInitialRender] = useState(true);
+
   let filtersUpdated = false;
   if (restaurants.length !== 0)
     filtersUpdated =
@@ -53,6 +53,7 @@ const useRestaurants = (room, initialFilters) => {
     };
 
     const fetchAndUpdateRestaurants = async (filter) => {
+      setLoading(true);
       initialList && (await setDistance((distance) => distance + 10));
       const location = await getUserLocation();
       let fireData: any = await fetchNearbyPlacesFromFirestore(
@@ -68,7 +69,6 @@ const useRestaurants = (room, initialFilters) => {
           pageToken,
           filter
         );
-        setFirebase(false);
       } else setFirebase(true);
 
       const data = googleData ? googleData : fireData;
@@ -110,8 +110,9 @@ const useRestaurants = (room, initialFilters) => {
         }
       } else {
         console.error(data.error);
-        return null;
       }
+
+      setLoading(false);
     };
 
     if (

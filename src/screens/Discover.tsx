@@ -1,4 +1,4 @@
-import { TouchableOpacity } from "react-native";
+import { ActivityIndicator, TouchableOpacity } from "react-native";
 import SwipeCard from "../components/SwipeCard";
 import Box from "../components/Box";
 import Text from "../components/Text";
@@ -81,31 +81,34 @@ const Discover = ({ navigation, route }) => {
   return (
     <Layout variant="main">
       <Box width="100%" flex={1}>
-        <Box
-          position="relative"
-          width="100%"
-          flex={10}
-          flexDirection="row"
-          justifyContent="center"
-          alignItems="center"
-        >
-          {loading ? (
-            <AnimatedLogo variant="secondary" />
-          ) : restaurants.length > 0 ? (
-            restaurants.map((restaurant, index) => (
-              <SwipeCard
-                key={restaurant.place_id}
-                restaurantPassed={restaurant}
-                handleSwipe={handleSwipe}
-                filters={filters ? filters : initialFilters}
-                discover
-                navigation={navigation}
-              />
-            ))
-          ) : (
-            <Text>No restaurants found.</Text>
-          )}
-        </Box>
+        {loading && <ActivityIndicator size={50} />}
+        {!loading && (
+          <Box
+            position="relative"
+            width="100%"
+            flex={10}
+            flexDirection="row"
+            justifyContent="center"
+            alignItems="center"
+          >
+            {loading ? (
+              <AnimatedLogo variant="secondary" />
+            ) : restaurants.length > 0 ? (
+              restaurants.map((restaurant, index) => (
+                <SwipeCard
+                  key={restaurant.place_id}
+                  restaurantPassed={restaurant}
+                  handleSwipe={handleSwipe}
+                  filters={filters ? filters : initialFilters}
+                  discover
+                  navigation={navigation}
+                />
+              ))
+            ) : (
+              <Text>No restaurants found.</Text>
+            )}
+          </Box>
+        )}
       </Box>
     </Layout>
   );

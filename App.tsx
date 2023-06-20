@@ -1,10 +1,11 @@
+import "expo-dev-client";
 import { ThemeProvider } from "@shopify/restyle";
 import { darkTheme, theme } from "./theme";
 import { useState } from "react";
 import { AuthenticatedUserProvider } from "./src/hooks/useAuth";
 import RootNavigation from "./src/navigation/RootNavigation";
-import { RecoilRoot } from "recoil";
 import { RevenueCatProvider } from "./src/lib/RevenueCatProvider";
+import { RecoilRoot } from "recoil";
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(false);

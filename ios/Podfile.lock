@@ -801,6 +801,30 @@ PODS:
   - GlassfyGlue (1.3.6):
     - Glassfy (= 1.3.8)
   - glog (0.3.5)
+  - Google-Mobile-Ads-SDK (10.6.0):
+    - GoogleAppMeasurement (< 11.0, >= 7.0)
+    - GoogleUserMessagingPlatform (>= 1.1)
+  - GoogleAppMeasurement (10.11.0):
+    - GoogleAppMeasurement/AdIdSupport (= 10.11.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleAppMeasurement/AdIdSupport (10.11.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 10.11.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleAppMeasurement/WithoutAdIdSupport (10.11.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.11)
+    - GoogleUtilities/MethodSwizzler (~> 7.11)
+    - GoogleUtilities/Network (~> 7.11)
+    - "GoogleUtilities/NSData+zlib (~> 7.11)"
+    - nanopb (< 2.30910.0, >= 2.30908.0)
+  - GoogleUserMessagingPlatform (2.0.1)
   - GoogleUtilities/AppDelegateSwizzler (7.11.1):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -809,6 +833,8 @@ PODS:
     - PromisesObjC (< 3.0, >= 1.2)
   - GoogleUtilities/Logger (7.11.1):
     - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (7.11.1):
+    - GoogleUtilities/Logger
   - GoogleUtilities/Network (7.11.1):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
@@ -1256,6 +1282,10 @@ PODS:
     - RNFBApp
   - RNGestureHandler (2.9.0):
     - React-Core
+  - RNGoogleMobileAds (11.1.1):
+    - Google-Mobile-Ads-SDK (= 10.6.0)
+    - GoogleUserMessagingPlatform (= 2.0.1)
+    - React-Core
   - RNPurchases (6.0.0):
     - PurchasesHybridCommon (= 5.0.0)
     - React-Core
@@ -1355,6 +1385,7 @@ DEPENDENCIES:
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNGoogleMobileAds (from `../node_modules/react-native-google-mobile-ads`)
   - RNPurchases (from `../node_modules/react-native-purchases`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -1376,6 +1407,9 @@ SPEC REPOS:
     - fmt
     - Glassfy
     - GlassfyGlue
+    - Google-Mobile-Ads-SDK
+    - GoogleAppMeasurement
+    - GoogleUserMessagingPlatform
     - GoogleUtilities
     - "gRPC-C++"
     - gRPC-Core
@@ -1510,6 +1544,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNGoogleMobileAds:
+    :path: "../node_modules/react-native-google-mobile-ads"
   RNPurchases:
     :path: "../node_modules/react-native-purchases"
   RNReanimated:
@@ -1559,6 +1595,9 @@ SPEC CHECKSUMS:
   Glassfy: 6bea9bf717b8ff7b9889915cdbf77076cde7530c
   GlassfyGlue: 441481ed9fda8db8b10a98bb40f630df1a043cf5
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
+  Google-Mobile-Ads-SDK: 07599a44221fb3f00d111d5c2f4e27549f8dbf21
+  GoogleAppMeasurement: d3dabccdb336fc0ae44b633c8abaa26559893cd9
+  GoogleUserMessagingPlatform: 5f8b30daf181805317b6b985bb51c1ff3beca054
   GoogleUtilities: 9aa0ad5a7bc171f8bae016300bfcfa3fb8425749
   "gRPC-C++": 0968bace703459fd3e5dcb0b2bed4c573dbff046
   gRPC-Core: 17108291d84332196d3c8466b48f016fc17d816d
@@ -1605,6 +1644,7 @@ SPEC CHECKSUMS:
   RNFBFirestore: 396b5ee1086dc847d26edfc7ba11632f6897ca7a
   RNFBStorage: 2af76edfdeda08e06595c9f949b86fab19a78e8d
   RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
+  RNGoogleMobileAds: 12d55c39ba7d2dbaeebd119c538824fdd1eac7e4
   RNPurchases: 8d29c34cc7118f3ee798001a4ad60ca6c25be4cc
   RNReanimated: cc5e3aa479cb9170bcccf8204291a6950a3be128
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f

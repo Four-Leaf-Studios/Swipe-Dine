@@ -8,6 +8,7 @@ import { Theme } from "../../theme";
 import { ScrollView } from "react-native-gesture-handler";
 import useUserProfileFromFirestore from "../hooks/useUserProfileFromFirestore";
 import ProfileRestaurantItem from "../components/ProfileRestaurantItem";
+import CustomImage from "../components/CustomImage";
 
 const Profile = ({ navigation }) => {
   const theme = useTheme<Theme>();
@@ -57,18 +58,13 @@ const Profile = ({ navigation }) => {
           padding="l"
           gap={"m"}
         >
-          <Image
-            source={{
-              uri: user?.photoURL
+          <CustomImage
+            uri={
+              user?.photoURL
                 ? user?.photoURL
-                : "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
-            }}
-            style={{
-              width: 100,
-              height: 100,
-              borderRadius: 999,
-              backgroundColor: gray,
-            }}
+                : "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+            }
+            variant="profile"
           />
           <Text variant="subheader" color="white">
             {user?.displayName}

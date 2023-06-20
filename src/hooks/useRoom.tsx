@@ -87,7 +87,7 @@ const useRoom = () => {
         .collection("rooms")
         .doc(roomCode)
         .update({
-          members: firestore.FieldValue.arrayRemove(user.uid),
+          members: room.members.filter((member) => member !== user.uid),
         });
       setLoading(false);
       setRoom(null);

@@ -73,16 +73,17 @@ const Home = ({ navigation }) => {
       >
         <Box
           width="100%"
-          height="40%"
+          height={{ phone: "25%", longPhone: "40%", tablet: "40%" }}
           justifyContent={"center"}
           alignItems={"center"}
           backgroundColor="darkGray"
-          paddingBottom="xl"
+          padding="s"
+          paddingBottom={{ phone: "l", longPhone: "xl" }}
           gap={"xl"}
         >
-          <Text variant="subheader" color="white">
+          <Text variant={"header"} color="white">
             Welcome to{" "}
-            <Text variant="subheader" color="orangeDark">
+            <Text variant={"header"} color="orangeDark">
               Swipe & Dine!
             </Text>
           </Text>
@@ -91,7 +92,7 @@ const Home = ({ navigation }) => {
           width="100%"
           position="absolute"
           bottom={0}
-          height="60%"
+          height={{ phone: "75%", longPhone: "60%", tablet: "60%" }}
           backgroundColor={"darkGray"}
         >
           <Box
@@ -110,17 +111,14 @@ const Home = ({ navigation }) => {
             padding="l"
             gap="s"
           >
-            <Box width="100%" flex={1}>
-              <Box padding="s" gap="s">
-                <Text variant="body" fontSize={20}>
+            <Box width="100%" flex={1} gap={{ phone: "s", tablet: "m" }}>
+              <Box padding="s" gap={{ phone: "s", tablet: "l" }}>
+                <Text variant={"body"} fontWeight="600">
                   What are you looking for?
                 </Text>
-                <Text variant="body">
+                <Text variant={"body"} fontWeight={"normal"}>
                   Better results when using one filter at a time if location
-                  isn't in our database yet.
-                  <Text variant="body" color="orangeDark">
-                    (for now)
-                  </Text>
+                  isn't in our database yet. (for now)
                 </Text>
               </Box>
 
@@ -131,17 +129,38 @@ const Home = ({ navigation }) => {
               disabled={userProfile.discovers === 0}
               onPress={searchRestaurants}
             >
-              <Text variant="body" color="buttonPrimaryText">
-                Find Restaurants Nearby{" "}
+              <Box
+                width="100%"
+                height="100%"
+                justifyContent={"center"}
+                alignItems="center"
+                flexDirection={"row"}
+                gap={{ phone: "s", tablet: "m" }}
+              >
                 <Text
                   variant="body"
-                  color="buttonPrimaryText"
+                  color={"buttonPrimaryText"}
                   fontWeight={"bold"}
-                  textAlign={"right"}
                 >
-                  {userProfile?.discovers}
+                  Find Restaurants Nearby{" "}
                 </Text>
-              </Text>
+                <Box
+                  padding={{ phone: "s", tablet: "m" }}
+                  backgroundColor={
+                    userProfile.discovers === 0 ? "error" : "darkGray"
+                  }
+                  borderRadius={999}
+                >
+                  <Text
+                    variant="body"
+                    color={"buttonPrimaryText"}
+                    fontWeight={"bold"}
+                    textAlign={"center"}
+                  >
+                    {userProfile?.discovers}
+                  </Text>
+                </Box>
+              </Box>
             </Button>
           </Box>
         </Box>

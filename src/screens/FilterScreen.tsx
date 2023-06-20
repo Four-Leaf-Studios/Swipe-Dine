@@ -20,12 +20,12 @@ const FilterScreen = ({ navigation, route }) => {
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
-      headerStyle: { backgroundColor: darkGray },
-      headerTitleStyle: { color: "white" },
+      headerStyle: { backgroundColor: "white" },
+      headerTitleStyle: { color: darkGray },
       headerLeft: () => (
         <Box paddingLeft="l">
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text variant="body" color="white">
+            <Text variant="body" color="orangeDark">
               Cancel
             </Text>
           </TouchableOpacity>
@@ -39,7 +39,7 @@ const FilterScreen = ({ navigation, route }) => {
               navigation.goBack();
             }}
           >
-            <Text variant="body" color="white">
+            <Text variant="body" color="orangeDark">
               Save Filters
             </Text>
           </TouchableOpacity>
@@ -49,7 +49,7 @@ const FilterScreen = ({ navigation, route }) => {
   }, [navigation, filters]);
 
   return (
-    <Layout variant="gray" gradient>
+    <Layout variant="main">
       <Box
         width="100%"
         flex={1}
