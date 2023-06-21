@@ -8,8 +8,10 @@ import {
   fetchNearbyPlacesFromFirestore,
 } from "../lib/firebaseHelpers";
 import { uploadRestaurantToFirestore } from "../lib/firebaseHelpers";
+import useAuth from "./useAuth";
 
 const useRestaurants = (room, initialFilters) => {
+  const { userProfile } = useAuth();
   const { filters } = useFilters(room, initialFilters);
   const [restaurants, setRestaurants] = useState<RestaurantDetails[] | null>(
     null

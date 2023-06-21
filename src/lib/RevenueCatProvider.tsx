@@ -9,7 +9,6 @@ import Purchases, {
   CustomerInfo,
   LOG_LEVEL,
   PurchasesOffering,
-  PurchasesStoreProduct,
 } from "react-native-purchases";
 import useAuth from "../hooks/useAuth";
 import { Platform } from "react-native";

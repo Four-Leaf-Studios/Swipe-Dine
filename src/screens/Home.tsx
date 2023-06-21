@@ -13,6 +13,11 @@ import {
 } from "../lib/firebaseHelpers";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from "react-native-google-mobile-ads";
 
 const Home = ({ navigation }) => {
   const { logout, user, userProfile } = useAuth();
@@ -65,6 +70,7 @@ const Home = ({ navigation }) => {
   return (
     <Layout variant="main">
       <Box
+        position="relative"
         width="100%"
         flex={1}
         flexDirection="column"
@@ -73,7 +79,7 @@ const Home = ({ navigation }) => {
       >
         <Box
           width="100%"
-          height={{ phone: "25%", longPhone: "40%", tablet: "40%" }}
+          height={{ phone: "25%", longPhone: "30%", tablet: "40%" }}
           justifyContent={"center"}
           alignItems={"center"}
           backgroundColor="darkGray"
@@ -109,6 +115,7 @@ const Home = ({ navigation }) => {
             shadowRadius={4}
             shadowOffset={{ width: 0, height: -4 }}
             padding="l"
+            paddingBottom={userProfile.subscriptions.free ? "none" : "l"}
             gap="s"
           >
             <Box width="100%" flex={1} gap={{ phone: "s", tablet: "m" }}>
@@ -117,8 +124,8 @@ const Home = ({ navigation }) => {
                   What are you looking for?
                 </Text>
                 <Text variant={"body"} fontWeight={"normal"}>
-                  Better results when using one filter at a time if location
-                  isn't in our database yet. (for now)
+                  Better results when using one filter at a time if locations
+                  aren't in our database (for now)
                 </Text>
               </Box>
 
@@ -165,6 +172,13 @@ const Home = ({ navigation }) => {
                 </Box>
               </Box>
             </Button>
+            {userProfile.subscriptions.free && (
+              <BannerAd
+                unitId={TestIds.BANNER}
+                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+                requestOptions={{ requestNonPersonalizedAdsOnly: true }}
+              />
+            )}
           </Box>
         </Box>
       </Box>

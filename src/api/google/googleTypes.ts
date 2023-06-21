@@ -89,6 +89,7 @@ interface RestaurantDetails {
   utc_offset?: number;
   vicinity: string;
   website?: string;
+  ad?: boolean;
 }
 
 export { RestaurantDetails };

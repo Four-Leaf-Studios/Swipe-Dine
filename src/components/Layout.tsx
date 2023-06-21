@@ -2,7 +2,6 @@ import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import React, { ReactElement } from "react";
 import LinearGradient from "./LinearGradient";
 import { ResponsiveValue } from "@shopify/restyle";
-
 type Props = {
   children?: ReactElement<any>;
   variant: ResponsiveValue<any, any>;
@@ -24,10 +23,6 @@ const styles = StyleSheet.create({
     width: "100%",
     flex: 1,
     marginTop: StatusBar.currentHeight,
-    position: "relative",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignitems: "center",
-    maxHeight: "100%",
+    backgroundColor: "transparent",
   },
 });
