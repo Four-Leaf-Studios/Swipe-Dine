@@ -3,136 +3,91 @@ import { getGooglePlaces } from "../api/google/google";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import { getUserLocation } from "../utils/geolocation";
 import useFilters from "./useFilters";
-import firestore from "@react-native-firebase/firestore";
 import {
+  checkDocumentExists,
   fetchNearbyPlacesFromFirestore,
-  uploadRestaurantToFirestore,
 } from "../lib/firebaseHelpers";
+import { uploadRestaurantToFirestore } from "../lib/firebaseHelpers";
 
 const useRestaurants = (room, initialFilters) => {
   const { filters } = useFilters(room, initialFilters);
-  const [restaurants, setRestaurants] = useState<RestaurantDetails[]>([]);
+  const [restaurants, setRestaurants] = useState<RestaurantDetails[] | null>(
+    null
+  );
   const [pageToken, setPageToken] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [prevFilters, setPrevFilters] = useState(filters);
-  const [distance, setDistance] = useState(50);
-  const [initialList, setInitialList] = useState([]);
-  const [firebase, setFirebase] = useState(false);
-  const [noRestaurantsLeft, setNoRestaurantsLeft] = useState(false);
-
-  let filtersUpdated = false;
-  if (restaurants.length !== 0)
-    filtersUpdated =
-      JSON.stringify(prevFilters) === JSON.stringify(filters) ? false : true;
+  const [firstRender, setFirstRender] = useState(true);
+  const [googleOrFirebase, setGoogleOrFirebase] = useState(null);
 
   useEffect(() => {
-    const checkFirestoreAndUpdate = async (restaurant) => {
-      if (!restaurant) return null;
+    const fetchNearbyRestaurants = async (filters) => {
       try {
-        const docRef = firestore()
-          .collection("places")
-          .doc(restaurant.place_id);
-        const doc = await docRef.get();
+        const userLocation = await getUserLocation();
+        const distance = 25;
+        const firestoreResult = await fetchNearbyPlacesFromFirestore(
+          userLocation,
+          distance,
+          filters,
+          pageToken
+        );
 
-        if (doc.exists) {
-          const updatedRestaurant = doc.data();
-          return { ...restaurant, ...updatedRestaurant };
-        } else {
-          const { success, data, error } = await uploadRestaurantToFirestore(
-            restaurant,
-            filters,
-            true
+        // Check if firestore result is too small.
+        if (
+          firestoreResult?.results?.length < 50 &&
+          (googleOrFirebase === "GOOGLE" || firstRender)
+        ) {
+          // Fetch Restuarants from Google Places API.
+          const googleResult = await getGooglePlaces(
+            userLocation,
+            pageToken,
+            filters
           );
 
-          return data;
+          // Check if places are in firestore, if not upload them to firestore.
+          googleResult.results = await Promise.all(
+            googleResult.results.map(async (restaurant) => {
+              // Check if restaurant exists in firestore.
+              const restaurantFromFirestore = await checkDocumentExists(
+                restaurant.place_id
+              );
+
+              // If google restaurant exists in firestore then use firestore data.
+              if (restaurantFromFirestore.exists) {
+                return restaurantFromFirestore.data;
+              }
+
+              // If google restaurant doesn't exist, upload it to firestore.
+              if (!restaurantFromFirestore.exists) {
+                const { data } = await uploadRestaurantToFirestore(
+                  restaurant,
+                  filters,
+                  true
+                );
+
+                return data;
+              }
+            })
+          );
+
+          setGoogleOrFirebase("GOOGLE");
+          setPageToken(googleResult.nextPageToken);
+          setRestaurants(googleResult.results);
+        } else {
+          setGoogleOrFirebase("FIREBASE");
+          setPageToken(firestoreResult.nextPageToken);
+          setRestaurants(firestoreResult.results as RestaurantDetails[]);
         }
-      } catch (error) {
-        console.error("Error fetching Firestore document:", error);
-      }
-      return restaurant;
+      } catch (error) {}
     };
 
-    const fetchAndUpdateRestaurants = async (filter) => {
+    if (restaurants?.length === 0) setRestaurants(null);
+    if (!restaurants && (pageToken || firstRender)) {
       setLoading(true);
-      initialList && (await setDistance((distance) => distance + 10));
-      const location = await getUserLocation();
-      let fireData: any = await fetchNearbyPlacesFromFirestore(
-        location,
-        distance,
-        filters,
-        pageToken
-      );
-      console.log("FIREBASE", fireData.results.length, "Distance", distance);
-      if (!(fireData.results.length > 50) && !firebase) {
-        var googleData = await getGooglePlaces(
-          `${location.latitude},${location.longitude}`,
-          pageToken,
-          filter
-        );
-      } else setFirebase(true);
-
-      const data = googleData ? googleData : fireData;
-
-      if (data.results) {
-        let updatedRestaurants = fireData.results;
-        if (googleData)
-          updatedRestaurants = await Promise.all(
-            data.results.map(checkFirestoreAndUpdate)
-          );
-
-        updatedRestaurants = updatedRestaurants.filter(
-          (restaurant) => restaurant !== null
-        );
-        if (filtersUpdated) {
-          setPrevFilters(filters);
-          setRestaurants(updatedRestaurants);
-          setInitialList(updatedRestaurants);
-          setPageToken(null);
-        } else {
-          updatedRestaurants = updatedRestaurants.filter(
-            (restaurant) =>
-              !initialList.some((item) => item.place_id === restaurant.place_id)
-          );
-
-          if (
-            (updatedRestaurants.length === 0 && firebase) ||
-            (googleData && data.results.length < 20)
-          ) {
-            setNoRestaurantsLeft(true);
-          }
-
-          setInitialList((intitialList) => [
-            ...initialList,
-            ...updatedRestaurants,
-          ]);
-          setPageToken(data.nextPageToken);
-          setRestaurants((list) => [...list, ...updatedRestaurants]);
-        }
-      } else {
-        console.error(data.error);
-      }
-
+      fetchNearbyRestaurants(filters);
       setLoading(false);
-    };
-
-    if (
-      (restaurants.length === 0 || filtersUpdated) &&
-      filters &&
-      !noRestaurantsLeft
-    ) {
-      const filterString = Object.entries(filters ? filters : {})
-        .filter(([_, value]) => value === true)
-        .map(([key]) => key.toLowerCase())
-        .join(" | ");
-
-      fetchAndUpdateRestaurants(filterString);
+      setFirstRender(false);
     }
-  }, [restaurants, filtersUpdated, filters]);
-
-  // Update prevFilters when filters change
-  useEffect(() => {
-    setPrevFilters(filters);
-  }, [filters]);
+  }, [restaurants]);
 
   return { restaurants, loading, setRestaurants, filters };
 };

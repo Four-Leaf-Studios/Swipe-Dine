@@ -273,7 +273,7 @@ const SwipeCard = memo(
                 {restaurant.vicinity}
               </Text>
 
-              <StarRating
+              {/* <StarRating
                 disabled={true}
                 maxStars={5}
                 rating={restaurant.rating}
@@ -284,7 +284,7 @@ const SwipeCard = memo(
                 fullStarColor={orangeDark}
                 emptyStarColor="white"
                 starSize={20}
-              />
+              /> */}
 
               <Box
                 flex={1}

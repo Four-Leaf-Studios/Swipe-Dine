@@ -136,9 +136,12 @@ const Room = ({ navigation }) => {
                 </Text>
                 {room?.owner === user.uid && (
                   <Box
-                    padding={{ phone: "s", tablet: "m" }}
                     backgroundColor={"darkGray"}
                     borderRadius={999}
+                    width={35}
+                    height={35}
+                    justifyContent={"center"}
+                    alignItems={"center"}
                   >
                     <Text
                       variant="body"

@@ -16,10 +16,20 @@ interface GooglePlacesParams {
   type?: string;
 }
 
-const getGooglePlaces = async (location, nextPageToken = null, keywords) => {
+const getGooglePlaces = async (
+  location = null,
+  nextPageToken = null,
+  filters = null
+) => {
   try {
+    const keywords = Object.entries(filters ? filters : {})
+      .filter(([_, value]) => value === true)
+      .map(([key]) => key.toLowerCase())
+      .join(" | ");
+
+    const userLocation = `${location.latitude},${location.longitude}`;
     const params: GooglePlacesParams = {
-      location: location,
+      location: userLocation,
       key: SECONDARY_API_KEY,
       keyword: keywords,
       opennow: true,

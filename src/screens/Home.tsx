@@ -145,11 +145,14 @@ const Home = ({ navigation }) => {
                   Find Restaurants Nearby{" "}
                 </Text>
                 <Box
-                  padding={{ phone: "s", tablet: "m" }}
                   backgroundColor={
                     userProfile.discovers === 0 ? "error" : "darkGray"
                   }
                   borderRadius={999}
+                  width={35}
+                  height={35}
+                  justifyContent={"center"}
+                  alignItems={"center"}
                 >
                   <Text
                     variant="body"

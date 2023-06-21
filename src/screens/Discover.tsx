@@ -55,29 +55,6 @@ const Discover = ({ navigation, route }) => {
     });
   }, []);
 
-  useEffect(() => {
-    navigation.setOptions({
-      ...navigation.options,
-      headerRight: () =>
-        room ? null : (
-          <Box paddingRight="l">
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("Filters", {
-                  room: null,
-                  initialFilters: initialFilters,
-                })
-              }
-            >
-              <Text variant="body" color="headerButtonText">
-                Filters
-              </Text>
-            </TouchableOpacity>
-          </Box>
-        ),
-    });
-  }, [navigation]);
-
   return (
     <Layout variant="main">
       <Box width="100%" flex={1}>
@@ -93,7 +70,7 @@ const Discover = ({ navigation, route }) => {
           >
             {loading ? (
               <AnimatedLogo variant="secondary" />
-            ) : restaurants.length > 0 ? (
+            ) : restaurants ? (
               restaurants.map((restaurant, index) => (
                 <SwipeCard
                   key={restaurant.place_id}
