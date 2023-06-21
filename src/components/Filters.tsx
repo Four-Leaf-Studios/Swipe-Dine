@@ -22,7 +22,11 @@ const Filters = ({ filters, setFilters }) => {
             }));
           }}
         >
-          <Text variant="body" color={filters[item] ? "orangeDark" : "gray"}>
+          <Text
+            variant="body"
+            color={filters[item] ? "orangeDark" : "gray"}
+            fontSize={{ longPhone: 16 }}
+          >
             {item} {/* Using the current key as the filter name */}
           </Text>
         </Button>

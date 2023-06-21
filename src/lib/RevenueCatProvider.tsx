@@ -80,7 +80,7 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
 
       if (!standard?.isActive && !premium?.isActive) {
         if (
-          userProfile?.subscriptions.standard &&
+          userProfile?.subscriptions.standard ||
           userProfile?.subscriptions.premium
         ) {
           await updateProfileInFirestore(user.uid, {

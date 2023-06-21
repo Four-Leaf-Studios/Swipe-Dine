@@ -92,7 +92,7 @@ const Home = ({ navigation }) => {
           width="100%"
           position="absolute"
           bottom={0}
-          height={{ phone: "75%", longPhone: "60%", tablet: "60%" }}
+          height={{ phone: "75%", longPhone: "70%", tablet: "60%" }}
           backgroundColor={"darkGray"}
         >
           <Box
