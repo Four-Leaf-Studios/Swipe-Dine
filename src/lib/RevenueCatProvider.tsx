@@ -67,6 +67,17 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
     init();
   }, [user]);
 
+  useEffect(() => {
+    const fetchInfo = async () => {
+      await fetchCustomerInfo();
+    };
+    Purchases.addCustomerInfoUpdateListener(fetchInfo);
+
+    return () => {
+      Purchases.removeCustomerInfoUpdateListener(fetchInfo);
+    };
+  }, []);
+
   const fetchCustomerInfo = async () => {
     try {
       const info = await Purchases.getCustomerInfo();
@@ -92,8 +103,24 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
           });
         }
       }
+
       if (standard?.isActive) {
-        if (userProfile?.subscriptions?.standard !== standard.expirationDate)
+        if (userProfile?.subscriptions?.standard !== standard.expirationDate) {
+          const previousExpirationDate = userProfile?.subscriptions?.standard;
+          const monthsSinceExpiration = calculateMonthsBetweenDates(
+            previousExpirationDate,
+            standard.expirationDate
+          );
+          console.log(
+            "STANDARD",
+            "MONTHS SINCE LAST UPDATE",
+            monthsSinceExpiration,
+            "PREVIOUS DATE",
+            previousExpirationDate,
+            "NEW EXPIRATION DATE",
+            standard.expirationDate
+          );
+
           await updateProfileInFirestore(user.uid, {
             ...userProfile,
             subscriptions: {
@@ -102,13 +129,20 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
               premium: null,
               free: null,
             },
-            discovers: discovers + 10,
-            rooms: rooms + 5,
+            discovers: discovers + 10 * monthsSinceExpiration,
+            rooms: rooms + 5 * monthsSinceExpiration,
           });
+        }
       }
 
       if (premium?.isActive) {
-        if (userProfile?.subscriptions?.premium !== premium.expirationDate)
+        if (userProfile?.subscriptions?.premium !== premium.expirationDate) {
+          const previousExpirationDate = userProfile?.subscriptions?.premium;
+          const monthsSinceExpiration = calculateMonthsBetweenDates(
+            previousExpirationDate,
+            premium.expirationDate
+          );
+
           await updateProfileInFirestore(user.uid, {
             ...userProfile,
             subscriptions: {
@@ -117,13 +151,28 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
               standard: null,
               free: null,
             },
-            discovers: discovers + 20,
-            rooms: rooms + 10,
+            discovers: discovers + 20 * monthsSinceExpiration,
+            rooms: rooms + 10 * monthsSinceExpiration,
           });
+        }
       }
     } catch (error) {}
   };
 
+  const calculateMonthsBetweenDates = (startDate, endDate) => {
+    if (startDate === null) return 1;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const months =
+      (end.getFullYear() - start.getFullYear()) * 12 +
+      (end.getMonth() - start.getMonth());
+    return months > 0 ? months : 1;
+  };
+
+  calculateMonthsBetweenDates(
+    "2023-06-22T19:45:00.000Z",
+    "2023-06-22T20:45:00.000Z"
+  );
   const fetchOfferings = async () => {
     try {
       const offerings = await Purchases.getOfferings();

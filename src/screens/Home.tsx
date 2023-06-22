@@ -83,11 +83,11 @@ const Home = ({ navigation }) => {
           justifyContent={"center"}
           alignItems={"center"}
           backgroundColor="darkGray"
-          padding="s"
+          padding="m"
           paddingBottom={{ phone: "l", longPhone: "xl" }}
           gap={"xl"}
         >
-          <Text variant={"header"} color="white">
+          <Text variant={"subheader"} color="white">
             Welcome to{" "}
             <Text variant={"header"} color="orangeDark">
               Swipe & Dine!
