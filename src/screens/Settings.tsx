@@ -11,6 +11,7 @@ import Button from "../components/Button";
 import * as ImagePicker from "expo-image-picker";
 import { saveProfile } from "../lib/firebaseHelpers";
 import CustomImage from "../components/CustomImage";
+import { ScrollView } from "react-native-gesture-handler";
 
 const Settings = ({ navigation }) => {
   const theme = useTheme<Theme>();
@@ -120,8 +121,6 @@ const Settings = ({ navigation }) => {
         >
           <Box
             height="100%"
-            justifyContent={"space-between"}
-            alignItems="center"
             overflow="hidden"
             shadowColor={"white"}
             borderTopLeftRadius={20}
@@ -131,55 +130,64 @@ const Settings = ({ navigation }) => {
             elevation={4}
             shadowRadius={4}
             shadowOffset={{ width: 0, height: -4 }}
-            padding="l"
-            gap="l"
           >
-            <Box flex={1} width="100%" gap="l">
-              <Text variant="body" color="orangeDark">
-                Username
-              </Text>
-              <StyledTextInput
-                variant="room"
-                placeholder={"Username"}
-                keyboardType={"default"}
-                value={username}
-                message={""}
-                color={"darkGray"}
-                onChangeText={setUsername}
-              />
-              {(username !== userprofile.displayName ||
-                image !== userprofile.photoURL) && (
+            <ScrollView>
+              <Box
+                height="100%"
+                justifyContent={"space-between"}
+                alignItems="center"
+                overflow="hidden"
+                padding="l"
+                gap="l"
+              >
+                <Box flex={1} width="100%" gap="l">
+                  <Text variant="body" color="orangeDark">
+                    Username
+                  </Text>
+                  <StyledTextInput
+                    variant="room"
+                    placeholder={"Username"}
+                    keyboardType={"default"}
+                    value={username}
+                    message={""}
+                    color={"darkGray"}
+                    onChangeText={setUsername}
+                  />
+                  {(username !== userprofile.displayName ||
+                    image !== userprofile.photoURL) && (
+                    <Button
+                      disabled={loading}
+                      variant="home"
+                      onPress={handleSaveProfile}
+                    >
+                      <Text variant="subheader" color="buttonPrimaryText">
+                        {loading
+                          ? firstTime
+                            ? "Saving Profile"
+                            : "Updating Profile"
+                          : firstTime
+                          ? "Save Profile"
+                          : "Update Profile"}
+                      </Text>
+                    </Button>
+                  )}
+                </Box>
                 <Button
                   disabled={loading}
                   variant="home"
-                  onPress={handleSaveProfile}
+                  onPress={handleContactSupport}
                 >
                   <Text variant="subheader" color="buttonPrimaryText">
-                    {loading
-                      ? firstTime
-                        ? "Saving Profile"
-                        : "Updating Profile"
-                      : firstTime
-                      ? "Save Profile"
-                      : "Update Profile"}
+                    Contact Support
                   </Text>
                 </Button>
-              )}
-            </Box>
-            <Button
-              disabled={loading}
-              variant="home"
-              onPress={handleContactSupport}
-            >
-              <Text variant="subheader" color="buttonPrimaryText">
-                Contact Support
-              </Text>
-            </Button>
-            <Button disabled={loading} variant="home" onPress={logout}>
-              <Text variant="subheader" color="buttonPrimaryText">
-                Logout
-              </Text>
-            </Button>
+                <Button disabled={loading} variant="home" onPress={logout}>
+                  <Text variant="subheader" color="buttonPrimaryText">
+                    Logout
+                  </Text>
+                </Button>
+              </Box>
+            </ScrollView>
           </Box>
         </Box>
       </Box>

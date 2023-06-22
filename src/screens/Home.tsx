@@ -156,8 +156,9 @@ const Home = ({ navigation }) => {
                     userProfile.discovers === 0 ? "error" : "darkGray"
                   }
                   borderRadius={999}
-                  width={{ phone: 35, tablet: 55 }}
-                  height={{ phone: 35, tablet: 55 }}
+                  minWidth={{ phone: 35, tablet: 55 }}
+                  minHeight={{ phone: 35, tablet: 55 }}
+                  padding="s"
                   justifyContent={"center"}
                   alignItems={"center"}
                 >

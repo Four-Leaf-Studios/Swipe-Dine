@@ -138,8 +138,9 @@ const Room = ({ navigation }) => {
                   <Box
                     backgroundColor={"darkGray"}
                     borderRadius={999}
-                    width={35}
-                    height={35}
+                    minWidth={{ phone: 35, tablet: 55 }}
+                    minHeight={{ phone: 35, tablet: 55 }}
+                    padding="s"
                     justifyContent={"center"}
                     alignItems={"center"}
                   >
