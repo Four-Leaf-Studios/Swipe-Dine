@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import React, { useEffect } from "react";
 import Layout from "../components/Layout";
 import Box from "../components/Box";
@@ -79,7 +79,7 @@ const Home = ({ navigation }) => {
       >
         <Box
           width="100%"
-          height={{ phone: "25%", longPhone: "30%", tablet: "40%" }}
+          height={{ phone: "25%", longPhone: "30%", tablet: "30%" }}
           justifyContent={"center"}
           alignItems={"center"}
           backgroundColor="darkGray"
@@ -98,7 +98,7 @@ const Home = ({ navigation }) => {
           width="100%"
           position="absolute"
           bottom={0}
-          height={{ phone: "75%", longPhone: "70%", tablet: "60%" }}
+          height={{ phone: "75%", longPhone: "70%", tablet: "70%" }}
           backgroundColor={"darkGray"}
         >
           <Box
@@ -156,8 +156,8 @@ const Home = ({ navigation }) => {
                     userProfile.discovers === 0 ? "error" : "darkGray"
                   }
                   borderRadius={999}
-                  width={35}
-                  height={35}
+                  width={{ phone: 35, tablet: 55 }}
+                  height={{ phone: 35, tablet: 55 }}
                   justifyContent={"center"}
                   alignItems={"center"}
                 >

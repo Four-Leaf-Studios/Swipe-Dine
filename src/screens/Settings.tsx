@@ -1,4 +1,4 @@
-import { Image, TouchableOpacity } from "react-native";
+import { Image, Linking, Platform, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
@@ -21,6 +21,7 @@ const Settings = ({ navigation }) => {
     setUserProfile,
     userProfile: userprofile,
     user,
+    logout,
   } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -68,6 +69,27 @@ const Settings = ({ navigation }) => {
     setLoading(false);
   };
 
+  const handleContactSupport = async () => {
+    const email = "swipeanddineofficial@gmail.com";
+    let url = "";
+
+    if (Platform.OS === "ios") {
+      url = `mailto:${email}`;
+    } else if (Platform.OS === "android") {
+      url = `mailto:${email}`;
+    }
+
+    try {
+      const supported = await Linking.canOpenURL(url);
+
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        throw new Error("Failed to open email client.");
+      }
+    } catch (error) {}
+  };
+
   return (
     <Layout variant="main">
       <Box
@@ -110,29 +132,52 @@ const Settings = ({ navigation }) => {
             shadowRadius={4}
             shadowOffset={{ width: 0, height: -4 }}
             padding="l"
+            gap="l"
           >
-            <StyledTextInput
-              variant="room"
-              placeholder={"Username"}
-              keyboardType={"default"}
-              value={username}
-              message={""}
-              color={"darkGray"}
-              onChangeText={setUsername}
-            />
+            <Box flex={1} width="100%" gap="l">
+              <Text variant="body" color="orangeDark">
+                Username
+              </Text>
+              <StyledTextInput
+                variant="room"
+                placeholder={"Username"}
+                keyboardType={"default"}
+                value={username}
+                message={""}
+                color={"darkGray"}
+                onChangeText={setUsername}
+              />
+              {(username !== userprofile.displayName ||
+                image !== userprofile.photoURL) && (
+                <Button
+                  disabled={loading}
+                  variant="home"
+                  onPress={handleSaveProfile}
+                >
+                  <Text variant="subheader" color="buttonPrimaryText">
+                    {loading
+                      ? firstTime
+                        ? "Saving Profile"
+                        : "Updating Profile"
+                      : firstTime
+                      ? "Save Profile"
+                      : "Update Profile"}
+                  </Text>
+                </Button>
+              )}
+            </Box>
             <Button
               disabled={loading}
               variant="home"
-              onPress={handleSaveProfile}
+              onPress={handleContactSupport}
             >
               <Text variant="subheader" color="buttonPrimaryText">
-                {loading
-                  ? firstTime
-                    ? "Saving Profile"
-                    : "Updating Profile"
-                  : firstTime
-                  ? "Save Profile"
-                  : "Update Profile"}
+                Contact Support
+              </Text>
+            </Button>
+            <Button disabled={loading} variant="home" onPress={logout}>
+              <Text variant="subheader" color="buttonPrimaryText">
+                Logout
               </Text>
             </Button>
           </Box>

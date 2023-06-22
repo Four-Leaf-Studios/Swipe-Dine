@@ -6,19 +6,16 @@ import Text from "../components/Text";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 import { ScrollView } from "react-native-gesture-handler";
-import useUserProfileFromFirestore from "../hooks/useUserProfileFromFirestore";
 import ProfileRestaurantItem from "../components/ProfileRestaurantItem";
 import CustomImage from "../components/CustomImage";
+import useAuth from "../hooks/useAuth";
 
 const Profile = ({ navigation }) => {
   const theme = useTheme<Theme>();
   const { darkGray, gray } = theme.colors;
-  const {
-    favorites,
-    matched,
-    userProfile: user,
-  } = useUserProfileFromFirestore();
-
+  const { userProfile, user } = useAuth();
+  const { favoritedRestaurants: favorites, matchedRestaurants: matched } =
+    userProfile;
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
@@ -27,7 +24,7 @@ const Profile = ({ navigation }) => {
         color: "white",
       },
       headerRight: () => (
-        <Box paddingRight="l">
+        <Box paddingRight="l" zIndex={"z-30"}>
           <TouchableOpacity onPress={() => navigation.navigate("Settings")}>
             <Text variant="body" color="white">
               Settings
