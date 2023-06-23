@@ -93,6 +93,7 @@ const Shop = ({ navigation }) => {
     }
   };
 
+  const isTablet = Dimensions.get("window").width > 600;
   return (
     <Layout variant="main">
       <Box width="100%" flex={1} gap={"l"} backgroundColor={"darkGray"}>
@@ -108,13 +109,21 @@ const Shop = ({ navigation }) => {
             justifyContent={"space-around"}
             alignItems={"center"}
             flexDirection={"row"}
-            padding="xl"
+            padding={{ phone: "s", tablet: "xl" }}
           >
-            <Ionicons name="fast-food-outline" size={100} color={orangeDark} />
+            <Ionicons
+              name="fast-food-outline"
+              size={isTablet ? 100 : 50}
+              color={orangeDark}
+            />
             <Text variant="header" color="white">
               Subscriptions
             </Text>
-            <Ionicons name="fast-food-outline" size={100} color={orangeDark} />
+            <Ionicons
+              name="fast-food-outline"
+              size={isTablet ? 100 : 50}
+              color={orangeDark}
+            />
           </Box>
 
           <Box
@@ -153,7 +162,7 @@ const Shop = ({ navigation }) => {
                   width={Dimensions.get("window").width}
                   justifyContent="center"
                   alignItems="center"
-                  padding="l"
+                  padding={{ phone: "s", tablet: "l" }}
                 >
                   <OfferingGroup
                     product={packagePurchased.product}
@@ -177,14 +186,14 @@ const Shop = ({ navigation }) => {
                     {index > 0 && (
                       <Ionicons
                         name="ios-arrow-back-sharp"
-                        size={50}
+                        size={isTablet ? 50 : 25}
                         onPress={scrollBack}
                       />
                     )}
                     {index < offering.availablePackages.length - 1 && (
                       <Ionicons
                         name="ios-arrow-forward-sharp"
-                        size={50}
+                        size={isTablet ? 50 : 25}
                         onPress={scrollForward}
                       />
                     )}

@@ -140,14 +140,14 @@ const theme = createTheme({
     },
     header: {
       fontWeight: "bold",
-      fontSize: { phone: 34, longPhone: 38, tablet: 48 },
+      fontSize: { phone: 32, longPhone: 26, tablet: 48 },
     },
     subheader: {
       fontWeight: "600",
-      fontSize: { phone: 28, longPhone: 32, tablet: 38 },
+      fontSize: { phone: 24, longPhone: 28, tablet: 38 },
     },
     body: {
-      fontSize: { phone: 16, longPhone: 20, tablet: 32 },
+      fontSize: { phone: 14, longPhone: 18, tablet: 32 },
     },
   },
   logoVariants: {

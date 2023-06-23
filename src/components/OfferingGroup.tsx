@@ -4,7 +4,7 @@ import Layout from "./Layout";
 import Text from "./Text";
 import Button from "./Button";
 import { useRevenueCat } from "../lib/RevenueCatProvider";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 // Represents one offering group with n SKU items to purchase
@@ -24,20 +24,27 @@ const OfferingGroup = ({ product, packagePurchased }) => {
     activeSubscriptions.length === 0
       ? "UPGRADE"
       : !subscribed && product.title === "Standard Subscription" && "DOWNGRADE";
+
+  const isTablet = Dimensions.get("window").width > 600;
   return (
     <Box
       width="100%"
       height="100%"
       justifyContent={loading ? "center" : "space-between"}
       alignItems={"center"}
-      padding="l"
+      padding={{ phone: "m", tablet: "l" }}
       gap={"l"}
     >
       {loading && <ActivityIndicator />}
       {!loading && (
-        <Box width="100%" height="100%" paddingLeft="xl" paddingRight="xl">
+        <Box
+          width="100%"
+          height="100%"
+          paddingLeft={{ phone: "s", tablet: "xl" }}
+          paddingRight={{ phone: "s", tablet: "xl" }}
+        >
           <Box width="100%" gap="s">
-            <Text variant="header" color="darkGray">
+            <Text variant={"header"} color="darkGray">
               {product.title.split(" ")[0].toUpperCase()}
             </Text>
             <Text variant="subheader" color="darkGray">
@@ -53,10 +60,18 @@ const OfferingGroup = ({ product, packagePurchased }) => {
                   flexDirection={"row"}
                   justifyContent={"flex-start"}
                   alignItems="center"
-                  gap="l"
+                  gap={{ phone: "s", tablet: "l" }}
                 >
-                  <Ionicons name="checkbox-outline" size={50} color="green" />
-                  <Text variant="subheader" color="darkGray">
+                  <Ionicons
+                    name="checkbox-outline"
+                    size={isTablet ? 50 : 25}
+                    color="green"
+                  />
+                  <Text
+                    variant={{ phone: "body", tablet: "subheader" }}
+                    color="darkGray"
+                    fontWeight={"bold"}
+                  >
                     15 MONTHLY DISCOVERS
                   </Text>
                 </Box>
@@ -66,10 +81,18 @@ const OfferingGroup = ({ product, packagePurchased }) => {
                   flexDirection={"row"}
                   justifyContent={"flex-start"}
                   alignItems="center"
-                  gap="l"
+                  gap={{ phone: "s", tablet: "l" }}
                 >
-                  <Ionicons name="checkbox-outline" size={50} color="green" />
-                  <Text variant="subheader" color="darkGray">
+                  <Ionicons
+                    name="checkbox-outline"
+                    size={isTablet ? 50 : 25}
+                    color="green"
+                  />
+                  <Text
+                    variant={{ phone: "body", tablet: "subheader" }}
+                    color="darkGray"
+                    fontWeight={"bold"}
+                  >
                     10 MONTHLY ROOM CREATIONS
                   </Text>
                 </Box>
@@ -79,10 +102,18 @@ const OfferingGroup = ({ product, packagePurchased }) => {
                   flexDirection={"row"}
                   justifyContent={"flex-start"}
                   alignItems="center"
-                  gap="l"
+                  gap={{ phone: "s", tablet: "l" }}
                 >
-                  <Ionicons name="checkbox-outline" size={50} color="green" />
-                  <Text variant="subheader" color="darkGray">
+                  <Ionicons
+                    name="checkbox-outline"
+                    size={isTablet ? 50 : 25}
+                    color="green"
+                  />
+                  <Text
+                    variant={{ phone: "body", tablet: "subheader" }}
+                    color="darkGray"
+                    fontWeight={"bold"}
+                  >
                     NO ADVERTISEMENTS
                   </Text>
                 </Box>
@@ -96,10 +127,18 @@ const OfferingGroup = ({ product, packagePurchased }) => {
                   flexDirection={"row"}
                   justifyContent={"flex-start"}
                   alignItems="center"
-                  gap="l"
+                  gap={{ phone: "s", tablet: "l" }}
                 >
-                  <Ionicons name="checkbox-outline" size={50} color="green" />
-                  <Text variant="subheader" color="darkGray">
+                  <Ionicons
+                    name="checkbox-outline"
+                    size={isTablet ? 50 : 25}
+                    color="green"
+                  />
+                  <Text
+                    variant={{ phone: "body", tablet: "subheader" }}
+                    color="darkGray"
+                    fontWeight={"bold"}
+                  >
                     30 MONTHLY DISCOVERS
                   </Text>
                 </Box>
@@ -109,10 +148,18 @@ const OfferingGroup = ({ product, packagePurchased }) => {
                   flexDirection={"row"}
                   justifyContent={"flex-start"}
                   alignItems="center"
-                  gap="l"
+                  gap={{ phone: "s", tablet: "l" }}
                 >
-                  <Ionicons name="checkbox-outline" size={50} color="green" />
-                  <Text variant="subheader" color="darkGray">
+                  <Ionicons
+                    name="checkbox-outline"
+                    size={isTablet ? 50 : 25}
+                    color="green"
+                  />
+                  <Text
+                    variant={{ phone: "body", tablet: "subheader" }}
+                    color="darkGray"
+                    fontWeight={"bold"}
+                  >
                     20 MONTHLY ROOM CREATIONS
                   </Text>
                 </Box>
@@ -122,10 +169,18 @@ const OfferingGroup = ({ product, packagePurchased }) => {
                   flexDirection={"row"}
                   justifyContent={"flex-start"}
                   alignItems="center"
-                  gap="l"
+                  gap={{ phone: "s", tablet: "l" }}
                 >
-                  <Ionicons name="checkbox-outline" size={50} color="green" />
-                  <Text variant="subheader" color="darkGray">
+                  <Ionicons
+                    name="checkbox-outline"
+                    size={isTablet ? 50 : 25}
+                    color="green"
+                  />
+                  <Text
+                    variant={{ phone: "body", tablet: "subheader" }}
+                    color="darkGray"
+                    fontWeight={"bold"}
+                  >
                     NO ADVERTISEMENTS
                   </Text>
                 </Box>
