@@ -1,8 +1,8 @@
-
 {
   "expo": {
     "name": "Swipe & Dine",
     "icon": "./assets/images/icon.png",
+    "version": "1.0.0",
     "splash": {
       "image": "./assets/images/Splash.png"
     },
@@ -23,18 +23,22 @@
     "plugins": [
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
-       [
+      [
         "expo-build-properties",
         {
-          "ios": { 
+          "ios": {
             "useFrameworks": "static"
           }
         }
       ]
-    ]
+    ],
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/532fcb21-d30b-44e1-ac28-683b56112119"
+    }
   },
   "react-native-google-mobile-ads": {
     "android_app_id": "ca-app-pub-6650165506489456~2520889695",
     "ios_app_id": "ca-app-pub-6650165506489456~2076967333"
   }
-}   
+}

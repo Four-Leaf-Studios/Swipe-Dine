@@ -4,6 +4,7 @@ import React, {
   createContext,
   useContext,
   ReactNode,
+  useMemo,
 } from "react";
 import Purchases, {
   CustomerInfo,
@@ -24,6 +25,7 @@ type PurchaserInfo = {
   offering: PurchasesOffering;
   makePurchase: Function;
   activeSubscriptions: CustomerInfo["activeSubscriptions"];
+  canUpgradeToPremium: boolean;
 };
 
 type RevenueCatContextType = PurchaserInfo | null;
@@ -42,6 +44,7 @@ export const useRevenueCat = (): RevenueCatContextType =>
 // RevenueCatProvider component
 export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
   const { user, userProfile } = useAuth();
+  const [canUpgradeToPremium, setCanUpgradeToPremium] = useState(true);
   const [activeSubscriptions, setActiveSubscriptions] = useState<
     CustomerInfo["activeSubscriptions"] | null
   >(null);
@@ -89,6 +92,7 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
       const rooms = userProfile?.rooms || 0;
 
       if (!standard?.isActive && !premium?.isActive) {
+        setCanUpgradeToPremium(true);
         if (
           userProfile?.subscriptions.standard ||
           userProfile?.subscriptions.premium
@@ -105,22 +109,13 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
       }
 
       if (standard?.isActive) {
+        setCanUpgradeToPremium(true);
         if (userProfile?.subscriptions?.standard !== standard.expirationDate) {
           const previousExpirationDate = userProfile?.subscriptions?.standard;
           const monthsSinceExpiration = calculateMonthsBetweenDates(
             previousExpirationDate,
             standard.expirationDate
           );
-          console.log(
-            "STANDARD",
-            "MONTHS SINCE LAST UPDATE",
-            monthsSinceExpiration,
-            "PREVIOUS DATE",
-            previousExpirationDate,
-            "NEW EXPIRATION DATE",
-            standard.expirationDate
-          );
-
           await updateProfileInFirestore(user.uid, {
             ...userProfile,
             subscriptions: {
@@ -136,6 +131,7 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
       }
 
       if (premium?.isActive) {
+        setCanUpgradeToPremium(false);
         if (userProfile?.subscriptions?.premium !== premium.expirationDate) {
           const previousExpirationDate = userProfile?.subscriptions?.premium;
           const monthsSinceExpiration = calculateMonthsBetweenDates(
@@ -203,13 +199,25 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
     } catch (e) {}
   };
 
-  const value = {
-    activeSubscriptions,
-    restorePurchases,
-    offering,
-    fetchOfferings,
-    makePurchase,
-  };
+  const value = useMemo(
+    () => ({
+      activeSubscriptions,
+      restorePurchases,
+      offering,
+      fetchOfferings,
+      makePurchase,
+      canUpgradeToPremium,
+    }),
+    [
+      activeSubscriptions,
+      restorePurchases,
+      offering,
+      ,
+      fetchOfferings,
+      makePurchase,
+      canUpgradeToPremium,
+    ]
+  );
 
   return (
     <RevenueCatContext.Provider value={value}>

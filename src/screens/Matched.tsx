@@ -202,37 +202,35 @@ const Matched = ({ navigation, route }) => {
             >
               {restaurantDetails?.reviews &&
                 restaurantDetails?.reviews?.map((review, index) => (
-                  <ScrollView key={index}>
-                    <Box
-                      width={Dimensions.get("window").width} // Adjust the value as needed
-                      justifyContent="center"
-                      alignItems="center"
-                      padding="l"
-                      gap="l"
+                  <Box
+                    width={Dimensions.get("window").width} // Adjust the value as needed
+                    justifyContent="center"
+                    alignItems="center"
+                    padding="l"
+                    gap="l"
+                  >
+                    <Image
+                      source={{ uri: review.profile_photo_url }}
+                      style={{ width: 40, height: 40 }}
+                    />
+
+                    <Text
+                      variant="body"
+                      textAlign={"center"}
+                      color="buttonSecondaryText"
+                      fontWeight="bold"
                     >
-                      <Image
-                        source={{ uri: review.profile_photo_url }}
-                        style={{ width: 40, height: 40 }}
-                      />
+                      {review.author_name}
+                    </Text>
 
-                      <Text
-                        variant="body"
-                        textAlign={"center"}
-                        color="buttonSecondaryText"
-                        fontWeight="bold"
-                      >
-                        {review.author_name}
-                      </Text>
-
-                      <Text
-                        variant="body"
-                        textAlign={"center"}
-                        color="buttonSecondaryText"
-                      >
-                        {review.text}
-                      </Text>
-                    </Box>
-                  </ScrollView>
+                    <Text
+                      variant="body"
+                      textAlign={"center"}
+                      color="buttonSecondaryText"
+                    >
+                      {review.text}
+                    </Text>
+                  </Box>
                 ))}
             </ScrollView>
           </Box>
