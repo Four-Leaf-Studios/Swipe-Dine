@@ -168,36 +168,28 @@ const Shop = ({ navigation }) => {
                     product={packagePurchased.product}
                     packagePurchased={packagePurchased}
                   />
-
-                  <Box
-                    height="100%"
-                    width="100%"
-                    position="absolute"
-                    flexDirection={"row"}
-                    justifyContent={
-                      index > 0 && index < offering.availablePackages.length - 1
-                        ? "space-between"
-                        : index === 0
-                        ? "flex-end"
-                        : "flex-start"
-                    }
-                    alignItems="center"
-                  >
-                    {index > 0 && (
-                      <Ionicons
-                        name="ios-arrow-back-sharp"
-                        size={isTablet ? 50 : 25}
-                        onPress={scrollBack}
-                      />
-                    )}
-                    {index < offering.availablePackages.length - 1 && (
-                      <Ionicons
-                        name="ios-arrow-forward-sharp"
-                        size={isTablet ? 50 : 25}
-                        onPress={scrollForward}
-                      />
-                    )}
-                  </Box>
+                  {index > 0 && (
+                    <Ionicons
+                      name="ios-arrow-back-sharp"
+                      size={isTablet ? 50 : 25}
+                      onPress={scrollBack}
+                      style={{
+                        position: "absolute",
+                        left: 0,
+                      }}
+                    />
+                  )}
+                  {index < offering.availablePackages.length - 1 && (
+                    <Ionicons
+                      name="ios-arrow-forward-sharp"
+                      size={isTablet ? 50 : 25}
+                      onPress={scrollForward}
+                      style={{
+                        position: "absolute",
+                        right: 0,
+                      }}
+                    />
+                  )}
                 </Box>
               ))}
             </ScrollView>

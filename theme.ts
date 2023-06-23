@@ -188,6 +188,7 @@ const theme = createTheme({
       alignItems: "center",
       maxHeight: { phone: 100, longPhone: 150, tablet: 200 },
       padding: { phone: "m", longPhone: "m", tablet: "l" },
+      zIndex: "z-30",
     },
     homeDisabled: {
       width: "100%",
