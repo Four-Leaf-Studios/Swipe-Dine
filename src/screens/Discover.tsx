@@ -60,17 +60,6 @@ const Discover = ({ navigation, route }) => {
     });
   }, []);
 
-  const handleAdSwiped = (direction, adId) => {
-    if (direction === "left") {
-      setRestaurants((restaurants) =>
-        restaurants.filter((restaurant) => restaurant.place_id !== adId)
-      );
-    }
-
-    if (direction === "right") {
-    }
-  };
-
   return (
     <Layout variant="main">
       <Box width="100%" flex={1} gap={"l"}>
@@ -101,6 +90,7 @@ const Discover = ({ navigation, route }) => {
                   filters={filters ? filters : initialFilters}
                   discover
                   navigation={navigation}
+                  distance={restaurant.distance}
                 />
               ))
             ) : (

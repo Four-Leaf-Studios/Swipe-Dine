@@ -167,28 +167,33 @@ const Shop = ({ navigation }) => {
                   <OfferingGroup
                     product={packagePurchased.product}
                     packagePurchased={packagePurchased}
+                    orientation={
+                      index === 0
+                        ? "flex-start"
+                        : index < offering.availablePackages.length - 1
+                        ? "center"
+                        : "flex-end"
+                    }
                   />
                   {index > 0 && (
-                    <Ionicons
-                      name="ios-arrow-back-sharp"
-                      size={isTablet ? 50 : 25}
-                      onPress={scrollBack}
-                      style={{
-                        position: "absolute",
-                        left: 0,
-                      }}
-                    />
+                    <Box padding="l" position="absolute" left={0} top={0}>
+                      <Ionicons
+                        name="ios-arrow-back-sharp"
+                        size={isTablet ? 100 : 70}
+                        onPress={scrollBack}
+                        color={orangeDark}
+                      />
+                    </Box>
                   )}
                   {index < offering.availablePackages.length - 1 && (
-                    <Ionicons
-                      name="ios-arrow-forward-sharp"
-                      size={isTablet ? 50 : 25}
-                      onPress={scrollForward}
-                      style={{
-                        position: "absolute",
-                        right: 0,
-                      }}
-                    />
+                    <Box padding="l" position="absolute" right={0} top={0}>
+                      <Ionicons
+                        name="ios-arrow-forward-sharp"
+                        size={isTablet ? 100 : 70}
+                        onPress={scrollForward}
+                        color={orangeDark}
+                      />
+                    </Box>
                   )}
                 </Box>
               ))}

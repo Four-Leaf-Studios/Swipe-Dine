@@ -35,7 +35,7 @@ const useRestaurants = (room, initialFilters) => {
 
         // Check if firestore result is too small.
         if (
-          firestoreResult?.results?.length < 50 &&
+          firestoreResult?.results?.length < 40 &&
           (googleOrFirebase === "GOOGLE" || firstRender)
         ) {
           // Fetch Restuarants from Google Places API.

@@ -90,6 +90,7 @@ interface RestaurantDetails {
   vicinity: string;
   website?: string;
   ad?: boolean;
+  distance: number;
 }
 
 export { RestaurantDetails };

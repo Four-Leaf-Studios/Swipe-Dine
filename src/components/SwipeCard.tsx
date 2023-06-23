@@ -28,6 +28,7 @@ interface Props {
   discover?: boolean;
   filters: Object;
   navigation: any;
+  distance: number;
 }
 
 const SwipeCard = memo(
@@ -36,15 +37,16 @@ const SwipeCard = memo(
     handleSwipe,
     discover: discoverPassed = false,
     filters,
+    distance,
   }: Props) => {
     const theme = useTheme<Theme>();
     const { orangeDark } = theme.colors;
     const [discover, setDiscover] = useState(discoverPassed);
-    const {
-      restaurant: restaurantDetails,
-      loading,
-      milesAway,
-    } = useRestaurantDetails(restaurantPassed?.place_id, discover, filters);
+    const { restaurant: restaurantDetails, loading } = useRestaurantDetails(
+      restaurantPassed?.place_id,
+      discover,
+      filters
+    );
     const [restaurant, setRestaurant] = useState(restaurantPassed);
 
     useEffect(() => {
@@ -307,7 +309,7 @@ const SwipeCard = memo(
                   fontWeight={"bold"}
                   textAlign={"center"}
                 >
-                  {milesAway} MILES AWAY{" "}
+                  {distance} MILES AWAY{" "}
                 </Text>
               </Box>
             </Box>

@@ -8,7 +8,7 @@ import { ActivityIndicator, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 // Represents one offering group with n SKU items to purchase
-const OfferingGroup = ({ product, packagePurchased }) => {
+const OfferingGroup = ({ product, packagePurchased, orientation }) => {
   const { makePurchase, activeSubscriptions, canUpgradeToPremium } =
     useRevenueCat();
   const [loading, setLoading] = useState(false);
@@ -23,9 +23,14 @@ const OfferingGroup = ({ product, packagePurchased }) => {
   const canUpgrade =
     activeSubscriptions.length === 0
       ? "UPGRADE"
-      : !subscribed && product.title === "Standard Subscription" && "DOWNGRADE";
+      : !subscribed
+      ? product.title === "Standard Subscription"
+        ? "DOWNGRADE"
+        : "UPGRADE"
+      : "UPGRADE";
 
   const isTablet = Dimensions.get("window").width > 600;
+
   return (
     <Box
       width="100%"
@@ -43,7 +48,12 @@ const OfferingGroup = ({ product, packagePurchased }) => {
           paddingLeft={{ phone: "s", tablet: "xl" }}
           paddingRight={{ phone: "s", tablet: "xl" }}
         >
-          <Box width="100%" gap="s">
+          <Box
+            width="100%"
+            gap="s"
+            justifyContent={"center"}
+            alignItems={orientation}
+          >
             <Text variant={"header"} color="darkGray">
               {product.title.split(" ")[0].toUpperCase()}
             </Text>
@@ -56,7 +66,6 @@ const OfferingGroup = ({ product, packagePurchased }) => {
               <>
                 <Box
                   width="100%"
-                  flex={1}
                   flexDirection={"row"}
                   justifyContent={"flex-start"}
                   alignItems="center"
@@ -77,7 +86,6 @@ const OfferingGroup = ({ product, packagePurchased }) => {
                 </Box>
                 <Box
                   width="100%"
-                  flex={1}
                   flexDirection={"row"}
                   justifyContent={"flex-start"}
                   alignItems="center"
@@ -98,7 +106,6 @@ const OfferingGroup = ({ product, packagePurchased }) => {
                 </Box>
                 <Box
                   width="100%"
-                  flex={1}
                   flexDirection={"row"}
                   justifyContent={"flex-start"}
                   alignItems="center"

@@ -5,6 +5,8 @@ import auth from "@react-native-firebase/auth";
 import firebase from "@react-native-firebase/app";
 import { query, serverTimestamp } from "firebase/firestore";
 import { saveImage } from "../api/google/google";
+import { distanceTo } from "geolocation-utils";
+import { convertDistance } from "geolib";
 
 export const saveFilters = async (room, filters, uid) => {
   try {
@@ -167,15 +169,27 @@ export const fetchNearbyPlacesFromFirestore = async (
       .where("geohash", "<=", range.upper)
       .where("types", "array-contains-any", filterKeys);
 
-    const querySnapshot = await q
-      .orderBy("geohash")
-      .startAfter(pageToken)
-      .limit(60)
-      .get();
+    const querySnapshot = await q.orderBy("geohash").limit(60).get();
+
+    const places = querySnapshot.docs.map((doc) => doc.data());
+
+    // Sort places by distance
+    const paddingDistance = 7;
+    const sortedPlaces = await Promise.all(
+      places.map(async (place) => {
+        const distance = await distanceTo(location, place.geometry.location);
+        const milesDistance = parseInt(
+          convertDistance(distance, "mi").toFixed(2)
+        );
+
+        return { ...place, distance: milesDistance + paddingDistance };
+      })
+    );
+
+    sortedPlaces.sort((a, b) => b.distance - a.distance);
 
     const nextPageToken = querySnapshot.docs[querySnapshot.docs.length - 1];
-    const places = querySnapshot.docs.map((doc) => doc.data());
-    return { results: places, nextPageToken: nextPageToken };
+    return { results: sortedPlaces, nextPageToken: nextPageToken };
   } catch (error) {
     // Handle the error
     console.error("Error fetching nearby places:", error);
@@ -186,15 +200,14 @@ export const fetchNearbyPlacesFromFirestore = async (
 // Calculate the upper and lower boundary geohashes for
 // a given latitude, longitude, and distance in miles
 const getGeohashRange = (latitude, longitude, distance) => {
-  const lat = 0.0144927536231884; // degrees latitude per mile
-  const lon = 0.0181818181818182; // degrees longitude per mile
+  const lat = 0.01; // degrees latitude per mile
+  const lon = 0.01; // degrees longitude per mile
 
   const lowerLat = latitude - lat * distance;
   const lowerLon = longitude - lon * distance;
 
   const upperLat = latitude + lat * distance;
   const upperLon = longitude + lon * distance;
-
   const lower = geohash.encode(lowerLat, lowerLon);
   const upper = geohash.encode(upperLat, upperLon);
 
