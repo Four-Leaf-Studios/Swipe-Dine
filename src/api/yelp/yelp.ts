@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const API_KEY =
-  "6IYuglGLvhvd2s00Qp7Qpzkgy7GwHVLafR-alAwayyespz3koHiWoYDp7oln4zhcJ7hRhOxyaIESGiYrEoVS0TxT_xHlSWmUN7OJU00s05lRbLbq24Y8y6cGK4h2ZHYx";
+const API_KEY = process.env.EXPO_PUBLIC_YELP_API_KEY;
 const URL = "https://api.yelp.com/v3/businesses";
 const URL_DETAILS = "https://api.yelp.com/v3/businesses/";
 const Axios = axios.create({

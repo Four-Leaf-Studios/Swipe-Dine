@@ -4,9 +4,11 @@ import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 import firebase from "@react-native-firebase/app";
 import { query, serverTimestamp } from "firebase/firestore";
-import { saveImage } from "../api/google/google";
+import { getGooglePlaces, saveImage } from "../api/google/google";
 import { distanceTo } from "geolocation-utils";
 import { convertDistance } from "geolib";
+import { getUserLocation } from "../utils/geolocation";
+import { RestaurantDetails } from "../api/google/googleTypes";
 
 export const saveFilters = async (room, filters, uid) => {
   try {
@@ -22,9 +24,10 @@ export const saveFilters = async (room, filters, uid) => {
   }
 };
 
-export const storeGooglePlacesData = async (roomCode, data) => {
+export const storePlacesRoomData = async (roomCode, data) => {
+  console.log("BLAH");
   try {
-    const doc = firestore().doc(`rooms/${roomCode}`);
+    const doc = firestore().collection("rooms").doc(roomCode);
     await doc.update({
       restaurants: data,
     });
@@ -147,6 +150,33 @@ export const fetchUserProfile = async (user) => {
   }
 };
 
+export const fetchNearbyPlaces = async (distance, filters, pageToken) => {
+  try {
+    let results;
+    const userLocation = await getUserLocation();
+    results = await fetchNearbyPlacesFromFirestore(
+      userLocation,
+      distance,
+      filters,
+      pageToken
+    );
+
+    // Check if firestore result is too small.
+    // if (results?.results?.length < 20) {
+    //   // Fetch Restuarants from Google Places API.
+    //   results = await getGooglePlaces(userLocation, pageToken, filters);
+    // }
+
+    return {
+      results: results?.results,
+      nextPageToken: results.nextPageToken,
+      error: null,
+    };
+  } catch (error) {
+    return { results: null, nextPageToken: null, error: error.message };
+  }
+};
+
 export const fetchNearbyPlacesFromFirestore = async (
   location,
   distance, // In Miles
@@ -188,7 +218,8 @@ export const fetchNearbyPlacesFromFirestore = async (
 
     sortedPlaces.sort((a, b) => b.distance - a.distance);
 
-    const nextPageToken = querySnapshot.docs[querySnapshot.docs.length - 1];
+    let nextPageToken = querySnapshot.docs[querySnapshot.docs.length - 1];
+    if (sortedPlaces.length < 60) nextPageToken = null;
     return { results: sortedPlaces, nextPageToken: nextPageToken };
   } catch (error) {
     // Handle the error

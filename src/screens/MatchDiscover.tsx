@@ -98,7 +98,10 @@ const MatchDiscover = ({ navigation, route }) => {
         navigation.navigate("Matched", {
           restaurant: matchedRestaurant,
           filters: filters,
+          room: room,
         });
+      } else {
+        navigation.back();
       }
     }
   }, [room.swiped]);
@@ -133,8 +136,9 @@ const MatchDiscover = ({ navigation, route }) => {
           justifyContent="center"
           alignItems="center"
         >
-          {restaurants.map((restaurant, index) => (
+          {restaurants?.map((restaurant, index) => (
             <SwipeCard
+              distance={restaurant.distance}
               key={restaurant.place_id}
               restaurantPassed={restaurant}
               handleSwipe={handleSwipe}

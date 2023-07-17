@@ -8,10 +8,8 @@ import {
   fetchNearbyPlacesFromFirestore,
 } from "../lib/firebaseHelpers";
 import { uploadRestaurantToFirestore } from "../lib/firebaseHelpers";
-import useAuth from "./useAuth";
 
 const useRestaurants = (room, initialFilters) => {
-  const { userProfile } = useAuth();
   const { filters } = useFilters(room, initialFilters);
   const [restaurants, setRestaurants] = useState<RestaurantDetails[] | null>(
     null
@@ -21,9 +19,25 @@ const useRestaurants = (room, initialFilters) => {
   const [firstRender, setFirstRender] = useState(true);
   const [googleOrFirebase, setGoogleOrFirebase] = useState(null);
 
+  const filterOutDuplicates = (restaurants) => {
+    const uniqueRestaurants = [];
+    const restaurantIds = new Set();
+
+    // Loop through the restaurants and filter out duplicates based on the place_id
+    for (const restaurant of restaurants) {
+      if (!restaurantIds.has(restaurant.place_id)) {
+        uniqueRestaurants.push(restaurant);
+        restaurantIds.add(restaurant.place_id);
+      }
+    }
+
+    return uniqueRestaurants;
+  };
+
   useEffect(() => {
     const fetchNearbyRestaurants = async (filters) => {
       try {
+        setLoading(true);
         const userLocation = await getUserLocation();
         const distance = 25;
         const firestoreResult = await fetchNearbyPlacesFromFirestore(
@@ -73,20 +87,22 @@ const useRestaurants = (room, initialFilters) => {
 
           setGoogleOrFirebase("GOOGLE");
           setPageToken(googleResult.nextPageToken);
-          setRestaurants(googleResult.results);
+          setRestaurants(filterOutDuplicates(googleResult.results));
         } else {
           setGoogleOrFirebase("FIREBASE");
           setPageToken(firestoreResult.nextPageToken);
-          setRestaurants(firestoreResult.results as RestaurantDetails[]);
+          setRestaurants(
+            filterOutDuplicates(firestoreResult.results as RestaurantDetails[])
+          );
         }
       } catch (error) {}
+
+      setLoading(false);
     };
 
     if (restaurants?.length === 0) setRestaurants(null);
     if (!restaurants && (pageToken || firstRender)) {
-      setLoading(true);
       fetchNearbyRestaurants(filters);
-      setLoading(false);
       setFirstRender(false);
     }
   }, [restaurants]);

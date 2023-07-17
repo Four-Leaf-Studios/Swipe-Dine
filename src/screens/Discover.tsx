@@ -3,10 +3,9 @@ import SwipeCard from "../components/SwipeCard";
 import Box from "../components/Box";
 import Text from "../components/Text";
 import useRestaurants from "../hooks/useRestaurants";
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useState } from "react";
 import { RestaurantDetails } from "../api/google/googleTypes";
 import Layout from "../components/Layout";
-import AnimatedLogo from "../components/AnimatedLogo";
 import { addRestaurantToMatchedListInFirestore } from "../lib/firebaseHelpers";
 import useAuth from "../hooks/useAuth";
 import {
@@ -69,7 +68,11 @@ const Discover = ({ navigation, route }) => {
             size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
           />
         )}
-        {loading && <ActivityIndicator size={50} />}
+        {loading && (
+          <Box flex={10} width="100%">
+            <ActivityIndicator size={50} />
+          </Box>
+        )}
         {!loading && (
           <Box
             position="relative"
@@ -79,12 +82,10 @@ const Discover = ({ navigation, route }) => {
             justifyContent="center"
             alignItems="center"
           >
-            {loading ? (
-              <AnimatedLogo variant="secondary" />
-            ) : restaurants ? (
+            {restaurants ? (
               restaurants.map((restaurant, index) => (
                 <SwipeCard
-                  key={restaurant.place_id + index}
+                  key={restaurant.place_id + index + restaurant.adr_address}
                   restaurantPassed={restaurant}
                   handleSwipe={handleSwipe}
                   filters={filters ? filters : initialFilters}

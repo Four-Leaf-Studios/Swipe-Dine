@@ -224,7 +224,7 @@ const SwipeCard = memo(
               >
                 {restaurant.photos?.map((photo, index) => (
                   <Box
-                    key={photo.photo_reference}
+                    key={index}
                     flex={1}
                     backgroundColor={index === currentPhoto ? "white" : "gray"}
                     height="100%"

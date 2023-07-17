@@ -1,8 +1,8 @@
 import axios from "axios";
 import { Dimensions } from "react-native";
 
-const SECONDARY_API_KEY = "AIzaSyCrY8u4ZvjdQNOe2Z1U1hz0wr5G269vs9E";
-const API_KEY = "AIzaSyBLB4ZE2E8SRTeZ2f9OtY1fXGJ8cdIlvro";
+const SECONDARY_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY_ONE;
+const API_KEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY_TWO;
 const URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 const URL_DETAILS = "https://maps.googleapis.com/maps/api/place/details/json";
 

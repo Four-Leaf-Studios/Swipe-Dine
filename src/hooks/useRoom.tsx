@@ -4,11 +4,12 @@ import useFilters from "./useFilters";
 import { useRecoilState } from "recoil";
 import { roomState } from "../atoms/atoms";
 import firestore from "@react-native-firebase/firestore";
-import { fetchNearbyPlacesFromFirestore } from "../lib/firebaseHelpers";
-import { getUserLocation } from "../utils/geolocation";
-import { getGooglePlaces } from "../api/google/google";
-import { updateUserProfileInFirestore } from "../lib/firebaseHelpers";
-import { storeGooglePlacesData } from "../lib/firebaseHelpers";
+import {
+  fetchNearbyPlaces,
+  fetchNearbyPlacesFromFirestore,
+  storePlacesRoomData,
+} from "../lib/firebaseHelpers";
+import { RestaurantDetails } from "../api/google/googleTypes";
 
 interface Room {
   owner: string;
@@ -116,56 +117,32 @@ const useRoom = () => {
   };
 
   const handleStart = async () => {
-    setStartBegan(true);
-    setLoading(true);
-    if (!room.restaurants) {
-      const location = await getUserLocation();
-      const keywords = Object.entries(filters ? filters : {})
-        .filter(([_, value]) => value === true)
-        .map(([key]) => key.toLowerCase())
-        .join(" | ");
+    try {
+      setStartBegan(true);
+      setLoading(true);
+      const results: RestaurantDetails[] = [];
+      const fetch = async (nextPage) => {
+        try {
+          const {
+            results: restaurants,
+            nextPageToken,
+            error,
+          } = await fetchNearbyPlaces(25, filters, nextPage);
 
-      const results = [];
-      let nextPageToken = null;
-      const placeIds = new Set();
-
-      const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-      const fetchPage = async () => {
-        const response = await getGooglePlaces(
-          `${location.latitude},${location.longitude}`,
-          nextPageToken,
-          keywords
-        );
-
-        if (response.results) {
-          response.results.forEach((place) => {
-            if (!placeIds.has(place.place_id)) {
-              placeIds.add(place.place_id);
-              results.push(place);
-            }
-          });
-
-          nextPageToken = response.nextPageToken;
-
-          if (nextPageToken) {
-            await delay(1000); // Delay between API calls (2 seconds)
-            await fetchPage(); // Call the next page recursively
-          } else {
-            const roomCode = room.code;
-            await storeGooglePlacesData(roomCode, results);
-            setLoading(false);
-          }
-        } else {
-          console.error(response.error);
-        }
+          if (restaurants) results.push(...restaurants);
+          if (nextPageToken)
+            setTimeout(async () => await fetch(nextPageToken), 1000);
+          else await storePlacesRoomData(room.code, results);
+        } catch (error) {}
       };
 
-      await fetchPage();
-      await updateUserProfileInFirestore(user.uid, {
-        ...userProfile,
-        rooms: userProfile.rooms - 1,
-      });
+      if (!room.restaurants) {
+        await fetch(null);
+        setLoading(false);
+      }
+    } catch (error) {
+      // Handle any other errors that might occur in the handleStart function
+      console.error("Error in handleStart:", error);
     }
   };
 

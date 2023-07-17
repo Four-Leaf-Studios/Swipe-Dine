@@ -1,9 +1,9 @@
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   Linking,
   TouchableOpacity,
-  View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
@@ -14,38 +14,72 @@ import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 import { getPhotoURL } from "../api/google/google";
 import useRestaurantDetails from "../hooks/useRestaurantDetails";
-import AnimatedLogo from "../components/AnimatedLogo";
 import { ScrollView } from "react-native-gesture-handler";
 import { normalize } from "react-native-elements";
-
+import firestore from "@react-native-firebase/firestore";
+import useAuth from "../hooks/useAuth";
 const Matched = ({ navigation, route }) => {
+  const { user } = useAuth();
   const theme = useTheme<Theme>();
   const { darkGray, orangeDark } = theme.colors;
-  const { restaurant: restaurantPassed, filters } = route.params;
-  const { restaurant: restaurantDetails, loading } = useRestaurantDetails(
+  const { restaurant: restaurantPassed, filters, room } = route.params;
+  const { restaurant, loading } = useRestaurantDetails(
     restaurantPassed.place_id,
     false,
     filters
   );
-  const [restaurant, setRestaurant] = useState(
-    restaurantDetails ? restaurantDetails : restaurantPassed
-  );
 
-  useEffect(() => {
-    if (
-      restaurantDetails &&
-      JSON.stringify(restaurantDetails) !== JSON.stringify(restaurant)
-    ) {
-      setRestaurant(restaurantDetails);
+  const unmatchInRoom = async (place_id) => {
+    if (!place_id) return;
+    try {
+      const roomDocRef = firestore().collection("rooms").doc(room.code);
+      const roomSnapshot = await roomDocRef.get();
+      const roomData = roomSnapshot.data();
+      if (roomData) {
+        const updatedSwiped = { ...roomData.swiped };
+        if (updatedSwiped[place_id]) {
+          // Place ID exists in swiped, remove user from the array
+          const updatedUsers = updatedSwiped[place_id]?.filter(
+            (uid) => uid !== user.uid
+          );
+
+          // Update the swiped field in the Firestore document with the updatedUsers array
+          await roomDocRef.update({
+            swiped: {
+              ...updatedSwiped,
+              [place_id]: updatedUsers,
+            },
+          });
+        }
+      }
+    } catch (error) {
+      // Handle any errors that may occur during the unmatching process
+      console.error("Error unmatching in room:", error);
     }
-  }, [restaurantDetails]);
+  };
 
+  const [activeReviewIndex, setActiveReviewIndex] = useState(0);
   useEffect(() => {
     navigation.setOptions({
       ...navigation.options,
-      title: restaurant.name,
+      title: restaurant?.name,
+      headerLeft: () => (
+        <Box paddingLeft="l">
+          <TouchableOpacity
+            onPress={async () => {
+              if (room) await unmatchInRoom(restaurant?.place_id);
+            }}
+          >
+            <Text variant="body" color="orangeDark">
+              UNMATCH
+            </Text>
+          </TouchableOpacity>
+        </Box>
+      ),
     });
-  }, []);
+  }, [restaurant]);
+
+  if (!restaurant) return <ActivityIndicator />;
 
   //const restaurantDetails = useRestaurantDetails(restaurant.place_id);
   const handleNavigatePressed = () => {
@@ -77,8 +111,6 @@ const Matched = ({ navigation, route }) => {
       // You can handle the error or display a message to the user if the website cannot be opened
     });
   };
-
-  const [activeReviewIndex, setActiveReviewIndex] = useState(0);
 
   const handleScroll = (event) => {
     const scrollOffset = event.nativeEvent.contentOffset.y;
@@ -200,9 +232,10 @@ const Matched = ({ navigation, route }) => {
               style={{ flex: 1, width: "100%" }}
               onScroll={handleScroll}
             >
-              {restaurantDetails?.reviews &&
-                restaurantDetails?.reviews?.map((review, index) => (
+              {restaurant?.reviews &&
+                restaurant?.reviews?.map((review, index) => (
                   <Box
+                    key={review.author_name}
                     width={Dimensions.get("window").width} // Adjust the value as needed
                     justifyContent="center"
                     alignItems="center"
