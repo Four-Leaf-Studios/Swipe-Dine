@@ -37,12 +37,12 @@ const Settings = ({ navigation }) => {
   }, [navigation]);
 
   const [image, setImage] = useState<string>(
-    user.photoURL
+    user?.photoURL
       ? user.photoURL
       : "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
   );
   const [username, setUsername] = useState(
-    user.displayName ? user.displayName : ""
+    user?.displayName ? user.displayName : ""
   );
 
   const pickImage = async () => {
@@ -153,8 +153,8 @@ const Settings = ({ navigation }) => {
                     color={"darkGray"}
                     onChangeText={setUsername}
                   />
-                  {(username !== userprofile.displayName ||
-                    image !== userprofile.photoURL) && (
+                  {(username !== userprofile?.displayName ||
+                    image !== userprofile?.photoURL) && (
                     <Button
                       disabled={loading}
                       variant="home"

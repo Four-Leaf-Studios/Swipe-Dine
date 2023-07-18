@@ -1,8 +1,8 @@
 import axios from "axios";
 import { Dimensions } from "react-native";
-
-const SECONDARY_API_KEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY_ONE;
-const API_KEY = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY_TWO;
+import Constants from "expo-constants";
+const SECONDARY_API_KEY = Constants.expoConfig.extra.GOOGLE_PLACES_API_KEY_ONE;
+const API_KEY = Constants.expoConfig.extra.GOOGLE_PLACES_API_KEY_TWO;
 const URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 const URL_DETAILS = "https://maps.googleapis.com/maps/api/place/details/json";
 
@@ -43,10 +43,12 @@ const getGooglePlaces = async (
 
     const response = await axios.get(URL, { params });
 
+    let error;
+    if (response.data.results.length === 0) error = true;
     return {
       results: response.data.results,
       nextPageToken: response.data.next_page_token,
-      error: null,
+      error: error,
     };
   } catch (error) {
     return { results: null, nextPageToken: null, error: error.message };

@@ -3,7 +3,12 @@ import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 import firebase from "@react-native-firebase/app";
-import { query, serverTimestamp } from "firebase/firestore";
+import {
+  Firestore,
+  Timestamp,
+  query,
+  serverTimestamp,
+} from "firebase/firestore";
 import { getGooglePlaces, saveImage } from "../api/google/google";
 import { distanceTo } from "geolocation-utils";
 import { convertDistance } from "geolib";
@@ -25,7 +30,6 @@ export const saveFilters = async (room, filters, uid) => {
 };
 
 export const storePlacesRoomData = async (roomCode, data) => {
-  console.log("BLAH");
   try {
     const doc = firestore().collection("rooms").doc(roomCode);
     await doc.update({
@@ -220,11 +224,16 @@ export const fetchNearbyPlacesFromFirestore = async (
 
     let nextPageToken = querySnapshot.docs[querySnapshot.docs.length - 1];
     if (sortedPlaces.length < 60) nextPageToken = null;
-    return { results: sortedPlaces, nextPageToken: nextPageToken };
+    let error;
+    if (sortedPlaces.length === 0) error = true;
+    return {
+      results: sortedPlaces,
+      nextPageToken: nextPageToken,
+      error: error,
+    };
   } catch (error) {
     // Handle the error
-    console.error("Error fetching nearby places:", error);
-    return { results: [], nextPageToken: null };
+    return { results: [], nextPageToken: null, error: error };
   }
 };
 
@@ -398,10 +407,24 @@ export const saveProfile = async (imageURI, username, user) => {
 
     // Update the user profile in Firestore
     const userRef = firebase.firestore().collection("users").doc(user.uid);
-    await userRef.update({
+    let profile: any = {
       displayName: username,
       photoURL: imageURL,
-    });
+    };
+
+    if (!user?.displayName) {
+      profile = {
+        ...profile,
+        subscriptions: {
+          free: Timestamp.now(),
+          standard: null,
+          premium: null,
+        },
+        discovers: 5,
+        rooms: 5,
+      };
+    }
+    await userRef.update(profile);
 
     // Update the profile in the authentication system
     await auth().currentUser.updateProfile({
@@ -409,12 +432,7 @@ export const saveProfile = async (imageURI, username, user) => {
       photoURL: imageURL,
     });
 
-    return {
-      email: user.email,
-      uid: user.uid,
-      displayName: username,
-      photoURL: imageURL,
-    };
+    return profile;
   } catch (error) {
     // Handle the error
     console.error("Error saving profile:", error);

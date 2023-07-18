@@ -47,6 +47,7 @@ const OfferingGroup = ({ product, packagePurchased, orientation }) => {
           height="100%"
           paddingLeft={{ phone: "s", tablet: "xl" }}
           paddingRight={{ phone: "s", tablet: "xl" }}
+          gap="s"
         >
           <Box
             width="100%"
@@ -124,6 +125,27 @@ const OfferingGroup = ({ product, packagePurchased, orientation }) => {
                     NO ADVERTISEMENTS
                   </Text>
                 </Box>
+                <Box
+                  width="100%"
+                  flexDirection={"row"}
+                  justifyContent={"flex-start"}
+                  alignItems="center"
+                  gap={{ phone: "s", tablet: "l" }}
+                >
+                  <Ionicons
+                    name="checkbox-outline"
+                    size={isTablet ? 50 : 25}
+                    color="green"
+                  />
+                  <Text
+                    variant={{ phone: "body", tablet: "subheader" }}
+                    color="darkGray"
+                    fontWeight={"bold"}
+                  >
+                    Database limited per day due to costs of api calls (for
+                    now).
+                  </Text>
+                </Box>
               </>
             )}
             {packagePurchased.identifier === "Premium" && (
@@ -189,6 +211,27 @@ const OfferingGroup = ({ product, packagePurchased, orientation }) => {
                     fontWeight={"bold"}
                   >
                     NO ADVERTISEMENTS
+                  </Text>
+                </Box>
+                <Box
+                  width="100%"
+                  flexDirection={"row"}
+                  justifyContent={"flex-start"}
+                  alignItems="center"
+                  gap={{ phone: "s", tablet: "l" }}
+                >
+                  <Ionicons
+                    name="checkbox-outline"
+                    size={isTablet ? 50 : 25}
+                    color="green"
+                  />
+                  <Text
+                    variant={{ phone: "body", tablet: "subheader" }}
+                    color="darkGray"
+                    fontWeight={"bold"}
+                  >
+                    Database limited per day due to costs of api calls (for
+                    now).
                   </Text>
                 </Box>
               </>

@@ -55,10 +55,11 @@ export const AuthenticatedUserProvider = ({ children }) => {
     const unsubscribe = fireAuth().onAuthStateChanged(async (user) => {
       if (user) {
         // Check if the user has a profile
-        if (!user.displayName) {
-          setFirstTime(true);
-        } else {
+        console.log(user.photoURL);
+        if (user.photoURL) {
           setFirstTime(false);
+        } else {
+          setFirstTime(true);
         }
 
         // Logged in...

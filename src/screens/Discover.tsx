@@ -17,10 +17,8 @@ import {
 const Discover = ({ navigation, route }) => {
   const { user, userProfile } = useAuth();
   const { room, initialFilters } = route.params;
-  const { restaurants, loading, setRestaurants, filters } = useRestaurants(
-    room,
-    initialFilters
-  );
+  const { restaurants, loading, setRestaurants, filters, error } =
+    useRestaurants(room, initialFilters);
   const [swipeLeftList, setSwipeLeftList] = useState<RestaurantDetails[]>([]);
   const [swipeRightList, setSwipeRightList] = useState<RestaurantDetails[]>([]);
 
@@ -62,7 +60,7 @@ const Discover = ({ navigation, route }) => {
   return (
     <Layout variant="main">
       <Box width="100%" flex={1} gap={"l"}>
-        {userProfile.subscriptions.free && (
+        {userProfile?.subscriptions?.free && (
           <BannerAd
             unitId={TestIds.BANNER}
             size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
@@ -94,12 +92,17 @@ const Discover = ({ navigation, route }) => {
                   distance={restaurant.distance}
                 />
               ))
+            ) : error ? (
+              <Text>
+                The limit for google places database is hit for today and we
+                don't have any data in our own database.
+              </Text>
             ) : (
               <Text>No restaurants found.</Text>
             )}
           </Box>
         )}
-        {userProfile.subscriptions.free && (
+        {userProfile?.subscriptions?.free && (
           <BannerAd
             unitId={TestIds.BANNER}
             size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}

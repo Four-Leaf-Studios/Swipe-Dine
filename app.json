@@ -14,7 +14,8 @@
     "ios": {
       "bundleIdentifier": "com.michaelheinzman.swipeanddine",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "supportsTablet": true
+      "supportsTablet": true,
+      "buildNumber": "2"
     },
     "android": {
       "package": "com.michaelheinzman.swipeanddine",

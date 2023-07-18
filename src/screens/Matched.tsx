@@ -68,6 +68,7 @@ const Matched = ({ navigation, route }) => {
           <TouchableOpacity
             onPress={async () => {
               if (room) await unmatchInRoom(restaurant?.place_id);
+              else navigation.goBack();
             }}
           >
             <Text variant="body" color="orangeDark">

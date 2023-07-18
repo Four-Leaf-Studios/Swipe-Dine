@@ -15,6 +15,7 @@ import useAuth from "../hooks/useAuth";
 import { Platform } from "react-native";
 import { updateProfileInFirestore } from "./firebaseHelpers";
 import { Timestamp } from "firebase/firestore";
+import Constants from "expo-constants";
 
 // Define the types
 type PurchaserInfo = {
@@ -58,7 +59,7 @@ export const RevenueCatProvider = ({ children }: RevenueCatProviderProps) => {
 
       if (Platform.OS === "ios") {
         Purchases.configure({
-          apiKey: "appl_GKeIGPqJAbQOInruwFqlYVNlxrZ",
+          apiKey: Constants.expoConfig.extra.REVENUECAT_KEY,
           appUserID: user.uid,
         });
         // identify Purchases SDK with new Firebase user

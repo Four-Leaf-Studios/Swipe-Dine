@@ -115,7 +115,7 @@ const Home = ({ navigation }) => {
             shadowRadius={4}
             shadowOffset={{ width: 0, height: -4 }}
             padding="l"
-            paddingBottom={userProfile.subscriptions.free ? "none" : "l"}
+            paddingBottom={userProfile?.subscriptions?.free ? "none" : "l"}
             gap="s"
           >
             <Box width="100%" flex={1} gap={{ phone: "s", tablet: "m" }}>
@@ -132,8 +132,8 @@ const Home = ({ navigation }) => {
               {filters && <Filters filters={filters} setFilters={setFilters} />}
             </Box>
             <Button
-              variant={userProfile.discovers === 0 ? "homeDisabled" : "home"}
-              disabled={userProfile.discovers === 0}
+              variant={userProfile?.discovers === 0 ? "homeDisabled" : "home"}
+              disabled={userProfile?.discovers === 0}
               onPress={searchRestaurants}
             >
               <Box
@@ -153,7 +153,7 @@ const Home = ({ navigation }) => {
                 </Text>
                 <Box
                   backgroundColor={
-                    userProfile.discovers === 0 ? "error" : "darkGray"
+                    userProfile?.discovers === 0 ? "error" : "darkGray"
                   }
                   borderRadius={999}
                   minWidth={{ phone: 35, tablet: 55 }}
@@ -173,7 +173,7 @@ const Home = ({ navigation }) => {
                 </Box>
               </Box>
             </Button>
-            {userProfile.subscriptions.free && (
+            {userProfile?.subscriptions?.free && (
               <BannerAd
                 unitId={TestIds.BANNER}
                 size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}

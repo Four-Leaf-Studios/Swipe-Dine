@@ -18,6 +18,7 @@ const useRestaurants = (room, initialFilters) => {
   const [loading, setLoading] = useState(false);
   const [firstRender, setFirstRender] = useState(true);
   const [googleOrFirebase, setGoogleOrFirebase] = useState(null);
+  const [error, setError] = useState(null);
 
   const filterOutDuplicates = (restaurants) => {
     const uniqueRestaurants = [];
@@ -59,43 +60,54 @@ const useRestaurants = (room, initialFilters) => {
             filters
           );
 
-          // Check if places are in firestore, if not upload them to firestore.
-          googleResult.results = await Promise.all(
-            googleResult.results.map(async (restaurant) => {
-              // Check if restaurant exists in firestore.
-              const restaurantFromFirestore = await checkDocumentExists(
-                restaurant.place_id
-              );
-
-              // If google restaurant exists in firestore then use firestore data.
-              if (restaurantFromFirestore.exists) {
-                return restaurantFromFirestore.data;
-              }
-
-              // If google restaurant doesn't exist, upload it to firestore.
-              if (!restaurantFromFirestore.exists) {
-                const { data } = await uploadRestaurantToFirestore(
-                  restaurant,
-                  filters,
-                  true
+          if (googleResult.results) {
+            // Check if places are in firestore, if not upload them to firestore.
+            googleResult.results = await Promise.all(
+              googleResult.results.map(async (restaurant) => {
+                // Check if restaurant exists in firestore.
+                const restaurantFromFirestore = await checkDocumentExists(
+                  restaurant.place_id
                 );
 
-                return data;
-              }
-            })
-          );
+                // If google restaurant exists in firestore then use firestore data.
+                if (restaurantFromFirestore.exists) {
+                  return restaurantFromFirestore.data;
+                }
+
+                // If google restaurant doesn't exist, upload it to firestore.
+                if (!restaurantFromFirestore.exists) {
+                  const { data } = await uploadRestaurantToFirestore(
+                    restaurant,
+                    filters,
+                    true
+                  );
+
+                  return data;
+                }
+              })
+            );
+            setPageToken(googleResult.nextPageToken);
+            setRestaurants(filterOutDuplicates(googleResult.results));
+          }
+
+          if (googleResult.error) {
+            setError(googleResult.error);
+          }
 
           setGoogleOrFirebase("GOOGLE");
-          setPageToken(googleResult.nextPageToken);
-          setRestaurants(filterOutDuplicates(googleResult.results));
         } else {
+          if (firestoreResult.error) {
+            setError(firestoreResult.error);
+          }
           setGoogleOrFirebase("FIREBASE");
           setPageToken(firestoreResult.nextPageToken);
           setRestaurants(
             filterOutDuplicates(firestoreResult.results as RestaurantDetails[])
           );
         }
-      } catch (error) {}
+      } catch (error) {
+        setError(error);
+      }
 
       setLoading(false);
     };
@@ -107,7 +119,7 @@ const useRestaurants = (room, initialFilters) => {
     }
   }, [restaurants]);
 
-  return { restaurants, loading, setRestaurants, filters };
+  return { restaurants, loading, setRestaurants, filters, error };
 };
 
 export default useRestaurants;

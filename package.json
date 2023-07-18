@@ -13,6 +13,7 @@
     "@react-navigation/stack": "^6.3.16",
     "@shopify/restyle": "^2.4.2",
     "axios": "^1.4.0",
+    "dotenv": "^16.3.1",
     "expo": "~48.0.18",
     "expo-apple-authentication": "~6.0.1",
     "expo-build-properties": "~0.6.0",
@@ -22,6 +23,7 @@
     "expo-location": "~15.1.1",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
+    "expo-updates": "~0.16.4",
     "firebase": "^9.22.1",
     "geolib": "^3.3.4",
     "geolocation-utils": "^1.2.5",
@@ -40,8 +42,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-star-rating": "^1.1.0",
     "react-native-web": "~0.18.7",
-    "recoil": "^0.7.7",
-    "expo-updates": "~0.16.4"
+    "recoil": "^0.7.7"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

@@ -106,7 +106,7 @@ const Profile = ({ navigation }) => {
                 scrollEventThrottle={16}
                 style={{ flex: 1, width: "100%" }}
               >
-                {favorites.map((id) => (
+                {favorites?.map((id) => (
                   <ProfileRestaurantItem
                     key={id + "favorites"}
                     place_id={id}
@@ -131,7 +131,7 @@ const Profile = ({ navigation }) => {
                 scrollEventThrottle={16}
                 style={{ flex: 1, width: "100%" }}
               >
-                {matched.map((id) => (
+                {matched?.map((id) => (
                   <ProfileRestaurantItem
                     key={id + "matched"}
                     place_id={id}
