@@ -3,17 +3,12 @@ import firestore from "@react-native-firebase/firestore";
 import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 import firebase from "@react-native-firebase/app";
-import {
-  Firestore,
-  Timestamp,
-  query,
-  serverTimestamp,
-} from "firebase/firestore";
-import { getGooglePlaces, saveImage } from "../api/google/google";
+import { Timestamp, serverTimestamp } from "firebase/firestore";
+import { saveImage } from "../api/google/google";
 import { distanceTo } from "geolocation-utils";
 import { convertDistance } from "geolib";
 import { getUserLocation } from "../utils/geolocation";
-import { RestaurantDetails } from "../api/google/googleTypes";
+import { Geopoint, geohashQueryBounds, distanceBetween } from "geofire-common";
 
 export const saveFilters = async (room, filters, uid) => {
   try {
@@ -180,7 +175,6 @@ export const fetchNearbyPlaces = async (distance, filters, pageToken) => {
     return { results: null, nextPageToken: null, error: error.message };
   }
 };
-
 export const fetchNearbyPlacesFromFirestore = async (
   location,
   distance, // In Miles
@@ -188,46 +182,55 @@ export const fetchNearbyPlacesFromFirestore = async (
   pageToken
 ) => {
   try {
-    const range = getGeohashRange(
-      location.latitude,
-      location.longitude,
-      distance
-    );
-
     const filterKeys = Object.keys(filters).filter(
       (key) => filters[key] && key
     );
+
+    const center = [location.latitude, location.longitude] as Geopoint;
+    const radiusInM = distance * 1609.344;
+    const bounds = geohashQueryBounds(center, radiusInM);
+    const promises = [];
     const placesRef = firestore().collection("places");
-    let q = placesRef
-      .where("geohash", ">=", range.lower)
-      .where("geohash", "<=", range.upper)
-      .where("types", "array-contains-any", filterKeys);
 
-    const querySnapshot = await q.orderBy("geohash").limit(60).get();
+    for (const b of bounds) {
+      let q = placesRef
+        .orderBy("geohash")
+        .startAt(b[0])
+        .endAt(b[1])
+        .where("types", "array-contains-any", filterKeys)
+        .limit(60);
 
-    const places = querySnapshot.docs.map((doc) => doc.data());
+      promises.push(q.get());
+    }
 
-    // Sort places by distance
-    const paddingDistance = 7;
-    const sortedPlaces = await Promise.all(
-      places.map(async (place) => {
-        const distance = await distanceTo(location, place.geometry.location);
-        const milesDistance = parseInt(
-          convertDistance(distance, "mi").toFixed(2)
+    const snapshots = await Promise.all(promises);
+
+    const matchingDocs = [];
+    for (const snap of snapshots) {
+      for (const doc of snap.docs) {
+        const location = doc.data().geometry.location;
+        // We have to filter out a few false positives due to GeoHash
+        // accuracy, but most will match
+        const distanceInKm = distanceBetween(
+          [location.lat, location.lng],
+          center
         );
+        const distanceInM = distanceInKm * 1000;
+        const distanceInMiles = Math.ceil(distanceInM / 1609.344);
+        if (distanceInM <= radiusInM) {
+          matchingDocs.push({ ...doc.data(), distance: distanceInMiles });
+        }
+      }
+    }
 
-        return { ...place, distance: milesDistance + paddingDistance };
-      })
-    );
+    matchingDocs.sort((a, b) => b.distance - a.distance);
 
-    sortedPlaces.sort((a, b) => b.distance - a.distance);
-
-    let nextPageToken = querySnapshot.docs[querySnapshot.docs.length - 1];
-    if (sortedPlaces.length < 60) nextPageToken = null;
+    let nextPageToken = snapshots[0].docs[snapshots[0].docs.length - 1];
+    if (matchingDocs.length < 60) nextPageToken = null;
     let error;
-    if (sortedPlaces.length === 0) error = true;
+    if (matchingDocs.length === 0) error = true;
     return {
-      results: sortedPlaces,
+      results: matchingDocs,
       nextPageToken: nextPageToken,
       error: error,
     };
@@ -240,8 +243,8 @@ export const fetchNearbyPlacesFromFirestore = async (
 // Calculate the upper and lower boundary geohashes for
 // a given latitude, longitude, and distance in miles
 const getGeohashRange = (latitude, longitude, distance) => {
-  const lat = 0.01; // degrees latitude per mile
-  const lon = 0.01; // degrees longitude per mile
+  const lat = 0.0144927536231884;
+  const lon = 0.0181818181818182;
 
   const lowerLat = latitude - lat * distance;
   const lowerLon = longitude - lon * distance;

@@ -101,9 +101,7 @@ const useRestaurants = (room, initialFilters) => {
           }
           setGoogleOrFirebase("FIREBASE");
           setPageToken(firestoreResult.nextPageToken);
-          setRestaurants(
-            filterOutDuplicates(firestoreResult.results as RestaurantDetails[])
-          );
+          setRestaurants(filterOutDuplicates(firestoreResult.results as any));
         }
       } catch (error) {
         setError(error);

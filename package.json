@@ -25,6 +25,8 @@
     "expo-status-bar": "~1.4.4",
     "expo-updates": "~0.16.4",
     "firebase": "^9.22.1",
+    "geofire": "^6.0.0",
+    "geofire-common": "^6.0.0",
     "geolib": "^3.3.4",
     "geolocation-utils": "^1.2.5",
     "ngeohash": "^0.6.3",
