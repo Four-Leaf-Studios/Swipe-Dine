@@ -240,26 +240,6 @@ export const fetchNearbyPlacesFromFirestore = async (
   }
 };
 
-// Calculate the upper and lower boundary geohashes for
-// a given latitude, longitude, and distance in miles
-const getGeohashRange = (latitude, longitude, distance) => {
-  const lat = 0.0144927536231884;
-  const lon = 0.0181818181818182;
-
-  const lowerLat = latitude - lat * distance;
-  const lowerLon = longitude - lon * distance;
-
-  const upperLat = latitude + lat * distance;
-  const upperLon = longitude + lon * distance;
-  const lower = geohash.encode(lowerLat, lowerLon);
-  const upper = geohash.encode(upperLat, upperLon);
-
-  return {
-    lower,
-    upper,
-  };
-};
-
 export const addFiltersToTypes = (types, filters) => {
   const existingTypes = types || []; // Get existing types or initialize as an empty array
   const newTypes = [
