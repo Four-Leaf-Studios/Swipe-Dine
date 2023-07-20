@@ -195,6 +195,7 @@ export const fetchNearbyPlacesFromFirestore = async (
     for (const b of bounds) {
       let q = placesRef
         .orderBy("geohash")
+        .startAfter(pageToken)
         .startAt(b[0])
         .endAt(b[1])
         .where("types", "array-contains-any", filterKeys)
