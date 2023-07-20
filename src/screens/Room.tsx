@@ -1,4 +1,4 @@
-import { TouchableOpacity, FlatList } from "react-native";
+import { TouchableOpacity, FlatList, ActivityIndicator } from "react-native";
 import React, { useEffect } from "react";
 import Box from "../components/Box";
 import Text from "../components/Text";
@@ -10,6 +10,7 @@ import useAuth from "../hooks/useAuth";
 import { useTheme } from "@shopify/restyle";
 import { Theme } from "../../theme";
 import Filters from "../components/Filters";
+import { setLogLevel } from "firebase/firestore";
 
 const Room = ({ navigation }) => {
   const theme = useTheme<Theme>();
@@ -19,6 +20,7 @@ const Room = ({ navigation }) => {
     room,
     leaveRoom,
     loading,
+    setLoading,
     handleStart,
     startBegan,
     filters,
@@ -30,11 +32,13 @@ const Room = ({ navigation }) => {
   }, [room]);
 
   useEffect(() => {
-    if (room?.restaurants)
+    if (room?.restaurants) {
+      setLoading(false);
       navigation.navigate("MatchDiscover", {
         room: room,
         filters: filters,
       });
+    }
   }, [room?.restaurants]);
 
   useEffect(() => {
@@ -118,44 +122,65 @@ const Room = ({ navigation }) => {
                 <Filters filters={filters} setFilters={setFilters} />
               )}
             </Box>
-            <Button
-              variant="home"
-              disabled={room?.owner !== user.uid && !startBegan && true}
-              onPress={handleStart}
-            >
-              <Box
-                width="100%"
-                height="100%"
-                flexDirection={"row"}
-                justifyContent={"center"}
-                alignItems={"center"}
-                gap={{ phone: "s", tablet: "m" }}
+            {loading && (
+              <Button
+                variant="home"
+                disabled={room?.owner !== user.uid && !startBegan && true}
+                onPress={handleStart}
               >
-                <Text variant="subheader" color="white">
-                  {room?.owner === user.uid ? "Start" : "Waiting..."}{" "}
-                </Text>
-                {room?.owner === user.uid && (
-                  <Box
-                    backgroundColor={"darkGray"}
-                    borderRadius={999}
-                    minWidth={{ phone: 35, tablet: 55 }}
-                    minHeight={{ phone: 35, tablet: 55 }}
-                    padding="s"
-                    justifyContent={"center"}
-                    alignItems={"center"}
-                  >
-                    <Text
-                      variant="body"
-                      color="buttonPrimaryText"
-                      fontWeight={"bold"}
-                      textAlign={"right"}
+                <Box
+                  width="100%"
+                  height="100%"
+                  flexDirection={"row"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  gap={{ phone: "s", tablet: "m" }}
+                >
+                  <ActivityIndicator />
+                </Box>
+              </Button>
+            )}
+
+            {!loading && (
+              <Button
+                variant="home"
+                disabled={room?.owner !== user.uid && !startBegan && true}
+                onPress={handleStart}
+              >
+                <Box
+                  width="100%"
+                  height="100%"
+                  flexDirection={"row"}
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  gap={{ phone: "s", tablet: "m" }}
+                >
+                  <Text variant="subheader" color="white">
+                    {room?.owner === user.uid ? "Start" : "Waiting..."}
+                  </Text>
+                  {room?.owner === user.uid && (
+                    <Box
+                      backgroundColor={"darkGray"}
+                      borderRadius={999}
+                      minWidth={{ phone: 35, tablet: 55 }}
+                      minHeight={{ phone: 35, tablet: 55 }}
+                      padding="s"
+                      justifyContent={"center"}
+                      alignItems={"center"}
                     >
-                      {userProfile?.discovers}
-                    </Text>
-                  </Box>
-                )}
-              </Box>
-            </Button>
+                      <Text
+                        variant="body"
+                        color="buttonPrimaryText"
+                        fontWeight={"bold"}
+                        textAlign={"right"}
+                      >
+                        {userProfile?.discovers}
+                      </Text>
+                    </Box>
+                  )}
+                </Box>
+              </Button>
+            )}
           </Box>
         </Box>
       </Box>

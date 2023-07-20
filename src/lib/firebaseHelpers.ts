@@ -4,7 +4,7 @@ import storage from "@react-native-firebase/storage";
 import auth from "@react-native-firebase/auth";
 import firebase from "@react-native-firebase/app";
 import { Timestamp, serverTimestamp } from "firebase/firestore";
-import { saveImage } from "../api/google/google";
+import { getGooglePlaces, saveImage } from "../api/google/google";
 import { distanceTo } from "geolocation-utils";
 import { convertDistance } from "geolib";
 import { getUserLocation } from "../utils/geolocation";
@@ -161,10 +161,35 @@ export const fetchNearbyPlaces = async (distance, filters, pageToken) => {
     );
 
     // Check if firestore result is too small.
-    // if (results?.results?.length < 20) {
-    //   // Fetch Restuarants from Google Places API.
-    //   results = await getGooglePlaces(userLocation, pageToken, filters);
-    // }
+    if (results?.results?.length < 20) {
+      // Fetch Restuarants from Google Places API.
+      results = await getGooglePlaces(userLocation, pageToken, filters);
+      results.results = filterOutDuplicates(results.results);
+      // Check if places are in firestore, if not upload them to firestore.
+      results.results = await Promise.all(
+        results.results.map(async (restaurant) => {
+          // Check if restaurant exists in firestore.
+          const restaurantFromFirestore = await checkDocumentExists(
+            restaurant.place_id
+          );
+
+          // If google restaurant exists in firestore then use firestore data.
+          if (restaurantFromFirestore.exists) {
+            return restaurantFromFirestore.data;
+          }
+
+          // If google restaurant doesn't exist, upload it to firestore.
+          if (!restaurantFromFirestore.exists) {
+            const { data } = await uploadRestaurantToFirestore(
+              restaurant,
+              filters,
+              true
+            );
+            return data;
+          }
+        })
+      );
+    }
 
     return {
       results: results?.results,
@@ -230,8 +255,9 @@ export const fetchNearbyPlacesFromFirestore = async (
     if (matchingDocs.length < 60) nextPageToken = null;
     let error;
     if (matchingDocs.length === 0) error = true;
+
     return {
-      results: matchingDocs,
+      results: filterOutDuplicates(matchingDocs),
       nextPageToken: nextPageToken,
       error: error,
     };
@@ -240,7 +266,20 @@ export const fetchNearbyPlacesFromFirestore = async (
     return { results: [], nextPageToken: null, error: error };
   }
 };
+const filterOutDuplicates = (restaurants) => {
+  const uniqueRestaurants = [];
+  const restaurantIds = new Set();
 
+  // Loop through the restaurants and filter out duplicates based on the place_id
+  for (const restaurant of restaurants) {
+    if (!restaurantIds.has(restaurant.place_id)) {
+      uniqueRestaurants.push(restaurant);
+      restaurantIds.add(restaurant.place_id);
+    }
+  }
+
+  return uniqueRestaurants;
+};
 export const addFiltersToTypes = (types, filters) => {
   const existingTypes = types || []; // Get existing types or initialize as an empty array
   const newTypes = [

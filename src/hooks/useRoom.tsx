@@ -117,9 +117,9 @@ const useRoom = () => {
   };
 
   const handleStart = async () => {
+    setLoading(true);
     try {
       setStartBegan(true);
-      setLoading(true);
       const results: RestaurantDetails[] = [];
       const fetch = async (nextPage) => {
         try {
@@ -138,7 +138,6 @@ const useRoom = () => {
 
       if (!room.restaurants) {
         await fetch(null);
-        setLoading(false);
       }
     } catch (error) {
       // Handle any other errors that might occur in the handleStart function
